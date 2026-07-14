@@ -1,0 +1,126 @@
+:root {
+  --deep-blue: #1c233c;
+  --darker-blue: #10172e;
+  --black: #080c14;
+  --white: #fefefe;
+  --darker-green: #0d342d;
+  --dark-green: #32a246;
+  --light-green: #75ca6f;
+  --lighter-green: #00e87a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  color: var(--white);
+
+  background: var(--darker-blue);
+
+  position: relative;
+}
+
+header {
+  background: var(--darker-blue);
+
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid var(--deep-blue);
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+}
+
+.header-inner {
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  padding: 16px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+}
+
+.logo {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.logo-title {
+  margin: 0;
+
+  font-family: Impact, "Arial Black", sans-serif;
+
+  font-size: 32px;
+
+  letter-spacing: 2px;
+}
+.notificacao {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+}
+.notificacao-botao {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  width: 56px;
+
+  height: 56px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: var(--deep-blue);
+
+  color: var(--white);
+
+  font-size: 26px;
+
+  line-height: 1;
+
+  cursor: pointer;
+}
+.notificacao-botao:hover {
+  color: var(--darker-green);
+  transform: translateY(-2px);
+
+  background: var(--darker-green);
+}
