@@ -2,41 +2,89 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <script src="code.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluso Dashboard</title>
+
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Inclusão da biblioteca Lucide via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <link rel="stylesheet" href="style.css" />
-    <title>Flu$o</title>
+
+    <script src="code.js" defer></script>
   </head>
   <body>
-    <header>
-      <div class="header-inner">
-        <div class="logo">
-          <p class="logo-title">Flu$o</p>
-
-          <p class="logo-tagline">Gestão Financeira</p>
-
-          <p>Controle suas finanças de forma simples e eficiente</p>
-
-          <p class="bem-vindo">Olá, Usuário!</p>
-
-          <p class="atualizacao">
-            <strong>Atualização:</strong>
-            <span id="current_date"></span>
-          </p>
+    <div class="fluso">
+      <!-- BARRA LATERAL -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="brand">
+            <div class="brand-icon">
+              <!-- Ícone Lucide (Raio) -->
+              <i data-lucide="zap"></i>
+            </div>
+            <div class="brand-name">Flu<span>so</span></div>
+          </div>
         </div>
 
-        <div class="notificacao">
-          <button
-            type="button"
-            class="notificacao-botao"
-            aria-label="Notificações"
-          >
-            🔔
-          </button>
-        </div>
-      </div>
-    </header>
-    <body>
-        
-    </body>
+        <!-- MENU DE NAVEGAÇÃO -->
+        <nav class="sidebar-nav">
+          <!-- O item com a classe 'active' representa a página atual -->
+          <a href="#" class="nav-item active">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i data-lucide="users"></i>
+            <span>Usuários</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i data-lucide="folder-kanban"></i>
+            <span>Projetos</span>
+          </a>
+          <a href="#" class="nav-item">
+            <i data-lucide="settings"></i>
+            <span>Configurações</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- ÁREA PRINCIPAL -->
+      <main style="flex: 1; display: flex; flex-direction: column">
+        <!-- CABEÇALHO -->
+        <header>
+          <div class="header-inner">
+            <div class="logo">
+              <h1 class="logo-title">Dashboard</h1>
+            </div>
+
+            <div class="notificacao">
+              <button class="notificacao-botao" aria-label="Ver notificações">
+                <!-- Ícone Lucide (Sino) -->
+                <i data-lucide="bell"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <section style="padding: 32px">
+          <h2>Bem-vindo ao sistema</h2>
+          <p></p>
+        </section>
+      </main>
+    </div>
+
+    <!-- Script para renderizar os ícones da Lucide -->
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
 </html>
