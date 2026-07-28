@@ -18,10 +18,12 @@
 
     <link rel="stylesheet" href="style.css" />
 
-    <script src="code.js" defer></script>
+    <script src="script.js" defer></script>
   </head>
   <body>
     <div class="fluso">
+
+      <div class="overlay"></div>
       <!-- BARRA LATERAL -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -32,6 +34,9 @@
             </div>
             <div class="brand-name">Flu<span>$</span>o</div>
           </div>
+          <button class="close-mobile">
+            <i data-lucide="x"></i>
+          </button>
         </div>
 
         <!-- MENU DE NAVEGAÇÃO -->
@@ -66,12 +71,14 @@
 
       <!-- ÁREA PRINCIPAL -->
       <main>
+        
         <!-- CABEÇALHO -->
         <header class="topbar">
           <div class="header-left">
             <button class="hamburger">
               <i data-lucide="menu"></i>
             </button>
+
           </div>
           <div class="header-inner">
             <div class="logo">

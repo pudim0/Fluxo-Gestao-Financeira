@@ -87,8 +87,29 @@ main {
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 24px;
-  
 }
+.hamburger {
+  display: none;
+
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 10px;
+
+  background: var(--panel-2);
+
+  border: 1px solid var(--border);
+
+  color: var(--text);
+
+  align-items: center;
+
+  justify-content: center;
+
+  cursor: pointer;
+}
+
 /* =========================================
    Cabeçalho (Header)
    ========================================= */
@@ -135,8 +156,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 56px;
-  height: 56px;
+aspect-ratio: 1/1;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -175,8 +195,8 @@ header {
   position: sticky;
   top: 0;
   height: 100vh;
+  transition: transform 0.25s ease; 
 }
-
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -262,4 +282,117 @@ header {
 
 .nav-item.active svg {
   color: var(--accent);
+}
+.close-mobile {
+  display: none;
+
+  background: transparent;
+
+  border: none;
+
+  color: var(--text-dim);
+
+  cursor: pointer;
+}
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+.overlay {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+.hamburger {
+    display: flex;
+    margin-left: 16px; /* Distância o botão da borda esquerda no mobile */
+    margin-top: 16px; /* Distância o botão do topo no mobile */
+  }
+  .grid-2,
+  .grid-2b,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .logo-title {
+  margin: 0;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+
+  .health-wrap {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+  .notificacao {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    position: fixed;
+
+    z-index: 40;
+
+    left: 0;
+
+    top: 0;
+
+    transform: translateX(-100%);
+
+    transition: transform 0.25s ease;
+
+    box-shadow: 20px 0 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .close-mobile {
+    display: flex;
+  }
+.notificacao {
+    justify-content: flex-start;
+    aspect-ratio: 1/1;
+  }
+  .hamburger {
+    display: flex;
+  }
+
+  .overlay.active {
+    display: block;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    z-index: 30;
+  }
+
+  .main {
+    padding: 20px 16px 40px;
+  }
+
+  .hello {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .badges-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 }
