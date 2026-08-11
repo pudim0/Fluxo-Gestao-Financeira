@@ -1,6 +1,8 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+import { AuthService } from './services/auth.service';
 
 type NavigationItem = {
   label: string;
@@ -16,13 +18,15 @@ type NavigationItem = {
 })
 export class App {
   private readonly document = inject(DOCUMENT);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   protected readonly title = signal('Fluxo');
-  protected readonly theme = signal<'dark' | 'light'>('dark');
+  protected readonly theme = signal<'dark' | 'light'>(this.resolveInitialTheme());
   protected readonly sidebarOpen = signal(false);
 
   constructor() {
-    this.syncTheme();
+    this.applyTheme(this.theme());
   }
 
   protected readonly navigation: NavigationItem[] = [
@@ -38,8 +42,10 @@ export class App {
   ];
 
   protected toggleTheme(): void {
-    this.theme.update((current) => (current === 'dark' ? 'light' : 'dark'));
-    this.syncTheme();
+    const nextTheme = this.theme() === 'dark' ? 'light' : 'dark';
+    this.theme.set(nextTheme);
+    this.persistTheme(nextTheme);
+    this.applyTheme(nextTheme);
   }
 
   protected toggleSidebar(): void {
@@ -50,7 +56,45 @@ export class App {
     this.sidebarOpen.set(false);
   }
 
-  private syncTheme(): void {
-    this.document.documentElement.setAttribute('data-theme', this.theme());
+  protected logout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
+  }
+
+  @HostListener('window:keydown.escape')
+  protected closeSidebarOnEscape(): void {
+    this.closeSidebar();
+  }
+
+  private resolveInitialTheme(): 'dark' | 'light' {
+    const storedTheme = this.readStoredTheme();
+
+    if (storedTheme) {
+      return storedTheme;
+    }
+
+    return this.document.defaultView?.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  private readStoredTheme(): 'dark' | 'light' | null {
+    try {
+      const storedTheme = localStorage.getItem('fluxo.theme');
+
+      return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private persistTheme(theme: 'dark' | 'light'): void {
+    try {
+      localStorage.setItem('fluxo.theme', theme);
+    } catch {
+      // Local storage may be unavailable in some test environments.
+    }
+  }
+
+  private applyTheme(theme: 'dark' | 'light'): void {
+    this.document.documentElement.setAttribute('data-theme', theme);
   }
 }

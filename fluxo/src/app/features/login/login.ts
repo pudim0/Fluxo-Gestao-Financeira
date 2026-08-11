@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { Input as DsInput } from '../../shared/components/design-system/input/input';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -23,11 +25,11 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
 
       <section class="page-grid">
         <ds-card eyebrow="Entrar" title="Credenciais" subtitle="Campos prontos para o fluxo de autenticação.">
-          <form class="stack">
+          <form class="stack" (ngSubmit)="entrar()">
             <ds-input label="E-mail" type="email" placeholder="voce@empresa.com" />
             <ds-input label="Senha" type="password" placeholder="••••••••" />
             <div class="page-actions">
-              <ds-button type="submit">Entrar</ds-button>
+              <ds-button type="submit">Entrar no painel</ds-button>
               <ds-button type="button" variant="secondary">Esqueci a senha</ds-button>
             </div>
           </form>
@@ -68,4 +70,15 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
     </section>
   `
 })
-export class Login {}
+export class Login {
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly authService = inject(AuthService);
+
+  protected entrar(): void {
+    this.authService.login();
+
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/dashboard';
+    void this.router.navigateByUrl(redirectTo);
+  }
+}
