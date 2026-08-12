@@ -26,10 +26,7 @@
     <section class="status-card" aria-label="Status do projeto">
       <span class="status-pill">Standalone + Router + Signals</span>
       <h2>Estrutura inicial pronta</h2>
-      <p>
-        O projeto agora sai do starter do Angular e entra na base visual do
-        Flu$o.
-      </p>
+      <p>O projeto agora sai do starter do Angular e entra na base visual do Flu$o.</p>
     </section>
 
     <nav class="nav-list" aria-label="Menu principal">
@@ -39,7 +36,9 @@
           class="nav-item"
           [routerLink]="item.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' || item.route === '/onboarding' }"
+          [routerLinkActiveOptions]="{
+            exact: item.route === '/dashboard' || item.route === '/onboarding',
+          }"
           [attr.aria-current]="navLink.isActive ? 'page' : null"
           (click)="closeSidebar()"
         >
@@ -50,9 +49,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <p>
-        Próximo passo: extrair o design system para componentes reutilizáveis.
-      </p>
+      <p>Próximo passo: extrair o design system para componentes reutilizáveis.</p>
     </div>
   </aside>
 
@@ -82,7 +79,10 @@
         <div>
           <p class="eyebrow">Passo 3 em andamento</p>
           <h1>{{ title() }}</h1>
-          <p class="topbar-copy">As páginas agora vivem nas rotas e o shell ficou focado em navegação, tema e responsividade.</p>
+          <p class="topbar-copy">
+            As páginas agora vivem nas rotas e o shell ficou focado em navegação, tema e
+            responsividade.
+          </p>
         </div>
       </div>
 
@@ -91,9 +91,7 @@
           {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}
         </button>
 
-        <button type="button" class="secondary-button" (click)="logout()">
-          Sair
-        </button>
+        <button type="button" class="secondary-button">Sair</button>
 
         <span class="status-chip">Conectado</span>
       </div>
