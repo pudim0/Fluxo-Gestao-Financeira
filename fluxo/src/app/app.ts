@@ -6,7 +6,6 @@ import { AuthService } from './services/auth.service';
 
 type NavigationItem = {
   label: string;
-  hint: string;
   route: string;
 };
 
@@ -30,15 +29,15 @@ export class App {
   }
 
   protected readonly navigation: NavigationItem[] = [
-    { label: 'Onboarding', hint: 'Primeiro acesso e configuração', route: '/onboarding' },
-    { label: 'Login', hint: 'Entrar na conta', route: '/login' },
-    { label: 'Dashboard', hint: 'Visão geral e KPIs', route: '/dashboard' },
-    { label: 'Transações', hint: 'Entradas e saídas', route: '/transacoes' },
-    { label: 'Orçamento', hint: 'Limites e categorias', route: '/orcamento' },
-    { label: 'Relatórios', hint: 'Análises e gráficos', route: '/relatorios' },
-    { label: 'Metas', hint: 'Objetivos financeiros', route: '/metas' },
-    { label: 'Configurações', hint: 'Perfil e preferências', route: '/configuracoes' },
-    { label: 'Notificações', hint: 'Alertas e pendências', route: '/notificacoes' }
+    { label: 'Onboarding', route: '/onboarding' },
+    { label: 'Login', route: '/login' },
+    { label: 'Dashboard', route: '/dashboard' },
+    { label: 'Transações', route: '/transacoes' },
+    { label: 'Orçamento', route: '/orcamento' },
+    { label: 'Relatórios', route: '/relatorios' },
+    { label: 'Metas', route: '/metas' },
+    { label: 'Configurações', route: '/configuracoes' },
+    { label: 'Notificações', route: '/notificacoes' }
   ];
 
   protected toggleTheme(): void {
