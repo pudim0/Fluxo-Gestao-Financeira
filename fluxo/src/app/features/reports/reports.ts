@@ -14,20 +14,24 @@ import { Table as DsTable } from '../../shared/components/design-system/table/ta
           <p class="page-kicker">Relatórios</p>
           <h2 class="page-title">Análises, tendências e leitura executiva</h2>
           <p class="page-copy">
-            O módulo receberá gráficos e comparativos. Nesta etapa, a estrutura
-            de cards e tabelas já está no lugar.
+            O módulo receberá gráficos e comparativos. Nesta etapa, a estrutura de cards e tabelas
+            já está no lugar.
           </p>
         </div>
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Comparativo" title="Resumo mensal" subtitle="Base para evolução do consumo e receita.">
+        <ds-card
+          eyebrow="Comparativo"
+          title="Resumo mensal"
+          subtitle="Base para evolução do consumo e receita."
+        >
           <ds-table
             [columns]="['Mês', 'Receitas', 'Despesas', 'Saldo']"
             [rows]="[
               ['Jun', 'R$ 7.800', 'R$ 5.140', 'R$ 2.660'],
               ['Jul', 'R$ 8.250', 'R$ 4.920', 'R$ 3.330'],
-              ['Ago', 'R$ 8.600', 'R$ 4.710', 'R$ 3.890']
+              ['Ago', 'R$ 8.600', 'R$ 4.710', 'R$ 3.890'],
             ]"
           />
         </ds-card>
@@ -38,6 +42,6 @@ import { Table as DsTable } from '../../shared/components/design-system/table/ta
         />
       </section>
     </section>
-  `
+  `,
 })
 export class Reports {}

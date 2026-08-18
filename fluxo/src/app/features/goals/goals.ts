@@ -12,14 +12,18 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           <p class="page-kicker">Metas</p>
           <h2 class="page-title">Objetivos com progresso visível</h2>
           <p class="page-copy">
-            O usuário acompanha metas de curto e longo prazo com barras de
-            progresso e feedback claro.
+            O usuário acompanha metas de curto e longo prazo com barras de progresso e feedback
+            claro.
           </p>
         </div>
       </header>
 
       <section class="page-grid page-grid--single">
-        <ds-card eyebrow="Progresso" title="Metas prioritárias" subtitle="Base inicial para metas reais.">
+        <ds-card
+          eyebrow="Progresso"
+          title="Metas prioritárias"
+          subtitle="Base inicial para metas reais."
+        >
           <div class="progress-list">
             <div class="progress-item">
               <div class="progress-top"><span>Reserva de emergência</span><span>80%</span></div>
@@ -37,6 +41,6 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
         </ds-card>
       </section>
     </section>
-  `
+  `,
 })
 export class Goals {}

@@ -12,7 +12,6 @@ export const authGuard: CanMatchFn = (_route, segments) => {
   }
 
   const attemptedUrl = segments.map((segment) => segment.path).join('/');
-
   return router.createUrlTree(['/login'], {
     queryParams: attemptedUrl ? { redirectTo: `/${attemptedUrl}` } : undefined,
   });

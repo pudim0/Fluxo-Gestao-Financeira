@@ -19,7 +19,10 @@ import { ApiService } from '../../services/api.service';
           <p class="page-kicker">Dashboard</p>
           <h2 class="page-title">{{ (summary$ | async)?.title ?? 'Resumo financeiro central' }}</h2>
           <p class="page-copy">
-            {{ (summary$ | async)?.copy ?? 'Esta tela concentra os indicadores principais, o histórico recente e as áreas que alimentam decisões rápidas.' }}
+            {{
+              (summary$ | async)?.copy ??
+                'Esta tela concentra os indicadores principais, o histórico recente e as áreas que alimentam decisões rápidas.'
+            }}
           </p>
         </div>
 
@@ -32,7 +35,11 @@ import { ApiService } from '../../services/api.service';
       @if (summary$ | async; as summary) {
         <section class="metrics-grid">
           @for (metric of summary.metrics; track metric.label) {
-            <article class="metric-card" [class.positive]="metric.tone === 'positive'" [class.warning]="metric.tone === 'warning'">
+            <article
+              class="metric-card"
+              [class.positive]="metric.tone === 'positive'"
+              [class.warning]="metric.tone === 'warning'"
+            >
               <span class="metric-label">{{ metric.label }}</span>
               <span class="metric-value">{{ metric.value }}</span>
               <span class="metric-detail">{{ metric.detail }}</span>
@@ -49,7 +56,11 @@ import { ApiService } from '../../services/api.service';
             </div>
           </ds-card>
 
-          <ds-card eyebrow="Movimento" title="Últimas transações" subtitle="Base para a lista detalhada da área financeira">
+          <ds-card
+            eyebrow="Movimento"
+            title="Últimas transações"
+            subtitle="Base para a lista detalhada da área financeira"
+          >
             <ds-table
               [columns]="['Data', 'Descrição', 'Categoria', 'Valor']"
               [rows]="summary.transactions"
@@ -75,7 +86,7 @@ import { ApiService } from '../../services/api.service';
         />
       }
     </section>
-  `
+  `,
 })
 export class Dashboard {
   private readonly apiService = inject(ApiService);

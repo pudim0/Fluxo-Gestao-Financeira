@@ -1,0 +1,84 @@
+<main class="auth-page">
+  <section class="auth-showcase" aria-label="Sobre o Flu$o">
+    <div class="auth-showcase__content">
+      <a class="brand" routerLink="/login"><span class="brand__mark">↯</span>Flu$o</a>
+      <h1>Seu dinheiro, inteligente.</h1>
+      <p>
+        Tenha clareza para decidir melhor. Organize contas, despesas e objetivos em um só lugar.
+      </p>
+      <span class="open-finance">● Open Finance integrado</span>
+      <div class="auth-stats" aria-label="Indicadores da plataforma">
+        <div><strong>100%</strong><span>visão financeira</span></div>
+        <div><strong>24/7</strong><span>sempre com você</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-area">
+    <div class="auth-card">
+      <a class="brand auth-card__brand" routerLink="/login"
+        ><span class="brand__mark">↯</span>Flu$o</a
+      >
+      <h1>Bem-vindo de volta</h1>
+      <p class="auth-card__intro">Entre na sua conta para continuar</p>
+      @if (route.snapshot.queryParamMap.get('reason') === 'session-expired') {
+        <p class="auth-message">Sua sessão expirou. Entre novamente para continuar.</p>
+      }
+      <form class="auth-form" (ngSubmit)="submit()">
+        <label class="auth-field"
+          ><span class="auth-field__header">E-mail</span
+          ><input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            required
+        /></label>
+        <label class="auth-field"
+          ><span class="auth-field__header"
+            >Senha <a class="auth-link" routerLink="/recuperar-senha">Esqueci a senha</a></span
+          ><span class="auth-password"
+            ><input
+              [type]="passwordVisible() ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            /><button
+              type="button"
+              (click)="passwordVisible.update((v) => !v)"
+              [attr.aria-label]="passwordVisible() ? 'Ocultar senha' : 'Mostrar senha'"
+            >
+              {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+            </button></span
+          ></label
+        >
+        <button class="auth-submit" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Entrando…' : 'Entrar' }}
+        </button>
+      </form>
+      <div class="auth-divider">ou continue com</div>
+      <div class="auth-social">
+        <button
+          type="button"
+          disabled
+          title="Disponível quando a autenticação social for integrada"
+        >
+          Google</button
+        ><button
+          type="button"
+          disabled
+          title="Disponível quando a autenticação social for integrada"
+        >
+          Apple
+        </button>
+      </div>
+      <p class="auth-footnote">
+        Não tem uma conta? <a class="auth-link" routerLink="/cadastro">Criar conta grátis</a>
+      </p>
+      <p class="auth-footer">© 2026 Flu$o · Todos os direitos reservados</p>
+    </div>
+  </section>
+</main>

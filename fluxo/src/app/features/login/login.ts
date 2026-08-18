@@ -17,14 +17,18 @@ import { AuthService } from '../../services/auth.service';
           <p class="page-kicker">Login</p>
           <h2 class="page-title">Acesse sua conta do Fluxo</h2>
           <p class="page-copy">
-            Esta tela já está pronta para receber autenticação real, validação e
-            integração com a proteção de rotas.
+            Esta tela já está pronta para receber autenticação real, validação e integração com a
+            proteção de rotas.
           </p>
         </div>
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Entrar" title="Credenciais" subtitle="Campos prontos para o fluxo de autenticação.">
+        <ds-card
+          eyebrow="Entrar"
+          title="Credenciais"
+          subtitle="Campos prontos para o fluxo de autenticação."
+        >
           <form class="stack" (ngSubmit)="entrar()">
             <ds-input label="E-mail" type="email" placeholder="voce@empresa.com" />
             <ds-input label="Senha" type="password" placeholder="••••••••" />
@@ -35,7 +39,11 @@ import { AuthService } from '../../services/auth.service';
           </form>
         </ds-card>
 
-        <ds-card eyebrow="Segurança" title="Base pronta" subtitle="Autenticação, interceptor e guarda entram no próximo passo.">
+        <ds-card
+          eyebrow="Segurança"
+          title="Base pronta"
+          subtitle="Autenticação, interceptor e guarda entram no próximo passo."
+        >
           <div class="progress-list">
             <div class="progress-item">
               <div class="progress-top">
@@ -58,8 +66,8 @@ import { AuthService } from '../../services/auth.service';
       <section class="page-grid page-grid--single">
         <ds-card eyebrow="Navegação" title="Retorno ao fluxo inicial">
           <p class="page-copy">
-            Se quiser revisar o primeiro contato, volte para o onboarding ou
-            siga direto para o dashboard.
+            Se quiser revisar o primeiro contato, volte para o onboarding ou siga direto para o
+            dashboard.
           </p>
           <div class="page-actions">
             <a class="secondary-button" routerLink="/onboarding">Voltar ao onboarding</a>
@@ -68,7 +76,7 @@ import { AuthService } from '../../services/auth.service';
         </ds-card>
       </section>
     </section>
-  `
+  `,
 })
 export class Login {
   private readonly router = inject(Router);

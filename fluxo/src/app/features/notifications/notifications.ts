@@ -13,14 +13,17 @@ import { EmptyState as DsEmptyState } from '../../shared/components/design-syste
           <p class="page-kicker">Notificações</p>
           <h2 class="page-title">Alertas, pendências e eventos importantes</h2>
           <p class="page-copy">
-            Aqui entram lembretes de fatura, metas, limites de orçamento e
-            alertas de segurança.
+            Aqui entram lembretes de fatura, metas, limites de orçamento e alertas de segurança.
           </p>
         </div>
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Recentes" title="Últimos avisos" subtitle="Modelo de feed para notificações futuras.">
+        <ds-card
+          eyebrow="Recentes"
+          title="Últimos avisos"
+          subtitle="Modelo de feed para notificações futuras."
+        >
           <div class="progress-list">
             <div class="progress-item">
               <div class="progress-top"><span>Fatura vence em 8 dias</span><span>Agora</span></div>
@@ -39,6 +42,6 @@ import { EmptyState as DsEmptyState } from '../../shared/components/design-syste
         />
       </section>
     </section>
-  `
+  `,
 })
 export class Notifications {}

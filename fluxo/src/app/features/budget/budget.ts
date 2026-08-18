@@ -12,14 +12,17 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           <p class="page-kicker">Orçamento</p>
           <h2 class="page-title">Categorias, limites e disciplina</h2>
           <p class="page-copy">
-            Esta página será o ponto de controle dos tetos de gasto e da
-            distribuição por categoria.
+            Esta página será o ponto de controle dos tetos de gasto e da distribuição por categoria.
           </p>
         </div>
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Categorias" title="Distribuição mensal" subtitle="Visão inicial dos limites por grupo.">
+        <ds-card
+          eyebrow="Categorias"
+          title="Distribuição mensal"
+          subtitle="Visão inicial dos limites por grupo."
+        >
           <div class="progress-list">
             <div class="progress-item">
               <div class="progress-top"><span>Alimentação</span><span>72%</span></div>
@@ -36,7 +39,11 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           </div>
         </ds-card>
 
-        <ds-card eyebrow="Ações" title="Ajustes rápidos" subtitle="Base para editar categoria, teto e recorrência.">
+        <ds-card
+          eyebrow="Ações"
+          title="Ajustes rápidos"
+          subtitle="Base para editar categoria, teto e recorrência."
+        >
           <div class="tag-row">
             <span class="tag">Rebalancear</span>
             <span class="tag">Copiar do mês anterior</span>
@@ -45,6 +52,6 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
         </ds-card>
       </section>
     </section>
-  `
+  `,
 })
 export class Budget {}

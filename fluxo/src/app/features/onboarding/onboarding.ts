@@ -13,8 +13,8 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           <p class="page-kicker">Onboarding</p>
           <h2 class="page-title">Organize sua vida financeira em poucos passos</h2>
           <p class="page-copy">
-            O primeiro acesso apresenta os dados, conecta as origens e prepara o
-            terreno para o login seguro e o dashboard operacional.
+            O primeiro acesso apresenta os dados, conecta as origens e prepara o terreno para o
+            login seguro e o dashboard operacional.
           </p>
         </div>
 
@@ -25,7 +25,11 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Etapa 1" title="Conectar fontes" subtitle="Bancos, cartões e carteiras começam aqui.">
+        <ds-card
+          eyebrow="Etapa 1"
+          title="Conectar fontes"
+          subtitle="Bancos, cartões e carteiras começam aqui."
+        >
           <div class="tag-row">
             <span class="tag">Open Finance</span>
             <span class="tag">Importação manual</span>
@@ -33,7 +37,11 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           </div>
         </ds-card>
 
-        <ds-card eyebrow="Etapa 2" title="Definir prioridades" subtitle="Escolha metas e categorias-chave para o app.">
+        <ds-card
+          eyebrow="Etapa 2"
+          title="Definir prioridades"
+          subtitle="Escolha metas e categorias-chave para o app."
+        >
           <div class="tag-row">
             <span class="tag">Metas</span>
             <span class="tag">Orçamento</span>
@@ -43,14 +51,18 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
       </section>
 
       <section class="page-grid page-grid--single">
-        <ds-card eyebrow="Etapa 3" title="Ativar a rotina" subtitle="O painel finaliza a configuração inicial.">
+        <ds-card
+          eyebrow="Etapa 3"
+          title="Ativar a rotina"
+          subtitle="O painel finaliza a configuração inicial."
+        >
           <p class="page-copy">
-            Depois desse fluxo, o usuário entra no dashboard com contexto,
-            preferências e alertas já organizados.
+            Depois desse fluxo, o usuário entra no dashboard com contexto, preferências e alertas já
+            organizados.
           </p>
         </ds-card>
       </section>
     </section>
-  `
+  `,
 })
 export class Onboarding {}

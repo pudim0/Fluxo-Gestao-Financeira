@@ -1,0 +1,68 @@
+<div class="app-shell">
+  <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+  <aside class="sidebar" [class.open]="sidebarOpen()" id="app-sidebar">
+    <div class="sidebar-top">
+      <a class="brand-lockup" routerLink="/dashboard"
+        ><div class="brand-mark">↯</div>
+        <div>
+          <p class="brand-name">Flu$o</p>
+          <p class="brand-note">Gestão financeira</p>
+        </div></a
+      ><button
+        class="icon-button mobile-only"
+        type="button"
+        (click)="closeSidebar()"
+        aria-label="Fechar menu"
+      >
+        ✕
+      </button>
+    </div>
+    <nav class="nav-list" aria-label="Menu principal">
+      @for (item of navigation; track item.route) {
+        <a
+          #link="routerLinkActive"
+          class="nav-item"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [attr.aria-current]="link.isActive ? 'page' : null"
+          (click)="closeSidebar()"
+          ><span class="nav-label">{{ item.label }}</span></a
+        >
+      }
+    </nav>
+    <div class="sidebar-footer">Sua visão financeira, em um só lugar.</div>
+  </aside>
+  @if (sidebarOpen()) {
+    <button
+      type="button"
+      class="overlay"
+      (click)="closeSidebar()"
+      aria-label="Fechar menu"
+    ></button>
+  }
+  <main class="page" id="main-content" tabindex="-1">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button
+          class="icon-button mobile-only"
+          type="button"
+          (click)="toggleSidebar()"
+          [attr.aria-expanded]="sidebarOpen()"
+          aria-label="Abrir menu"
+        >
+          ☰
+        </button>
+        <div>
+          <p class="eyebrow">Flu$o</p>
+          <h1>Visão geral</h1>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="secondary-button" type="button" (click)="toggleTheme()">
+          {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}</button
+        ><button class="secondary-button" type="button" (click)="logout()">Sair</button>
+      </div>
+    </header>
+    <section class="route-view"><router-outlet /></section>
+  </main>
+</div>

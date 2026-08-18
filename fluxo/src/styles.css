@@ -1,3 +1,5 @@
+@import './app/app.css';
+
 :root {
   color-scheme: dark;
   --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;

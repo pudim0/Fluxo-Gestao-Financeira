@@ -14,21 +14,29 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
           <p class="page-kicker">Configurações</p>
           <h2 class="page-title">Perfil, preferências e acessibilidade</h2>
           <p class="page-copy">
-            O painel de configurações vai concentrar personalização, conta e
-            comportamento da interface.
+            O painel de configurações vai concentrar personalização, conta e comportamento da
+            interface.
           </p>
         </div>
       </header>
 
       <section class="page-grid">
-        <ds-card eyebrow="Perfil" title="Dados da conta" subtitle="Campos base para personalização e contato.">
+        <ds-card
+          eyebrow="Perfil"
+          title="Dados da conta"
+          subtitle="Campos base para personalização e contato."
+        >
           <div class="stack">
             <ds-input label="Nome" placeholder="Seu nome" />
             <ds-input label="E-mail" type="email" placeholder="voce@empresa.com" />
           </div>
         </ds-card>
 
-        <ds-card eyebrow="Preferências" title="Interface" subtitle="Configurações que podem virar toggles reais depois.">
+        <ds-card
+          eyebrow="Preferências"
+          title="Interface"
+          subtitle="Configurações que podem virar toggles reais depois."
+        >
           <div class="tag-row">
             <span class="tag">Tema escuro</span>
             <span class="tag">Modo compacto</span>
@@ -46,6 +54,6 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
         </ds-card>
       </section>
     </section>
-  `
+  `,
 })
 export class Settings {}

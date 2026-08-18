@@ -1,0 +1,60 @@
+<main class="auth-page">
+  <section class="auth-showcase">
+    <div class="auth-showcase__content">
+      <a class="brand" routerLink="/login"><span class="brand__mark">↯</span>Flu$o</a>
+      <h1>Uma rotina financeira mais leve.</h1>
+      <p>Comece gratuitamente e transforme seus dados em decisões melhores.</p>
+      <span class="open-finance">● Seus dados sempre sob seu controle</span>
+    </div>
+  </section>
+  <section class="auth-form-area">
+    <div class="auth-card">
+      <a class="brand auth-card__brand" routerLink="/login"
+        ><span class="brand__mark">↯</span>Flu$o</a
+      >
+      <h1>Crie sua conta</h1>
+      <p class="auth-card__intro">Leva menos de um minuto para começar.</p>
+      <form class="auth-form" (ngSubmit)="submit()">
+        <label class="auth-field"
+          ><span class="auth-field__header">Nome</span
+          ><input
+            name="name"
+            [(ngModel)]="name"
+            autocomplete="name"
+            placeholder="Como podemos chamar você?"
+            required /></label
+        ><label class="auth-field"
+          ><span class="auth-field__header">E-mail</span
+          ><input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            autocomplete="email"
+            placeholder="seu@email.com"
+            required /></label
+        ><label class="auth-field"
+          ><span class="auth-field__header">Senha</span
+          ><span class="auth-password"
+            ><input
+              [type]="passwordVisible() ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="password"
+              minlength="8"
+              autocomplete="new-password"
+              placeholder="Mínimo de 8 caracteres"
+              required
+            /><button type="button" (click)="passwordVisible.update((v) => !v)">
+              {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+            </button></span
+          ></label
+        ><button class="auth-submit" type="submit">Criar conta grátis</button>
+      </form>
+      <p class="auth-footnote">
+        Já tem uma conta? <a class="auth-link" routerLink="/login">Entrar</a>
+      </p>
+      <p class="auth-footer">
+        Ao criar sua conta, você aceita os Termos e a Política de Privacidade.
+      </p>
+    </div>
+  </section>
+</main>
