@@ -9,7 +9,7 @@ const AUTH_TOKEN_KEY = 'fluxo.auth.token';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    return Boolean(this.getToken());
   }
 
   getToken(): string | null {

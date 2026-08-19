@@ -3,8 +3,6 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { AppShell } from './layout/app-shell/app-shell';
-import { Dashboard } from './features/dashboard/dashboard';
-import { Onboarding } from './features/onboarding/onboarding';
 
 export const routes: Routes = [
   {
@@ -29,14 +27,6 @@ export const routes: Routes = [
       import('./features/auth/password-recovery').then((m) => m.PasswordRecovery),
   },
   {
-    path: 'onboarding',
-    component: Onboarding,
-  },
-  {
-    path: 'dashboard',
-    component: Dashboard,
-  },
-  {
     path: '',
     canMatch: [authGuard],
     component: AppShell,
@@ -47,7 +37,8 @@ export const routes: Routes = [
       },
       {
         path: 'onboarding',
-        loadComponent: () => import('./features/onboarding/onboarding').then((m) => m.Onboarding),
+        loadComponent: () =>
+          import('./features/onboarding/onboarding/onboarding').then((m) => m.Onboarding),
       },
       {
         path: 'transacoes',

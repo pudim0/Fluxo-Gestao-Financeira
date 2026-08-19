@@ -58,9 +58,50 @@
         </div>
       </div>
       <div class="topbar-actions">
-        <button class="secondary-button" type="button" (click)="toggleTheme()">
-          {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}</button
-        ><button class="secondary-button" type="button" (click)="logout()">Sair</button>
+        <div class="settings-menu">
+          <button
+            class="icon-button settings-trigger"
+            type="button"
+            (click)="toggleSettings()"
+            [attr.aria-expanded]="settingsOpen()"
+            aria-haspopup="menu"
+            aria-label="Abrir configurações"
+            title="Configurações"
+          >
+            ⚙
+          </button>
+          @if (settingsOpen()) {
+            <div class="settings-dropdown" role="menu">
+              <a
+                class="settings-menu-item"
+                routerLink="/configuracoes"
+                role="menuitem"
+                (click)="closeSettings()"
+              >
+                <span aria-hidden="true">⚙</span>
+                Configurações
+              </a>
+              <button
+                class="settings-menu-item"
+                type="button"
+                role="menuitem"
+                (click)="toggleTheme(); closeSettings()"
+              >
+                <span aria-hidden="true">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
+                {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}
+              </button>
+              <button
+                class="settings-menu-item settings-menu-item--danger"
+                type="button"
+                role="menuitem"
+                (click)="logout()"
+              >
+                <span aria-hidden="true">↪</span>
+                Sair
+              </button>
+            </div>
+          }
+        </div>
       </div>
     </header>
     <section class="route-view"><router-outlet /></section>

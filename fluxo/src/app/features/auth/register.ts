@@ -22,6 +22,6 @@ export class Register {
     if (!this.name() || !this.email() || this.password().length < 8) return;
     // Temporary demo session; account creation must be handled by a real API.
     this.authService.startDemoSession();
-    void this.router.navigateByUrl('/dashboard');
+    void this.router.navigateByUrl('/onboarding');
   }
 }

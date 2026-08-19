@@ -1,26 +1,46 @@
-import {CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-type DebtType = 
-'credit-card' | 'loan' | 'financing' | 'other';
+type Question =
+  | 'goal'
+  | 'incomeSource'
+  | 'incomeFrequency'
+  | 'incomeType'
+  | 'hasDebt'
+  | 'debtTypes'
+  | 'debtAmount'
+  | 'hasEmergencyFund'
+  | 'concern';
+
+type DebtType =
+  | 'Cartão de crédito'
+  | 'Empréstimo'
+  | 'Financiamento'
+  | 'Cheque especial'
+  | 'Outra';
 
 interface FinancialProfile {
   goal: string;
   incomeSource: string;
   incomeFrequency: string;
-  incomeTypes: string[];
-  hasDebt: boolean;
-  debtType: DebtType[]
-  debtAmount: number;
-  hasEmergencyFund: boolean;
+  incomeType: string;
+  hasDebt: 'Sim' | 'Não' | '';
+  debtTypes: DebtType[];
+  debtAmount: string;
+  hasEmergencyFund: 'Sim' | 'Não' | '';
   concern: string;
 }
+
+type AnswerField = Exclude<
+  keyof FinancialProfile,
+  'debtTypes' | 'debtAmount'
+>;
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule],
+  imports: [DecimalPipe],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css'
 })
@@ -33,160 +53,198 @@ export class Onboarding {
     goal: '',
     incomeSource: '',
     incomeFrequency: '',
-    incomeTypes: [],
-    hasDebt: false,
-    debtType: [],
-    debtAmount: 0,
-    hasEmergencyFund: false,
+    incomeType: '',
+    hasDebt: '',
+    debtTypes: [],
+    debtAmount: '',
+    hasEmergencyFund: '',
     concern: ''
   };
 
-  goals = [
+  readonly goals = [
     'Organizar minhas finanças',
-    'Economizar dinheiro',
-    'Sair das dívidas',
+    'Quitar dívidas',
     'Criar uma reserva',
-    'Começar a investir',
-    'Entender para onde meu dinheiro está indo',
+    'Investir'
   ];
 
-  incomeSources = [
+  readonly incomeSources = [
     'Salário',
-    'Trabalho autônomo/Freelance',
-    'Bolsa ou auxílio',
-    'Renda de investimentos',
-    'Outro',
-    'Ainda não tenho renda'
+    'Autônomo',
+    'Empreendedor',
+    'Aposentadoria',
+    'Outra'
   ];
 
-  incomeFrequencies = [
-    'Diária',
-    'Semanal',
-    'Quinzenal',
-    'Mensal',
-    'Não tenho renda fixa'
+  readonly incomeFrequencies = [
+    'Diariamente',
+    'Semanalmente',
+    'Quinzenalmente',
+    'Mensalmente',
+    'Eventualmente'
   ];
 
-  incomeTypes = ['Fixa', 'Variável', 'Uma combinação de fixa e variável'];
-  
-  hasDebtOptions = ['Sim', 'Não'] as const;
+  readonly incomeTypes = ['Fixa', 'Variável', 'Fixa e variável'];
 
-  debtTypes: DebtType[] = ['credit-card', 'loan', 'financing', 'other'];
+  readonly debtAnswers: Array<'Sim' | 'Não'> = ['Sim', 'Não'];
 
-emergencyFundOptions = ['Sim', 'Não'] as const;
-
-  concerns = [
-    'Não consigo economizar dinheiro',
-    'Tenho dificuldade em controlar meus gastos',
-    'Não sei como investir meu dinheiro',
-    'Tenho dívidas e não sei como sair delas',
-    'Não tenho uma reserva de emergência',
-    'Quero melhorar minha educação financeira'
+  readonly debtTypes: DebtType[] = [
+    'Cartão de crédito',
+    'Empréstimo',
+    'Financiamento',
+    'Cheque especial',
+    'Outra'
   ];
 
-  constructor(private router: Router) {}
+  readonly emergencyFundAnswers: Array<'Sim' | 'Não'> = ['Sim', 'Não'];
 
-  get steps(): string[] {
-    const baseSteps = [
-      'Objetivo',
-      'Renda',
-      'Dívidas',
-      'Reserva de Emergência',
-      'Preocupações'
+  readonly concerns = [
+    'Controlar gastos',
+    'Quitar dívidas',
+    'Aumentar minha renda',
+    'Começar a investir'
+  ];
+
+  constructor(private readonly router: Router) {}
+
+  get steps(): Question[] {
+    const baseSteps: Question[] = [
+      'goal',
+      'incomeSource',
+      'incomeFrequency',
+      'incomeType',
+      'hasDebt'
     ];
-  if (this.profile.hasDebt === true) {
-    baseSteps.push('Tipo de Dívida', 'Valor da Dívida');
+
+    if (this.profile.hasDebt === 'Sim') {
+      baseSteps.push('debtTypes', 'debtAmount');
+    }
+
+    baseSteps.push('hasEmergencyFund', 'concern');
+
+    return baseSteps;
   }
 
-  baseSteps.push('hasEmergencyFund', 'concern');
-  return baseSteps;
-  }
-
-  get currentQuestion(): string {
+  get currentQuestion(): Question {
     return this.steps[this.currentStep];
   }
 
   get progress(): number {
-    return (this.currentStep + 1) / this.steps.length * 100;
+    return ((this.currentStep + 1) / this.steps.length) * 100;
   }
 
-  start() : void {
+  get recommendation(): string {
+    if (this.profile.hasDebt === 'Sim') {
+      return 'a organização das dívidas e a criação de um plano de pagamento';
+    }
+
+    if (this.profile.goal === 'Criar uma reserva') {
+      return 'a criação da sua reserva de emergência';
+    }
+
+    if (this.profile.goal === 'Investir') {
+      return 'a organização financeira antes dos seus primeiros investimentos';
+    }
+
+    return 'o controle dos seus gastos e hábitos financeiros';
+  }
+
+  start(): void {
     this.started = true;
   }
 
-  selectAnswer(field: keyof FinancialProfile, value: any): void {
-    if (field === 'hasDebt' && value === false) {
-      this.profile.debtType = [];
-      this.profile.debtAmount = 0;
+  selectAnswer(field: AnswerField, value: string): void {
+    if (field === 'hasDebt') {
+      this.profile.hasDebt = value as 'Sim' | 'Não';
+
+      if (value === 'Não') {
+        this.profile.debtTypes = [];
+        this.profile.debtAmount = '';
+      }
+
+      return;
     }
-    this.profile[field] = value as never;
+
+    if (field === 'hasEmergencyFund') {
+      this.profile.hasEmergencyFund = value as 'Sim' | 'Não';
+      return;
+    }
+
+    this.profile[field] = value;
   }
-  toggleDebtType(debtType: DebtType): void {
-    const selected = this.profile.debtType;
-  
-  if (selected.includes(type)) {
-    this.profile.debtTypes = selected.filter((item) => item !== type);
-    return
+
+  toggleDebtType(type: DebtType): void {
+    if (this.profile.debtTypes.includes(type)) {
+      this.profile.debtTypes = this.profile.debtTypes.filter(
+        (debt) => debt !== type
+      );
+      return;
+    }
+
+    this.profile.debtTypes = [...this.profile.debtTypes, type];
   }
-  this.profile.debtType = [...selected, type];
+
+  updateDebtAmount(event: Event): void {
+    this.profile.debtAmount = (event.target as HTMLInputElement).value;
   }
-  isSelected(field:keyof FinancialProfile, value: string): boolean {
+
+  isSelected(field: AnswerField, value: string): boolean {
     return this.profile[field] === value;
   }
 
   canContinue(): boolean {
     switch (this.currentQuestion) {
-      case 'Objetivo':
-        return this.profile.goal !== '';
-      case 'Renda':
-        return this.profile.incomeSource !== '' && this.profile.incomeFrequency !== '';
-      case 'Dívidas':
-        return this.profile.hasDebt !== undefined;
-      case 'Tipo de Dívida':
-        return this.profile.debtType.length > 0;
-      case 'Valor da Dívida':
-        return this.profile.debtAmount > 0;
-      case 'Reserva de Emergência':
-        return this.profile.hasEmergencyFund !== undefined;
-      case 'Preocupações':
-        return this.profile.concern !== '';
-      default:
-        return true;
-    }
-  }
-  
-  next(): void {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep++;
-    } else {
-      this.showSummary = true;
+      case 'goal':
+        return !!this.profile.goal;
+
+      case 'incomeSource':
+        return !!this.profile.incomeSource;
+
+      case 'incomeFrequency':
+        return !!this.profile.incomeFrequency;
+
+      case 'incomeType':
+        return !!this.profile.incomeType;
+
+      case 'hasDebt':
+        return !!this.profile.hasDebt;
+
+      case 'debtTypes':
+        return this.profile.debtTypes.length > 0;
+
+      case 'debtAmount':
+        return !!this.profile.debtAmount.trim();
+
+      case 'hasEmergencyFund':
+        return !!this.profile.hasEmergencyFund;
+
+      case 'concern':
+        return !!this.profile.concern;
     }
   }
 
-previous(): void {
+  next(): void {
+    if (!this.canContinue()) return;
+
+    if (this.currentStep === this.steps.length - 1) {
+      this.showSummary = true;
+      return;
+    }
+
+    this.currentStep++;
+  }
+
+  previous(): void {
     if (this.currentStep > 0) {
       this.currentStep--;
     }
   }
 
   finish(): void {
-    localStorage.setItem('financialProfile', JSON.stringify(this.profile));
+    try {
+      localStorage.setItem('financialProfile', JSON.stringify(this.profile));
+    } catch {
+    }
     this.router.navigate(['/dashboard']);
   }
-
-  get recommendation(): string {
-    if (this.profile.goal === 'Sair das dívidas' || this.profile.hasDebt === true) {
-      return 'organização das dívidas, vencimentos e criação de um plano de pagamento';
-    }
-
-    if (this.profile.goal === 'Criar uma reserva') {
-      return 'controle de gastos e construção da sua reserva de emergência';
-    }
-
-    if (this.profile.goal === 'Começar a investir') {
-      return 'organização financeira e preparação para os seus primeiros investimentos';
-    }
-
-    return 'controle de gastos e construção de hábitos financeiros saudáveis';
-  }
-}
+} 

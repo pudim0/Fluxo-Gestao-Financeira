@@ -17,4 +17,10 @@ describe('AuthService', () => {
     service.logout();
     expect(service.isAuthenticated()).toBe(false);
   });
+
+  it('does not accept an empty token as an authenticated session', () => {
+    localStorage.setItem('fluxo.auth.token', '');
+
+    expect(service.isAuthenticated()).toBe(false);
+  });
 });

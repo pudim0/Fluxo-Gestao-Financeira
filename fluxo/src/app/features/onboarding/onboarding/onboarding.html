@@ -1,1 +1,245 @@
-<p>onboarding works!</p>
+<main class="onboarding">
+  @if (!started) {
+    <section class="welcome-card">
+      <span class="welcome-icon">✦</span>
+
+      <h1>Vamos organizar sua vida financeira.</h1>
+
+      <p>
+        Responda algumas perguntas rápidas para que o Flu$o personalize
+        sua experiência.
+      </p>
+
+      <button type="button" class="primary-button" (click)="start()">
+        Começar
+      </button>
+    </section>
+  }
+
+  @if (started && !showSummary) {
+    <section class="question-card">
+      <div class="progress-header">
+        <span>{{ currentStep + 1 }} de {{ steps.length }}</span>
+        <span>{{ progress | number: '1.0-0' }}%</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-value" [style.width.%]="progress"></div>
+      </div>
+
+      @if (currentQuestion === 'goal') {
+        <div>
+          <h1>Qual é seu principal objetivo financeiro?</h1>
+
+          @for (option of goals; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('goal', option)"
+              (click)="selectAnswer('goal', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'incomeSource') {
+        <div>
+          <h1>Qual é sua principal fonte de renda?</h1>
+
+          @for (option of incomeSources; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('incomeSource', option)"
+              (click)="selectAnswer('incomeSource', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'incomeFrequency') {
+        <div>
+          <h1>Com que frequência você recebe dinheiro?</h1>
+
+          @for (option of incomeFrequencies; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('incomeFrequency', option)"
+              (click)="selectAnswer('incomeFrequency', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'incomeType') {
+        <div>
+          <h1>Sua renda costuma ser:</h1>
+
+          @for (option of incomeTypes; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('incomeType', option)"
+              (click)="selectAnswer('incomeType', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'hasDebt') {
+        <div>
+          <h1>Você possui dívidas atualmente?</h1>
+
+          @for (option of debtAnswers; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('hasDebt', option)"
+              (click)="selectAnswer('hasDebt', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'debtTypes') {
+        <div>
+          <h1>Que tipo de dívida você possui?</h1>
+          <p class="subtitle">Você pode escolher mais de uma opção.</p>
+
+          @for (type of debtTypes; track type) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="profile.debtTypes.includes(type)"
+              (click)="toggleDebtType(type)">
+              {{ type }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'debtAmount') {
+        <div>
+          <h1>Você sabe aproximadamente quanto deve?</h1>
+
+          <input
+            class="amount-input"
+            type="text"
+            inputmode="decimal"
+            placeholder="Ex.: R$ 2.500"
+            [value]="profile.debtAmount"
+            (input)="updateDebtAmount($event)">
+        </div>
+      }
+
+      @if (currentQuestion === 'hasEmergencyFund') {
+        <div>
+          <h1>Você possui uma reserva de emergência?</h1>
+
+          @for (option of emergencyFundAnswers; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('hasEmergencyFund', option)"
+              (click)="selectAnswer('hasEmergencyFund', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (currentQuestion === 'concern') {
+        <div>
+          <h1>Qual é sua principal preocupação financeira hoje?</h1>
+
+          @for (option of concerns; track option) {
+            <button
+              type="button"
+              class="option-button"
+              [class.selected]="isSelected('concern', option)"
+              (click)="selectAnswer('concern', option)">
+              {{ option }}
+            </button>
+          }
+        </div>
+      }
+
+      <div class="navigation">
+        @if (currentStep > 0) {
+          <button type="button" class="back-button" (click)="previous()">
+            Voltar
+          </button>
+        }
+
+        <button
+          type="button"
+          class="primary-button"
+          [disabled]="!canContinue()"
+          (click)="next()">
+          {{ currentStep === steps.length - 1 ? 'Ver resumo' : 'Continuar' }}
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (showSummary) {
+    <section class="summary-card">
+      <span class="welcome-icon">✓</span>
+
+      <h1>Seu perfil financeiro</h1>
+
+      <div class="profile-row">
+        <span>Objetivo</span>
+        <strong>{{ profile.goal }}</strong>
+      </div>
+
+      <div class="profile-row">
+        <span>Fonte de renda</span>
+        <strong>{{ profile.incomeSource }}</strong>
+      </div>
+
+      <div class="profile-row">
+        <span>Renda</span>
+        <strong>{{ profile.incomeType }} · {{ profile.incomeFrequency }}</strong>
+      </div>
+
+      <div class="profile-row">
+        <span>Dívidas</span>
+        <strong>
+          {{
+            profile.hasDebt === 'Sim'
+              ? profile.debtTypes.join(', ')
+              : 'Não possui'
+          }}
+        </strong>
+      </div>
+
+      @if (profile.hasDebt === 'Sim') {
+        <div class="profile-row">
+          <span>Valor aproximado</span>
+          <strong>{{ profile.debtAmount }}</strong>
+        </div>
+      }
+
+      <div class="profile-row">
+        <span>Reserva</span>
+        <strong>{{ profile.hasEmergencyFund }}</strong>
+      </div>
+
+      <p class="recommendation">
+        Com base nas suas respostas, o Flu$o vai priorizar
+        <strong>{{ recommendation }}</strong>.
+      </p>
+
+      <button type="button" class="primary-button" (click)="finish()">
+        Ir para meu dashboard
+      </button>
+    </section>
+  }
+</main>
