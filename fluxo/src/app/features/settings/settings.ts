@@ -43,6 +43,14 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
             <span class="tag">Atalhos de teclado</span>
           </div>
         </ds-card>
+
+        <ds-card
+          eyebrow="Acessibilidade"
+          title="Ajustes"
+          subtitle="Configurações que podem virar toggles reais depois."
+        >
+          
+        </ds-card>
       </section>
 
       <section class="page-grid page-grid--single">
