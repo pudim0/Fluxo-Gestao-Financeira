@@ -14,7 +14,7 @@ import { Component, input } from '@angular/core';
     >
       <ng-content />
     </button>
-  `
+  `,
 })
 export class Button {
   readonly variant = input<'primary' | 'secondary' | 'ghost'>('primary');

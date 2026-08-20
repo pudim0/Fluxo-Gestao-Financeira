@@ -18,7 +18,7 @@ import { Component, output, input } from '@angular/core';
         <small class="ds-field__helper">{{ helperText() }}</small>
       }
     </label>
-  `
+  `,
 })
 export class Input {
   readonly label = input('Campo');

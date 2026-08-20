@@ -21,7 +21,7 @@ import { Component, input } from '@angular/core';
         <ng-content />
       </div>
     </section>
-  `
+  `,
 })
 export class Card {
   readonly eyebrow = input('');
