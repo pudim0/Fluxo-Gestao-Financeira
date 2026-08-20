@@ -1,5 +1,14 @@
 :host {
   display: block;
+  --assistant-surface: color-mix(in srgb, var(--surface-strong) 88%, transparent);
+  --assistant-border: color-mix(in srgb, var(--accent) 24%, var(--border-color));
+  --progress-track-bg: color-mix(in srgb, var(--surface-strong) 72%, var(--border-color));
+}
+
+:host-context([data-theme='light']) {
+  --assistant-surface: color-mix(in srgb, var(--surface-strong) 94%, white 6%);
+  --assistant-border: color-mix(in srgb, var(--accent) 32%, var(--border-color));
+  --progress-track-bg: color-mix(in srgb, var(--accent) 18%, var(--surface-elevated));
 }
 
 .page-shell {
@@ -34,9 +43,9 @@
 .assistant-tip {
   grid-area: tip;
   padding: 16px;
-  border: 1px solid rgba(0, 232, 122, 0.2);
+  border: 1px solid var(--assistant-border);
   border-radius: 9px;
-  background: rgba(13, 22, 34, 0.72);
+  background: var(--assistant-surface);
 }
 
 .assistant-tip__title {
@@ -71,7 +80,7 @@
   padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: 9px;
-  background: rgba(13, 22, 34, 0.72);
+  background: var(--assistant-surface);
 }
 
 .assistant-prompt__icon {
@@ -255,7 +264,7 @@
   margin-top: 12px;
   overflow: hidden;
   border-radius: 999px;
-  background: #223246;
+  background: var(--progress-track-bg);
 }
 
 .progress-fill {
