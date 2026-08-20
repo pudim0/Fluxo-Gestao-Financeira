@@ -15,7 +15,7 @@ import { TransactionsService } from '../../services/transactions.service';
     <section class="page-shell">
       <header class="page-header">
         <div>
-          <p class="page-kicker">Dashboard</p>
+
           <h2 class="page-title">Resumo financeiro central</h2>
           <p class="page-copy">
             Acompanhe o que entrou, saiu e precisa da sua atenção neste ciclo financeiro.

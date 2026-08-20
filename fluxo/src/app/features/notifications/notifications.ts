@@ -10,7 +10,7 @@ import { EmptyState as DsEmptyState } from '../../shared/components/design-syste
     <section class="page-shell">
       <header class="page-header">
         <div>
-          <p class="page-kicker">Notificações</p>
+
           <h2 class="page-title">Alertas, pendências e eventos importantes</h2>
           <p class="page-copy">
             Aqui entram lembretes de fatura, metas, limites de orçamento e alertas de segurança.

@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -23,16 +23,54 @@ export class AppShell {
     { label: 'Relatórios', route: '/relatorios' },
     { label: 'Metas', route: '/metas' },
   ];
+
+  protected readonly mensagem = signal('Visão geral');
+
   constructor() {
     this.applyTheme(this.theme());
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        const url = (event as NavigationEnd).urlAfterRedirects;
+        this.mensagem.set(this.getMensagem(url));
+      });
   }
+
+  private getMensagem(url: string): string {
+    if (url.startsWith('/dashboard')) {
+      return 'Dashboard';
+    }
+
+    if (url.startsWith('/transacoes')) {
+      return 'Transações';
+    }
+
+    if (url.startsWith('/orcamento')) {
+      return 'Orçamento';
+    }
+
+    if (url.startsWith('/relatorios')) {
+      return 'Relatórios';
+    }
+
+    if (url.startsWith('/metas')) {
+      return 'Metas';
+    }
+
+    if (url.startsWith('/configuracoes')) {
+      return 'Configurações';
+    }
+
+    return 'Visão geral';
+  }
+
   protected toggleTheme(): void {
     const next = this.theme() === 'dark' ? 'light' : 'dark';
     this.theme.set(next);
     try {
       localStorage.setItem('fluxo.theme', next);
-    } catch {
-    }
+    } catch {}
     this.applyTheme(next);
   }
   protected toggleSidebar(): void {

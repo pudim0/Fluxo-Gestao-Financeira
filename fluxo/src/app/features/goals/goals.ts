@@ -9,7 +9,7 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
     <section class="page-shell">
       <header class="page-header">
         <div>
-          <p class="page-kicker">Metas</p>
+
           <h2 class="page-title">Objetivos com progresso visível</h2>
           <p class="page-copy">
             O usuário acompanha metas de curto e longo prazo com barras de progresso e feedback
