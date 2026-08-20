@@ -1,11 +1,15 @@
 <section class="page-shell">
+
   <header class="page-header">
+
     <div>
+    
       <p class="page-kicker">Planejamento</p>
       <h2 class="page-title">Minhas metas</h2>
       <p class="page-copy">
         Acompanhe seus objetivos financeiros e veja o quanto falta para cada conquista.
       </p>
+    
     </div>
   </header>
 
@@ -35,11 +39,29 @@
   <section class="goals-layout">
     <div class="goals-main-card">
       <ds-card eyebrow="Progresso" title="Minhas metas" subtitle="Seus objetivos em andamento.">
-        <form class="new-goal-form" (submit)="$event.preventDefault(); addGoal(goalName.value, +goalTarget.value, +goalMonthly.value, goalDeadline.value)">
+        <form
+          class="new-goal-form"
+          (submit)="
+            $event.preventDefault();
+            addGoal(goalName.value, +goalTarget.value, +goalMonthly.value, goalDeadline.value)
+          "
+        >
           <strong>Adicionar nova meta</strong>
           <input #goalName type="text" placeholder="Nome da meta" aria-label="Nome da meta" />
-          <input #goalTarget type="number" min="1" placeholder="Valor total" aria-label="Valor total da meta" />
-          <input #goalMonthly type="number" min="1" placeholder="Aporte mensal" aria-label="Aporte mensal" />
+          <input
+            #goalTarget
+            type="number"
+            min="1"
+            placeholder="Valor total"
+            aria-label="Valor total da meta"
+          />
+          <input
+            #goalMonthly
+            type="number"
+            min="1"
+            placeholder="Aporte mensal"
+            aria-label="Aporte mensal"
+          />
           <input #goalDeadline type="month" aria-label="Prazo da meta" />
           <button type="submit">Adicionar meta</button>
         </form>
@@ -53,34 +75,76 @@
                   <small>Meta: {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
                 </div>
                 <span class="progress-value">
-                  <b>{{ goal.saved / goal.target * 100 | number: '1.0-0' }}%</b>
-                  <small>{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} / {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+                  <b>{{ (goal.saved / goal.target) * 100 | number: '1.0-0' }}%</b>
+                  <small
+                    >{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} /
+                    {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small
+                  >
                 </span>
               </div>
-              <div class="progress-track"><div class="progress-fill" [style.width.%]="goal.saved / goal.target * 100"></div></div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="(goal.saved / goal.target) * 100"></div>
+              </div>
               <div class="progress-footer">
                 <small>{{ goal.monthly | currency: 'BRL' : 'symbol' : '1.0-0' }}/mês</small>
                 <small>Prazo: {{ goal.deadlineLabel }}</small>
               </div>
-              <form class="contribution-form" (submit)="$event.preventDefault(); addContribution(goal.id, +contribution.value); contribution.value = ''">
-                <input #contribution type="number" min="1" placeholder="Adicionar valor" aria-label="Valor para adicionar à meta" />
+              <form
+                class="contribution-form"
+                (submit)="
+                  $event.preventDefault();
+                  addContribution(goal.id, +contribution.value);
+                  contribution.value = ''
+                "
+              >
+                <input
+                  #contribution
+                  type="number"
+                  min="1"
+                  placeholder="Adicionar valor"
+                  aria-label="Valor para adicionar à meta"
+                />
                 <button type="submit">Adicionar valor</button>
               </form>
-              <form class="contribution-form withdrawal-form" (submit)="$event.preventDefault(); removeContribution(goal.id, +withdrawal.value); withdrawal.value = ''">
-                <input #withdrawal type="number" min="1" placeholder="Retirar valor" aria-label="Valor para retirar da meta" />
+              <form
+                class="contribution-form withdrawal-form"
+                (submit)="
+                  $event.preventDefault();
+                  removeContribution(goal.id, +withdrawal.value);
+                  withdrawal.value = ''
+                "
+              >
+                <input
+                  #withdrawal
+                  type="number"
+                  min="1"
+                  placeholder="Retirar valor"
+                  aria-label="Valor para retirar da meta"
+                />
                 <button type="submit">Retirar valor</button>
               </form>
-              <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">Excluir meta</button>
+              <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">
+                Excluir meta
+              </button>
             </div>
           }
         </div>
       </ds-card>
     </div>
     <div class="goals-chart-card">
-      <ds-card eyebrow="Acompanhamento" title="Evolução das metas" subtitle="Crescimento do saldo poupado.">
+      <ds-card
+        eyebrow="Acompanhamento"
+        title="Evolução das metas"
+        subtitle="Crescimento do saldo poupado."
+      >
         <div class="goals-chart" aria-label="Gráfico de evolução das metas">
-            <svg viewBox="0 0 420 180" role="img" aria-label="Evolução do saldo poupado">
-            <polyline [attr.points]="chartPolyline()" fill="none" stroke="var(--accent)" stroke-width="3" />
+          <svg viewBox="0 0 420 180" role="img" aria-label="Evolução do saldo poupado">
+            <polyline
+              [attr.points]="chartPolyline()"
+              fill="none"
+              stroke="var(--accent)"
+              stroke-width="3"
+            />
             @for (point of chartPoints(); track point.month) {
               <circle
                 [attr.cx]="point.x"
@@ -113,12 +177,24 @@
     </div>
     <aside class="assistant-tip" aria-label="Dica da IA financeira">
       <p class="assistant-tip__title"><span aria-hidden="true">●</span> Dicas da IA financeira</p>
-      <p class="assistant-tip__copy"><span aria-hidden="true">💡</span> Aumentando <strong>R$ 150/mês</strong> na meta <b>{{ nextGoal().name }}</b>, você antecipa a conquista em <strong>1 mês!</strong></p>
+      <p class="assistant-tip__copy">
+        <span aria-hidden="true">💡</span> Aumentando <strong>R$ 150/mês</strong> na meta
+        <b>{{ nextGoal().name }}</b
+        >, você antecipa a conquista em <strong>1 mês!</strong>
+      </p>
     </aside>
     <div class="assistant-panel">
-      <form class="assistant-prompt" (submit)="$event.preventDefault(); askFinancialAssistant(question.value)">
+      <form
+        class="assistant-prompt"
+        (submit)="$event.preventDefault(); askFinancialAssistant(question.value)"
+      >
         <span class="assistant-prompt__icon" aria-hidden="true">✦</span>
-        <input #question type="text" placeholder="Pergunte algo à IA financeira..." aria-label="Pergunte algo à IA financeira" />
+        <input
+          #question
+          type="text"
+          placeholder="Pergunte algo à IA financeira..."
+          aria-label="Pergunte algo à IA financeira"
+        />
         <button type="submit" aria-label="Enviar pergunta">↑</button>
       </form>
       @if (assistantResponse(); as response) {
