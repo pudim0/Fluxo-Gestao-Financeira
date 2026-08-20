@@ -1,0 +1,47 @@
+/* Minimal styles for the dashboard layout. Adjust as needed. */
+.page-shell {
+  display: block;
+  padding: 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.page-actions a {
+  margin-left: 0.5rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metric-card {
+  padding: 1rem;
+  border-radius: 6px;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.metric-card.positive { border-left: 4px solid #16a34a; }
+.metric-card.warning { border-left: 4px solid #f59e0b; }
+
+.transaction-preview__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.income-value { color: #16a34a; }
+.expense-value { color: #dc2626; }
+
+.tag-row { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.tag { background: rgba(0,0,0,0.04); padding:0.25rem 0.5rem; border-radius:12px; }
