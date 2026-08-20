@@ -21,7 +21,12 @@ import { Component, HostListener, input, output } from '@angular/core';
               <h3 class="ds-modal__title">{{ title() }}</h3>
             </div>
 
-            <button type="button" class="ds-modal__close" (click)="close.emit()" aria-label="Fechar modal">
+            <button
+              type="button"
+              class="ds-modal__close"
+              (click)="close.emit()"
+              aria-label="Fechar modal"
+            >
               ✕
             </button>
           </header>
@@ -32,7 +37,7 @@ import { Component, HostListener, input, output } from '@angular/core';
         </section>
       </div>
     }
-  `
+  `,
 })
 export class Modal {
   readonly open = input(false);

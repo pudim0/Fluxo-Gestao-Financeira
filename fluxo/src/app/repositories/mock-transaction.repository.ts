@@ -88,7 +88,6 @@ export class MockTransactionRepository implements TransactionRepository {
   private persist(): void {
     try {
       localStorage.setItem(TRANSACTIONS_STORAGE_KEY, JSON.stringify(this.transactions));
-    } catch {
-    }
+    } catch {}
   }
 }

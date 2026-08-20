@@ -31,8 +31,7 @@ export class AppShell {
     this.theme.set(next);
     try {
       localStorage.setItem('fluxo.theme', next);
-    } catch {
-    }
+    } catch {}
     this.applyTheme(next);
   }
   protected toggleSidebar(): void {

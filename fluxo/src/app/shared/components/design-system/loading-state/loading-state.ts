@@ -13,7 +13,7 @@ import { Component, input } from '@angular/core';
         }
       </div>
     </section>
-  `
+  `,
 })
 export class LoadingState {
   readonly label = input('Carregando');

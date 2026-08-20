@@ -14,7 +14,7 @@ import { Component, output, input } from '@angular/core';
         </button>
       }
     </section>
-  `
+  `,
 })
 export class EmptyState {
   readonly title = input('Sem dados');
