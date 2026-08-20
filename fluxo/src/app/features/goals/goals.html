@@ -43,36 +43,72 @@
           <input #goalDeadline type="month" aria-label="Prazo da meta" />
           <button type="submit">Adicionar meta</button>
         </form>
-        <div class="progress-list">
-          @for (goal of goals(); track goal.id) {
-            <div class="progress-item">
-              <div class="progress-heading">
-                <span class="goal-icon">{{ goal.icon }}</span>
-                <div>
-                  <strong>{{ goal.name }}</strong>
-                  <small>Meta: {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+        <div class="goals-carousel" aria-label="Carrossel de metas">
+          <button
+            class="carousel-arrow"
+            type="button"
+            aria-label="Meta anterior"
+            (click)="goToPreviousGoal()"
+            [disabled]="goals().length <= 1"
+          >
+            &#10094;
+          </button>
+          <div class="progress-window">
+            <div class="progress-track-list" [style.transform]="'translateX(-' + currentIndex() * 100 + '%)'">
+              @for (goal of goals(); track goal.id) {
+                <div class="progress-slide" [attr.aria-label]="'Meta ' + ($index + 1) + ' de ' + goals().length">
+                  <div class="progress-item">
+                    <div class="progress-heading">
+                      <span class="goal-icon">{{ goal.icon }}</span>
+                      <div>
+                        <strong>{{ goal.name }}</strong>
+                        <small>Meta: {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+                      </div>
+                      <span class="progress-value">
+                        <b>{{ goal.saved / goal.target * 100 | number: '1.0-0' }}%</b>
+                        <small>{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} / {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+                      </span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" [style.width.%]="goal.saved / goal.target * 100"></div></div>
+                    <div class="progress-footer">
+                      <small>{{ goal.monthly | currency: 'BRL' : 'symbol' : '1.0-0' }}/mês</small>
+                      <small>Prazo: {{ goal.deadlineLabel }}</small>
+                    </div>
+                    <form class="contribution-form" (submit)="$event.preventDefault(); addContribution(goal.id, +contribution.value); contribution.value = ''">
+                      <input #contribution type="number" min="1" placeholder="Adicionar valor" aria-label="Valor para adicionar à meta" />
+                      <button type="submit">Adicionar valor</button>
+                    </form>
+                    <form class="contribution-form withdrawal-form" (submit)="$event.preventDefault(); removeContribution(goal.id, +withdrawal.value); withdrawal.value = ''">
+                      <input #withdrawal type="number" min="1" placeholder="Retirar valor" aria-label="Valor para retirar da meta" />
+                      <button type="submit">Retirar valor</button>
+                    </form>
+                    <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">Excluir meta</button>
+                  </div>
                 </div>
-                <span class="progress-value">
-                  <b>{{ goal.saved / goal.target * 100 | number: '1.0-0' }}%</b>
-                  <small>{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} / {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
-                </span>
+              }
               </div>
-              <div class="progress-track"><div class="progress-fill" [style.width.%]="goal.saved / goal.target * 100"></div></div>
-              <div class="progress-footer">
-                <small>{{ goal.monthly | currency: 'BRL' : 'symbol' : '1.0-0' }}/mês</small>
-                <small>Prazo: {{ goal.deadlineLabel }}</small>
-              </div>
-              <form class="contribution-form" (submit)="$event.preventDefault(); addContribution(goal.id, +contribution.value); contribution.value = ''">
-                <input #contribution type="number" min="1" placeholder="Adicionar valor" aria-label="Valor para adicionar à meta" />
-                <button type="submit">Adicionar valor</button>
-              </form>
-              <form class="contribution-form withdrawal-form" (submit)="$event.preventDefault(); removeContribution(goal.id, +withdrawal.value); withdrawal.value = ''">
-                <input #withdrawal type="number" min="1" placeholder="Retirar valor" aria-label="Valor para retirar da meta" />
-                <button type="submit">Retirar valor</button>
-              </form>
-              <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">Excluir meta</button>
+            <div class="carousel-dots" aria-label="Indicadores de metas">
+              @for (goal of goals(); track goal.id) {
+                <button
+                  class="carousel-dot"
+                  type="button"
+                  [class.active]="currentIndex() === $index"
+                  [attr.aria-label]="'Ir para meta ' + ($index + 1)"
+                  [attr.aria-current]="currentIndex() === $index ? 'true' : null"
+                  (click)="goToGoal($index)"
+                ></button>
+              }
             </div>
-          }
+          </div>
+          <button
+            class="carousel-arrow"
+            type="button"
+            aria-label="Próxima meta"
+            (click)="goToNextGoal()"
+            [disabled]="goals().length <= 1"
+          >
+            &#10095;
+          </button>
         </div>
       </ds-card>
     </div>
