@@ -38,6 +38,7 @@ export class Goals {
   private readonly storageKey = 'fluxo.goals.state';
   protected readonly monthlyIncome = 6000;
   protected readonly assistantResponse = signal('');
+  protected readonly currentIndex = signal(0);
   readonly goals = signal<Goal[]>([
     {
       id: 1,
@@ -100,6 +101,15 @@ export class Goals {
   protected readonly monthlyProgress = computed(() =>
     Math.round((this.monthlySaved() / this.monthlyTarget()) * 100),
   );
+  protected readonly currentGoal = computed(() => {
+    const goals = this.goals();
+    if (!goals.length) {
+      return null;
+    }
+
+    const index = Math.min(this.currentIndex(), goals.length - 1);
+    return goals[index] ?? null;
+  });
   protected readonly nextGoal = computed(() =>
     this.goals().reduce((next, goal) => (goal.priority < next.priority ? goal : next)),
   );
@@ -140,6 +150,40 @@ export class Goals {
 
   protected hideChartPoint(): void {
     this.activeChartPoint.set(null);
+  }
+
+  protected goToPreviousGoal(): void {
+    this.currentIndex.update((index) => {
+      const goalsLength = this.goals().length;
+      if (goalsLength <= 1) {
+        return 0;
+      }
+      return (index - 1 + goalsLength) % goalsLength;
+    });
+  }
+
+  protected goToNextGoal(): void {
+    this.currentIndex.update((index) => {
+      const goalsLength = this.goals().length;
+      if (goalsLength <= 1) {
+        return 0;
+      }
+      return (index + 1) % goalsLength;
+    });
+  }
+
+  protected goToGoal(index: number): void {
+    if (!Number.isInteger(index)) {
+      return;
+    }
+
+    const goalsLength = this.goals().length;
+    if (!goalsLength) {
+      return;
+    }
+
+    const safeIndex = Math.min(Math.max(index, 0), goalsLength - 1);
+    this.currentIndex.set(safeIndex);
   }
 
   addContribution(goalId: number, amount: number): void {
@@ -194,7 +238,9 @@ export class Goals {
       return;
     }
 
-    this.goals.update((goals) => goals.filter((item) => item.id !== goalId));
+    const nextGoals = this.goals().filter((item) => item.id !== goalId);
+    this.goals.set(nextGoals);
+    this.currentIndex.update((index) => Math.min(index, nextGoals.length - 1));
     this.syncChartWithGoals();
     this.persistState();
   }
