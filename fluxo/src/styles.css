@@ -318,6 +318,14 @@ svg {
   letter-spacing: 0.08em;
 }
 
+.texto-categoria {
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .page-title {
   margin-top: 0.35rem;
   font-family: var(--font-display);
@@ -341,6 +349,19 @@ svg {
 
 .page-actions > * {
   flex: 1 1 180px;
+}
+
+.button-config {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-save {
+  opacity: 100%;
 }
 
 .page-grid {
@@ -470,7 +491,8 @@ svg {
   position: relative;
 }
 
-.settings-trigger {
+.settings-trigger,
+.notification-trigger {
   width: 46px;
   height: 46px;
   padding: 0;
@@ -478,6 +500,14 @@ svg {
   background: var(--surface-elevated);
   color: var(--text-primary);
   font-size: 1.2rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-trigger {
+  font-size: 1.08rem;
 }
 
 .settings-dropdown {
