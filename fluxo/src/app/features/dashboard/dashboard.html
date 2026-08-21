@@ -1,21 +1,24 @@
-<section class="dashboard-shell">
+<section class="dashboard-shell page-shell">
   <section class="overview-panel">
-    <div class="section-header">
+    <header class="page-header dashboard-header">
       <div>
-        <p class="section-eyebrow">Dashboard</p>
-        <h2>Visão Geral</h2>
+        <p class="page-kicker">Planejamento</p>
+        <h2 class="page-title">Meu dashboard</h2>
+        <p class="page-copy">
+          Acompanhe seus objetivos financeiros e veja como está sua evolução mês a mês.
+        </p>
       </div>
       <button
-        class="primary-button"
+        class="primary-button dashboard-cta"
         type="button"
         aria-label="Nova transação"
         (click)="goToTransactions()"
       >
-        <span class="button-text">+ Nova Transação</span>
+        <span class="button-text">+ Nova transação</span>
       </button>
-    </div>
+    </header>
 
-    <div class="metrics-grid">
+    <div class="metrics-grid dashboard-metrics" aria-label="Resumo financeiro">
       @for (metric of metrics(); track metric.label) {
         <article class="metric-card" [class.positive]="metric.tone === 'positive'">
           <span class="metric-label">{{ metric.label }}</span>
@@ -44,14 +47,14 @@
         </div>
 
         <ul class="breakdown-list">
-          @for (item of cashBreakdown; track item.name) {
+          @for (item of cashBreakdown(); track item.name) {
             <li class="breakdown-item">
               <div class="breakdown-meta">
                 <span class="dot" [style.background]="item.color"></span>
                 <span>{{ item.name }}</span>
               </div>
               <div class="breakdown-values">
-                <strong>R$ {{ item.value.toFixed(2).replace('.', ',') }}</strong>
+                <strong>{{ item.value | currency: 'BRL' }}</strong>
                 <span>{{ item.percentage }}%</span>
               </div>
             </li>
@@ -63,13 +66,24 @@
 
   <section class="bottom-grid">
     <article class="subpanel alerts-panel">
-      <div class="panel-head compact-head">
+      <div class="panel-head compact-head panel-head--stacked-mobile">
         <h3>Alertas</h3>
-        <a href="#">Ver todos</a>
+        <div class="panel-actions">
+          <a href="#">Ver todos</a>
+          <button
+            class="panel-toggle"
+            type="button"
+            [attr.aria-expanded]="showAllAlerts()"
+            aria-label="Expandir alertas"
+            (click)="toggleAlerts()"
+          >
+            <span class="panel-toggle__icon" [class.open]="showAllAlerts()">⌄</span>
+          </button>
+        </div>
       </div>
 
       <ul class="alert-list">
-        @for (alert of alerts; track alert.title) {
+        @for (alert of visibleAlerts(); track alert.title) {
           <li class="alert-item">
             <span class="alert-badge">!</span>
             <div>
@@ -82,13 +96,24 @@
     </article>
 
     <article class="subpanel transactions-panel">
-      <div class="panel-head compact-head">
+      <div class="panel-head compact-head panel-head--stacked-mobile">
         <h3>Últimas Transações</h3>
-        <a href="#">Ver todos</a>
+        <div class="panel-actions">
+          <a href="#">Ver todos</a>
+          <button
+            class="panel-toggle"
+            type="button"
+            [attr.aria-expanded]="showAllTransactions()"
+            aria-label="Expandir transações"
+            (click)="toggleTransactions()"
+          >
+            <span class="panel-toggle__icon" [class.open]="showAllTransactions()">⌄</span>
+          </button>
+        </div>
       </div>
 
       <div class="transaction-list">
-        @for (transaction of recentTransactions(); track transaction.id) {
+        @for (transaction of visibleTransactions(); track transaction.id) {
           <div class="transaction-row">
             <div class="transaction-text">
               <strong>{{ transaction.description }}</strong>
@@ -112,54 +137,74 @@
   </section>
 
   <section class="investment-panel">
-    <div class="panel-head compact-head">
+    <div class="panel-head compact-head panel-head--stacked-mobile">
       <h3>Investimentos</h3>
-      <a href="#">Ver todos</a>
+      <div class="panel-actions">
+        <a href="#">Ver todos</a>
+        <button
+          class="panel-toggle"
+          type="button"
+          [attr.aria-expanded]="showAllInvestments()"
+          aria-label="Expandir investimentos"
+          (click)="toggleInvestments()"
+        >
+          <span class="panel-toggle__icon" [class.open]="showAllInvestments()">⌄</span>
+        </button>
+      </div>
     </div>
 
     <div class="investment-grid">
-      <div class="mini-card">
-        <div class="mini-card-header">
-          <span>Patrimônio Total</span>
-          <span class="trend positive">+8.4%</span>
-        </div>
-        <div class="amount">R$ 32.450,00</div>
-        <div class="bar-chart" aria-label="Patrimônio total por mês">
-          <span style="height: 45%"></span>
-          <span style="height: 60%"></span>
-          <span style="height: 52%"></span>
-          <span style="height: 72%"></span>
-          <span style="height: 64%"></span>
-          <span style="height: 80%"></span>
-        </div>
-      </div>
-
-      <div class="mini-card">
-        <div class="mini-card-header">
-          <span>Distribuição da Carteira</span>
-        </div>
-        <div class="ring-chart-wrapper">
-          <div class="ring-chart">
-            <div class="ring-center"></div>
+      @for (card of visibleInvestments(); track card.title) {
+        <div class="mini-card">
+          <div class="mini-card-header">
+            <span>{{ card.title }}</span>
+            @if (card.type === 'bars') {
+              <span class="trend positive">{{ card.highlight }}</span>
+            }
           </div>
-          <ul class="legend-list">
-            <li><span class="legend-dot dot-a"></span> Fundo A</li>
-            <li><span class="legend-dot dot-b"></span> Ações</li>
-            <li><span class="legend-dot dot-c"></span> Tesouro Direto</li>
-          </ul>
-        </div>
-      </div>
 
-      <div class="mini-card">
-        <div class="mini-card-header">
-          <span>Rentabilidade</span>
+          @if (card.type === 'bars') {
+            <div class="amount">{{ card.value }}</div>
+            <div class="bar-chart" aria-label="Patrimônio total por mês">
+              <span style="height: 45%"></span>
+              <span style="height: 60%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 72%"></span>
+              <span style="height: 64%"></span>
+              <span style="height: 80%"></span>
+            </div>
+          }
+
+          @if (card.type === 'ring') {
+            <div class="ring-chart-wrapper">
+              <div class="ring-chart">
+                <div class="ring-center"></div>
+              </div>
+              <ul class="legend-list">
+                @for (legendItem of card.legend; track legendItem) {
+                  <li>
+                    <span
+                      class="legend-dot"
+                      [class.dot-a]="$index === 0"
+                      [class.dot-b]="$index === 1"
+                      [class.dot-c]="$index === 2"
+                    ></span>
+                    {{ legendItem }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (card.type === 'list') {
+            <div class="rentability-list">
+              @for (item of card.items; track item.label) {
+                <div class="rentability-item"><span>{{ item.label }}</span><strong>{{ item.value }}</strong></div>
+              }
+            </div>
+          }
         </div>
-        <div class="rentability-list">
-          <div class="rentability-item"><span>No mês</span><strong>+ R$ 450,00</strong></div>
-          <div class="rentability-item"><span>No ano</span><strong>+ R$ 2.850,00</strong></div>
-          <div class="rentability-item"><span>Desde o início</span><strong>+ R$ 6.250,00</strong></div>
-        </div>
-      </div>
+      }
     </div>
   </section>
 </section>
