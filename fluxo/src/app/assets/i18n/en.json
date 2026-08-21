@@ -1,0 +1,45 @@
+{
+  "settings": {
+    "tituloPaginaConfig": "Settings",
+    "tituloPaginaMetas": "Goals",
+    "tituloPaginaTransacoes": "Transactions",
+    "tituloPaginaConfigRelatorios": "Reports",
+    "tituloOrcamento": "Budget",
+
+    "titulo": "Settings",
+    "perfil": "Profile",
+    "preferencias": "Preferences",
+    "acessibilidade": "Accessibility",
+
+    "contatoSuporte": "Contact support",
+    "msgSalvar": "Replace old data with the changes",
+    "salvar": "Save changes",
+
+    "descricao": "The settings panel will centralize personalization, account and interface behavior.",
+
+    "dadosConta": "Account data",
+    "dadosContaDescricao": "Basic fields for personalization and contact.",
+
+    "nome": "Name",
+    "seuNome": "Your name",
+
+    "email": "Email",
+    "seuEmail": "you@company.com",
+
+    "senhaAntiga": "Old password",
+    "novaSenha": "New password",
+
+    "interface": "Interface",
+    "interfaceDescricao": "Settings that can become real toggles later.",
+
+    "temaEscuro": "Dark theme",
+    "modoCompacto": "Compact mode",
+    "atalhosTeclado": "Keyboard shortcuts",
+
+    "ajustes": "Adjustments",
+
+    "persistenciaFutura": "Future persistence",
+    "salvarAlteracoes": "Save changes",
+    "cancelar": "Cancel"
+  }
+}

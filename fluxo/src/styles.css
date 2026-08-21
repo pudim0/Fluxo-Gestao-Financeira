@@ -364,6 +364,32 @@ svg {
   opacity: 100%;
 }
 
+.linguagens {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-linguagem.linguagem-atual {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.button-linguagem {
+  border-radius: 999px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.7rem;
+}
+
+.button-linguagem:hover {
+  background: color-mix(in srgb, var(--surface-elevated) 86%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--border-color));
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  transform: translateX(2px);
+}
+
 .selecionado {
   opacity: 0.4;
 }
