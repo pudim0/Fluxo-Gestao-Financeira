@@ -4,6 +4,8 @@ import { catchError, finalize, of } from 'rxjs';
 import { NewTransaction, Transaction, TransactionType } from '../models/transaction.model';
 import { TRANSACTION_REPOSITORY } from '../repositories/transaction.repository';
 
+import { normalizeText } from '../utils/normalize-text';
+
 const currency = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
@@ -19,7 +21,9 @@ export class TransactionsService {
   readonly transactions = this.transactionState.asReadonly();
   readonly isLoading = this.loadingState.asReadonly();
   readonly hasError = this.errorState.asReadonly();
-  readonly isEmpty = computed(() => !this.isLoading() && !this.hasError() && this.transactions().length === 0);
+  readonly isEmpty = computed(
+    () => !this.isLoading() && !this.hasError() && this.transactions().length === 0,
+  );
   readonly categories = computed(() =>
     [...new Set(this.transactions().map((transaction) => transaction.category))].sort(),
   );
@@ -30,7 +34,8 @@ export class TransactionsService {
     {
       label: 'Saldo atual',
       value: currency.format(this.balance()),
-      detail: this.balance() >= 0 ? 'Resultado acumulado no período' : 'Atenção ao resultado acumulado',
+      detail:
+        this.balance() >= 0 ? 'Resultado acumulado no período' : 'Atenção ao resultado acumulado',
       tone: this.balance() >= 0 ? 'positive' : 'warning',
     },
     {
@@ -50,7 +55,7 @@ export class TransactionsService {
       value: String(this.transactions().length),
       detail: 'Movimentações no histórico',
       tone: 'positive',
-    },
+    }
   ]);
   readonly highlights = computed(() => [
     `${this.transactions().length} movimentações`,
@@ -82,13 +87,31 @@ export class TransactionsService {
   }
 
   create(transaction: NewTransaction): void {
-    this.repository.create(transaction).subscribe((created) => {
+    const normalizedCategory = transaction.category.trim();
+
+    const existingCategory = this.findExistingCategory(normalizedCategory);
+
+    const transactionToCreate: NewTransaction = {
+      ...transaction,
+      category: existingCategory ?? normalizedCategory,
+    };
+
+    this.repository.create(transactionToCreate).subscribe((created) => {
       this.transactionState.update((current) => this.sortByDate([created, ...current]));
     });
   }
 
   update(id: string, transaction: NewTransaction): void {
-    this.repository.update(id, transaction).subscribe((updated) => {
+    const normalizedCategory = transaction.category.trim();
+
+    const existingCategory = this.findExistingCategory(normalizedCategory);
+
+    const transactionToUpdate: NewTransaction = {
+      ...transaction,
+      category: existingCategory ?? normalizedCategory,
+    };
+
+    this.repository.update(id, transactionToUpdate).subscribe((updated) => {
       this.transactionState.update((current) =>
         this.sortByDate(current.map((item) => (item.id === id ? updated : item))),
       );
@@ -109,5 +132,15 @@ export class TransactionsService {
 
   private sortByDate(transactions: Transaction[]): Transaction[] {
     return [...transactions].sort((first, second) => second.date.localeCompare(first.date));
+  }
+
+  private findExistingCategory(category: string): string | null {
+    const normalizedCategory = normalizeText(category);
+
+    const existingCategory = this.categories().find(
+      (existing) => normalizeText(existing) === normalizedCategory,
+    );
+
+    return existingCategory ?? null;
   }
 }

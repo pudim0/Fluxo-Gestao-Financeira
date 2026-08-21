@@ -1,0 +1,97 @@
+<section class="notifications-page">
+  <div class="notifications-panel">
+    <header class="notifications-header">
+      <div class="notifications-title-wrap">
+        <h1>Notificações</h1>
+        <p>{{ unreadCount() }} não lidas</p>
+      </div>
+
+      <button
+        type="button"
+        class="mark-all"
+        [disabled]="unreadCount() === 0"
+        (click)="markAllAsRead()"
+      >
+        Marcar todas como lidas
+      </button>
+    </header>
+
+    <!-- Cards de Resumo -->
+    <div class="summary-grid" aria-label="Resumo de notificações">
+      @for (summary of summaries(); track summary.label) {
+        <button
+          type="button"
+          class="summary-card"
+          [class.is-active]="summary.label === activeCategory()"
+          [class.is-danger]="summary.tone === 'danger'"
+          [class.is-warning]="summary.tone === 'warning'"
+          [class.is-success]="summary.tone === 'success'"
+          [class.is-info]="summary.tone === 'info'"
+          (click)="selectCategory(summary.label)"
+        >
+          <span class="summary-label">{{ summary.label }}</span>
+          <span class="summary-value">{{ summary.count }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Feed de Notificações -->
+    <div class="feed-shell" aria-live="polite">
+      <!-- Abas de Filtro -->
+      <div class="feed-tabs" role="tablist" aria-label="Filtros de notificações">
+        @for (tab of tabs(); track tab.label) {
+          <button
+            type="button"
+            class="feed-tab"
+            [class.is-active]="activeCategory() === tab.label"
+            (click)="selectCategory(tab.label)"
+          >
+            {{ tab.label }} <span>{{ tab.count }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="feed-group">
+        <div class="feed-date">HOJE</div>
+
+        @if (filteredNotifications().length > 0) {
+          @for (item of filteredNotifications(); track item.id) {
+            <article class="notification-item" [class.is-read]="item.read">
+              <div class="notification-icon" [class]="item.tone">
+                <span aria-hidden="true">{{ item.icon }}</span>
+              </div>
+
+              <div class="notification-body">
+                <div class="notification-title-row">
+                  <h2>{{ item.title }}</h2>
+                  <span class="notification-category">{{ item.category }}</span>
+                  @if (!item.read) {
+                    <span class="notification-dot" aria-label="Não lida"></span>
+                  }
+                </div>
+
+                <p class="notification-message">{{ item.message }}</p>
+
+                <div class="notification-footer">
+                  <span>há {{ item.elapsed }}</span>
+                  @if (item.amount) {
+                    <strong
+                      [class.amount-positive]="item.amountTone === 'positive'"
+                      [class.amount-negative]="item.amountTone === 'negative'"
+                    >
+                      {{ item.amount }}
+                    </strong>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        } @else {
+          <div class="empty-feed">
+            <p>Nenhuma notificação encontrada nesta categoria.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

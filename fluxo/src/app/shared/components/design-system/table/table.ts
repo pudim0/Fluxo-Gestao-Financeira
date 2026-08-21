@@ -24,7 +24,7 @@ import { Component, input } from '@angular/core';
         </tbody>
       </table>
     </div>
-  `
+  `,
 })
 export class Table {
   readonly columns = input<string[]>([]);

@@ -1,46 +1,201 @@
-import { Component } from '@angular/core';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
+
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
+
+export interface Goal {
+  id: number;
+  icon: string;
+  name: string;
+  target: number;
+  saved: number;
+  monthly: number;
+  deadlineLabel: string;
+}
+
+export interface ChartPoint {
+  month: string;
+  value: string;
+  rawAmount: number;
+  x: number;
+  y: number;
+  position: number;
+}
 
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [DsCard],
-  template: `
-    <section class="page-shell">
-      <header class="page-header">
-        <div>
-
-          <h2 class="page-title">Objetivos com progresso visível</h2>
-          <p class="page-copy">
-            O usuário acompanha metas de curto e longo prazo com barras de progresso e feedback
-            claro.
-          </p>
-        </div>
-      </header>
-
-      <section class="page-grid page-grid--single">
-        <ds-card
-          eyebrow="Progresso"
-          title="Metas prioritárias"
-          subtitle="Base inicial para metas reais."
-        >
-          <div class="progress-list">
-            <div class="progress-item">
-              <div class="progress-top"><span>Reserva de emergência</span><span>80%</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 80%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-top"><span>Viagem Europa</span><span>30%</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 30%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-top"><span>Troca de carro</span><span>63%</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 63%"></div></div>
-            </div>
-          </div>
-        </ds-card>
-      </section>
-    </section>
-  `,
+  imports: [CurrencyPipe, DecimalPipe, DsCard],
+  templateUrl: './goals.html',
+  styleUrl: './goals.css',
 })
-export class Goals {}
+export class GoalsComponent {
+  // --- Estados Principais ---
+  readonly goals = signal<Goal[]>([
+    {
+      id: 1,
+      icon: '🛡️',
+      name: 'Reserva de emergência',
+      target: 15000,
+      saved: 12000,
+      monthly: 500,
+      deadlineLabel: '12/2026',
+    },
+    {
+      id: 2,
+      icon: '✈️',
+      name: 'Viagem Europa',
+      target: 20000,
+      saved: 6000,
+      monthly: 800,
+      deadlineLabel: '07/2027',
+    },
+    {
+      id: 3,
+      icon: '🚗',
+      name: 'Troca de carro',
+      target: 35000,
+      saved: 22000,
+      monthly: 1200,
+      deadlineLabel: '11/2027',
+    },
+  ]);
+
+  readonly currentIndex = signal<number>(0);
+  readonly activeChartPoint = signal<ChartPoint | null>(null);
+  readonly assistantResponse = signal<string | null>(null);
+
+  // --- Indicadores Calculados (Computed Signals) ---
+  readonly totalTarget = computed(() => this.goals().reduce((acc, goal) => acc + goal.target, 0));
+
+  readonly totalSaved = computed(() => this.goals().reduce((acc, goal) => acc + goal.saved, 0));
+
+  readonly overallProgress = computed(() => {
+    const target = this.totalTarget();
+    return target > 0 ? Math.round((this.totalSaved() / target) * 100) : 0;
+  });
+
+  readonly monthlyTarget = computed(() =>
+    this.goals().reduce((acc, goal) => acc + goal.monthly, 0),
+  );
+
+  readonly monthlyProgress = computed(() => 78);
+
+  readonly nextGoal = computed(() => {
+    const currentGoals = this.goals();
+    return currentGoals.length > 0 ? currentGoals[0] : { name: 'Sem metas', deadlineLabel: '-' };
+  });
+
+  // --- Gráfico de Evolução ---
+  readonly chartData = signal([
+    { month: 'Jan', amount: 15000 },
+    { month: 'Fev', amount: 18000 },
+    { month: 'Mar', amount: 24000 },
+    { month: 'Abr', amount: 28000 },
+    { month: 'Mai', amount: 32000 },
+    { month: 'Jun', amount: 40000 },
+  ]);
+
+  readonly chartPoints = computed<ChartPoint[]>(() => {
+    const data = this.chartData();
+    if (data.length === 0) return [];
+
+    const maxVal = Math.max(...data.map((d) => d.amount)) || 1;
+    const width = 420;
+    const height = 140;
+    const paddingX = 30;
+
+    return data.map((d, index) => {
+      const x = paddingX + (index / (data.length - 1)) * (width - paddingX * 2);
+      const y = height - (d.amount / maxVal) * (height - 30) + 20;
+      const position = (x / width) * 100;
+
+      return {
+        month: d.month,
+        value: `R$ ${d.amount.toLocaleString('pt-BR')}`,
+        rawAmount: d.amount,
+        x,
+        y,
+        position,
+      };
+    });
+  });
+
+  readonly chartPolyline = computed(() =>
+    this.chartPoints()
+      .map((p) => `${p.x},${p.y}`)
+      .join(' '),
+  );
+
+  // --- Ações do Carrossel ---
+  goToPreviousGoal(): void {
+    if (this.currentIndex() > 0) {
+      this.currentIndex.update((i) => i - 1);
+    }
+  }
+
+  goToNextGoal(): void {
+    if (this.currentIndex() < this.goals().length - 1) {
+      this.currentIndex.update((i) => i + 1);
+    }
+  }
+
+  goToGoal(index: number): void {
+    this.currentIndex.set(index);
+  }
+
+  // --- Ações de Gestão de Metas ---
+  addGoal(name: string, target: number, monthly: number, deadline: string): void {
+    if (!name || !target) return;
+
+    const newGoal: Goal = {
+      id: Date.now(),
+      icon: '🎯',
+      name,
+      target,
+      saved: 0,
+      monthly: monthly || 0,
+      deadlineLabel: deadline ? deadline.split('-').reverse().join('/') : 'A definir',
+    };
+
+    this.goals.update((items) => [...items, newGoal]);
+    this.currentIndex.set(this.goals().length - 1);
+  }
+
+  addContribution(goalId: number, amount: number): void {
+    if (!amount || amount <= 0) return;
+    this.goals.update((items) =>
+      items.map((g) => (g.id === goalId ? { ...g, saved: g.saved + amount } : g)),
+    );
+  }
+
+  removeContribution(goalId: number, amount: number): void {
+    if (!amount || amount <= 0) return;
+    this.goals.update((items) =>
+      items.map((g) => (g.id === goalId ? { ...g, saved: Math.max(0, g.saved - amount) } : g)),
+    );
+  }
+
+  removeGoal(goalId: number): void {
+    this.goals.update((items) => items.filter((g) => g.id !== goalId));
+    if (this.currentIndex() >= this.goals().length && this.currentIndex() > 0) {
+      this.currentIndex.update((i) => i - 1);
+    }
+  }
+
+  // --- Interações com Gráfico e IA ---
+  showChartPoint(point: ChartPoint): void {
+    this.activeChartPoint.set(point);
+  }
+
+  hideChartPoint(): void {
+    this.activeChartPoint.set(null);
+  }
+
+  askFinancialAssistant(question: string): void {
+    if (!question.trim()) return;
+    this.assistantResponse.set(
+      `Analisando sua pergunta ("${question}")... Com base nos seus aportes atuais, manter o ritmo reduzirá seu prazo geral em até 2 meses.`,
+    );
+  }
+}

@@ -2,13 +2,11 @@
   <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
   <aside class="sidebar" [class.open]="sidebarOpen()" id="app-sidebar">
     <div class="sidebar-top">
-      <a class="brand-lockup" routerLink="/dashboard"
-        ><div class="brand-mark">↯</div>
+      <div class="brand-mark">↯</div>
         <div>
           <p class="brand-name">Flu$o</p>
           <p class="brand-note">Gestão financeira</p>
-        </div></a
-      ><button
+        </div><button
         class="icon-button mobile-only"
         type="button"
         (click)="closeSidebar()"
@@ -58,6 +56,15 @@
         </div>
       </div>
       <div class="topbar-actions">
+        <a
+          class="icon-button notification-trigger"
+          routerLink="/notificacoes"
+          aria-label="Abrir notificações"
+          title="Notificações"
+        >
+          🔔
+        </a>
+
         <div class="settings-menu">
           <button
             class="icon-button settings-trigger"
