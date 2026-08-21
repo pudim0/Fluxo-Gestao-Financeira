@@ -470,7 +470,8 @@ svg {
   position: relative;
 }
 
-.settings-trigger {
+.settings-trigger,
+.notification-trigger {
   width: 46px;
   height: 46px;
   padding: 0;
@@ -478,6 +479,14 @@ svg {
   background: var(--surface-elevated);
   color: var(--text-primary);
   font-size: 1.2rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-trigger {
+  font-size: 1.08rem;
 }
 
 .settings-dropdown {
