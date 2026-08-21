@@ -70,8 +70,8 @@
 
 .summary-card {
   appearance: none;
-  border: 1px solid rgba(148, 163, 184, 0.17);
-  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid var(--panel-border);
+  background: var(--panel-surface);
   color: var(--text-primary);
   border-radius: 12px;
   min-height: 68px;
@@ -92,11 +92,11 @@
 .summary-card:hover,
 .summary-card:focus-visible {
   transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--border-color);
 }
 
 .summary-card.is-active {
-  background: rgba(19, 33, 47, 0.92);
+  background: var(--panel-surface-strong);
   border-color: rgba(88, 171, 255, 0.28);
 }
 
@@ -134,8 +134,8 @@
 }
 
 .feed-shell {
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(11, 17, 25, 0.72);
+  border: 1px solid var(--panel-border);
+  background: var(--panel-surface);
   border-radius: 18px;
   overflow: hidden;
 }
@@ -150,8 +150,8 @@
 
 .feed-tab {
   appearance: none;
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid var(--border-color);
+  background: var(--surface-elevated);
   color: var(--text-secondary);
   border-radius: 8px;
   padding: 8px 12px;
@@ -177,7 +177,7 @@
 }
 
 .feed-tab.is-active {
-  background: rgba(13, 33, 45, 0.95);
+  background: var(--surface-strong);
   color: var(--text-primary);
   border-color: rgba(0, 232, 122, 0.2);
 }
@@ -191,7 +191,7 @@
   margin: 4px 0 12px;
   font-size: 0.74rem;
   letter-spacing: 0.12em;
-  color: rgba(148, 163, 184, 0.86);
+  color: var(--text-muted);
   font-weight: 700;
 }
 
@@ -201,8 +201,8 @@
   gap: 14px;
   padding: 14px 12px 12px;
   border-radius: 14px;
-  background: rgba(13, 28, 35, 0.28);
-  border: 1px solid rgba(148, 163, 184, 0.08);
+  background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
+  border: 1px solid var(--border-color);
   margin-bottom: 12px;
 }
 

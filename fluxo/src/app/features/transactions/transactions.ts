@@ -1,15 +1,17 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
+import { EmptyState as DsEmptyState } from '../../shared/components/design-system/empty-state/empty-state';
+import { LoadingState as DsLoadingState } from '../../shared/components/design-system/loading-state/loading-state';
 import { NewTransaction, Transaction, TransactionType } from '../../models/transaction.model';
 import { TransactionsService } from '../../services/transactions.service';
 
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard],
+  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard, DsEmptyState, DsLoadingState],
   template: `
     <section class="page-shell">
       <header class="page-header">
@@ -20,6 +22,12 @@ import { TransactionsService } from '../../services/transactions.service';
         </div>
         <button class="primary-button" type="button" (click)="startCreate()">Nova transação</button>
       </header>
+
+      @if (feedbackMessage) {
+        <section class="state-card action-feedback" role="status" aria-live="polite">
+          <strong>{{ feedbackMessage }}</strong>
+        </section>
+      }
 
       <section class="page-grid">
         <ds-card
@@ -57,18 +65,20 @@ import { TransactionsService } from '../../services/transactions.service';
                 }
               </select>
             </label>
-            <label class="field">
-              <span>De</span>
-              <input
-                type="date"
-                [value]="startDate"
-                (change)="startDate = $any($event.target).value"
-              />
-            </label>
-            <label class="field">
-              <span>Até</span>
-              <input type="date" [value]="endDate" (change)="endDate = $any($event.target).value" />
-            </label>
+            <div class="date-range">
+              <label class="field">
+                <span>De</span>
+                <input
+                  type="date"
+                  [value]="startDate"
+                  (change)="startDate = $any($event.target).value"
+                />
+              </label>
+              <label class="field">
+                <span>Até</span>
+                <input type="date" [value]="endDate" (change)="endDate = $any($event.target).value" />
+              </label>
+            </div>
           </div>
         </ds-card>
 
@@ -94,22 +104,25 @@ import { TransactionsService } from '../../services/transactions.service';
       </section>
 
       @if (transactionsService.isLoading()) {
-        <section class="state-card loading-state" aria-live="polite">
-          <strong>Carregando transações</strong>
-          <p>Buscando suas movimentações.</p>
-        </section>
+        <ds-loading-state
+          label="Carregando transações"
+          detail="Buscando suas movimentações."
+        />
       } @else if (transactionsService.hasError()) {
         <section class="state-card" role="alert">
           <strong>Não foi possível carregar as transações.</strong>
+          <p>Verifique a conexão e tente novamente.</p>
           <button class="secondary-button" type="button" (click)="transactionsService.load()">
             Tentar novamente
           </button>
         </section>
       } @else if (filteredTransactions.length === 0) {
-        <section class="state-card empty-state">
-          <strong>Nenhuma transação encontrada</strong>
-          <p>Adicione uma movimentação ou ajuste os filtros.</p>
-        </section>
+        <ds-empty-state
+          [title]="hasActiveFilters ? 'Nenhuma transação encontrada' : 'Comece registrando uma transação'"
+          [description]="hasActiveFilters ? 'Ajuste os filtros para encontrar outras movimentações.' : 'Adicione uma receita ou despesa para acompanhar seu fluxo financeiro.'"
+          [actionLabel]="hasActiveFilters ? 'Limpar filtros' : 'Nova transação'"
+          (action)="hasActiveFilters ? clearFilters() : startCreate()"
+        />
       } @else {
         <ds-card
           eyebrow="Extrato"
@@ -261,7 +274,7 @@ import { TransactionsService } from '../../services/transactions.service';
     </section>
   `,
 })
-export class Transactions {
+export class Transactions implements OnDestroy {
   protected readonly transactionsService = inject(TransactionsService);
   protected search = '';
   protected selectedType: TransactionType | '' = '';
@@ -272,6 +285,27 @@ export class Transactions {
   protected editingId: string | null = null;
   protected form: NewTransaction = this.emptyForm();
   protected creatingCategory = false;
+  protected feedbackMessage = '';
+
+  protected get hasActiveFilters(): boolean {
+    return Boolean(this.search || this.selectedType || this.selectedCategory || this.startDate || this.endDate);
+  }
+
+  protected clearFilters(): void {
+    this.search = '';
+    this.selectedType = '';
+    this.selectedCategory = '';
+    this.startDate = '';
+    this.endDate = '';
+  }
+
+  constructor() {
+    this.transactionsService.load();
+  }
+
+  ngOnDestroy(): void {
+    this.clearFilters();
+  }
 
   protected cancelNewCategory(): void {
     this.creatingCategory = false;
@@ -326,18 +360,23 @@ export class Transactions {
   }
 
   protected save(): void {
+    const wasEditing = Boolean(this.editingId);
     const transaction = { ...this.form, amount: Number(this.form.amount) };
-    if (this.editingId) {
+    if (wasEditing && this.editingId) {
       this.transactionsService.update(this.editingId, transaction);
     } else {
       this.transactionsService.create(transaction);
     }
     this.closeForm();
+    this.feedbackMessage = wasEditing
+      ? 'Transação atualizada com sucesso.'
+      : 'Transação criada com sucesso.';
   }
 
   protected remove(transaction: Transaction): void {
     if (window.confirm(`Excluir a transação "${transaction.description}"?`)) {
       this.transactionsService.delete(transaction.id);
+      this.feedbackMessage = 'Transação excluída com sucesso.';
     }
   }
 

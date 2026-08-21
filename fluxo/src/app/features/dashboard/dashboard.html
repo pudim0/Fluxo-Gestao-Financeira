@@ -40,6 +40,8 @@
           class="metric-card"
           [class.positive]="metric.tone === 'positive'"
           [class.warning]="metric.tone === 'warning'"
+          [class.neutral]="metric.tone === 'neutral'"
+          [class.negative]="metric.tone === 'negative'"
         >
           <span class="metric-label">{{ metric.label }}</span>
           <span class="metric-value">{{ metric.value }}</span>
@@ -48,7 +50,7 @@
       }
     </section>
 
-    <section class="page-grid">
+    <section class="dashboard-grid">
       <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculado do histórico">
         <div class="tag-row">
           @for (highlight of highlights(); track highlight) {
@@ -78,7 +80,27 @@
       </ds-card>
     </section>
 
-    <section class="page-grid">
+    <section class="dashboard-grid dashboard-grid--lower">
+      <ds-card eyebrow="Fluxo" title="Entradas e saídas" subtitle="Comparação baseada nas transações atuais.">
+        <div class="dashboard-chart" aria-label="Comparação entre entradas e saídas">
+          @for (item of chartData(); track item.label) {
+            <div class="dashboard-chart__row">
+              <div class="dashboard-chart__label">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.value | currency: 'BRL' }}</strong>
+              </div>
+              <div class="dashboard-chart__track">
+                <span
+                  class="dashboard-chart__bar"
+                  [class.dashboard-chart__bar--expense]="item.tone === 'expense'"
+                  [style.width.%]="item.percentage"
+                ></span>
+              </div>
+            </div>
+          }
+        </div>
+      </ds-card>
+
       <ds-empty-state
         title="Relatórios em preparação"
         description="Em breve você poderá comparar períodos e entender a evolução do seu dinheiro."

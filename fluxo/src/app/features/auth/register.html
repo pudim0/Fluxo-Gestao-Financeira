@@ -1,7 +1,7 @@
 <main class="auth-page">
   <section class="auth-showcase">
     <div class="auth-showcase__content">
-   <span class="brand__mark">↯</span>Flu$o
+      <a class="brand" routerLink="/register"><span class="brand__mark">↯</span>Flu$o</a>
       <h1>Uma rotina financeira mais leve.</h1>
       <p>Comece gratuitamente e transforme seus dados em decisões melhores.</p>
       <span class="open-finance">● Seus dados sempre sob seu controle</span>
@@ -14,41 +14,61 @@
       >
       <h1>Crie sua conta</h1>
       <p class="auth-card__intro">Leva menos de um minuto para começar.</p>
+      <p class="auth-message auth-demo-message" role="note">
+        Modo demonstração: o cadastro é local e ainda não usa um backend real.
+      </p>
+      @if (validationMessage) {
+        <p class="auth-message auth-message--error" role="alert" aria-live="assertive">{{ validationMessage }}</p>
+      }
       <form class="auth-form" (ngSubmit)="submit()">
-        <label class="auth-field"
+        <label class="auth-field" for="register-name"
           ><span class="auth-field__header">Nome</span
           ><input
+            id="register-name"
             name="name"
             [(ngModel)]="name"
             autocomplete="name"
             placeholder="Como podemos chamar você?"
             required /></label
-        ><label class="auth-field"
+        ><label class="auth-field" for="register-email"
           ><span class="auth-field__header">E-mail</span
           ><input
+            id="register-email"
             type="email"
             name="email"
             [(ngModel)]="email"
             autocomplete="email"
             placeholder="seu@email.com"
             required /></label
-        ><label class="auth-field"
+        ><label class="auth-field" for="register-password"
           ><span class="auth-field__header">Senha</span
           ><span class="auth-password"
             ><input
-              [type]="passwordVisible() ? 'text' : 'password'"
+              id="register-password"
+              [type]="passwordVisible ? 'text' : 'password'"
               name="password"
               [(ngModel)]="password"
               minlength="8"
               autocomplete="new-password"
               placeholder="Mínimo de 8 caracteres"
               required
-            /><button type="button" (click)="passwordVisible.update((v) => !v)">
-              {{ passwordVisible() ? 'Ocultar' : 'Mostrar' }}
+            /><button type="button" (click)="togglePasswordVisibility()">
+              {{ passwordVisible ? 'Ocultar' : 'Mostrar' }}
             </button></span
           ></label
         ><button class="auth-submit" type="submit">Criar conta grátis</button>
       </form>
+      <div class="auth-divider">ou continue com</div>
+      <div class="auth-social">
+        <button type="button" disabled title="Disponível quando a autenticação social for integrada">
+          <span class="social-icon social-icon--google" aria-hidden="true">G</span>
+          Google
+        </button>
+        <button type="button" disabled title="Disponível quando a autenticação social for integrada">
+          <svg class="social-icon social-icon--apple" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.77 12.74c.02 2.06 1.8 2.75 1.82 2.76-.02.05-.28.96-.93 1.9-.56.81-1.14 1.62-2.06 1.64-.9.02-1.2-.53-2.24-.53-1.05 0-1.38.51-2.23.55-.9.03-1.58-.88-2.15-1.69-1.17-1.65-2.06-4.67-.86-6.71.6-1.01 1.67-1.65 2.83-1.67.88-.02 1.72.58 2.24.58.52 0 1.5-.72 2.53-.61.43.02 1.65.17 2.43 1.31-.06.04-1.45.84-1.43 2.47ZM15.11 7.9c.47-.57.79-1.37.7-2.16-.68.03-1.5.45-1.99 1.02-.43.5-.81 1.32-.71 2.1.76.06 1.53-.39 2-.96Z"/></svg>
+          Apple
+        </button>
+      </div>
       <p class="auth-footnote">
         Já tem uma conta? <a class="auth-link" routerLink="/login">Entrar</a>
       </p>

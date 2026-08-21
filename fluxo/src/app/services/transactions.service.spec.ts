@@ -9,7 +9,7 @@ describe('TransactionsService', () => {
   let service: TransactionsService;
 
   beforeEach(() => {
-    localStorage.removeItem('fluxo.mock.transactions');
+    localStorage.removeItem('fluxo.mock.transactions:anonymous');
     TestBed.configureTestingModule({
       providers: [
         TransactionsService,

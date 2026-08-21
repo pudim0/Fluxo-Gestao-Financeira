@@ -22,6 +22,16 @@ export class Dashboard {
   protected readonly recentTransactions = computed(() =>
     this.transactionsService.transactions().slice(0, 5),
   );
+  protected readonly chartData = computed(() => {
+    const income = this.transactionsService.totalIncome();
+    const expense = this.transactionsService.totalExpense();
+    const maximum = Math.max(income, expense, 1);
+
+    return [
+      { label: 'Entradas', value: income, percentage: (income / maximum) * 100, tone: 'income' },
+      { label: 'Saídas', value: expense, percentage: (expense / maximum) * 100, tone: 'expense' },
+    ];
+  });
 
   protected goToTransactions(): void {
     void this.router.navigateByUrl('/transacoes');

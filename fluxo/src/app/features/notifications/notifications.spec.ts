@@ -31,8 +31,8 @@ describe('Notifications', () => {
   });
 
   it('should expose the list of notifications in the component', () => {
-    expect(component.notifications.length).toBe(4);
-    expect(component.notifications[0].title).toContain('Limite de gasto atingido');
-    expect(component.notifications[3].category).toBe('Lembrete');
+    expect(component.notifications().length).toBe(4);
+    expect(component.notifications()[0].title).toContain('Limite de gasto atingido');
+    expect(component.notifications()[3].category).toBe('Lembretes');
   });
 });
