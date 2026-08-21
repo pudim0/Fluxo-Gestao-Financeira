@@ -49,7 +49,7 @@
 .mark-all {
   border: 0;
   background: transparent;
-  color: var(--accent);
+  color:rgb(22, 216, 126) ;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -60,6 +60,8 @@
 .mark-all:hover,
 .mark-all:focus-visible {
   opacity: 0.8;
+  color: rgb(0, 255, 76);
+  text-shadow: 2px 0px 5px rgba(0, 232, 124, 0.5);
 }
 
 .summary-grid {
@@ -92,12 +94,12 @@
 .summary-card:hover,
 .summary-card:focus-visible {
   transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.345);
 }
 
 .summary-card.is-active {
-  background: rgba(19, 33, 47, 0.92);
-  border-color: rgba(88, 171, 255, 0.28);
+  background: rgba(19, 33, 47, 0.943);
+  border-color: rgba(255, 255, 255, 0.432);
 }
 
 .summary-label {
@@ -163,6 +165,11 @@
   gap: 8px;
 }
 
+.feed-tab:hover{
+  background-color: rgba(35, 35, 35, 0.153);
+  border-color: rgba(38, 142, 71, 0.7)
+}
+
 .feed-tab span {
   display: inline-flex;
   align-items: center;
@@ -176,10 +183,15 @@
   font-size: 0.68rem;
 }
 
+.feed-tab:hover span {
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--text-primary);
+}
+
 .feed-tab.is-active {
   background: rgba(13, 33, 45, 0.95);
   color: var(--text-primary);
-  border-color: rgba(0, 232, 122, 0.2);
+  border-color: rgba(0, 232, 124, 0.573);
 }
 
 .feed-group {
@@ -201,7 +213,7 @@
   gap: 14px;
   padding: 14px 12px 12px;
   border-radius: 14px;
-  background: rgba(13, 28, 35, 0.28);
+  background: rgba(13, 28, 35, 0.249);
   border: 1px solid rgba(148, 163, 184, 0.08);
   margin-bottom: 12px;
 }
