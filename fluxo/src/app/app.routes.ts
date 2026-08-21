@@ -53,7 +53,7 @@ export const routes: Routes = [
         path: 'relatorios',
         loadComponent: () => import('./features/reports/reports').then((m) => m.Reports),
       },
-      { path: 'metas', loadComponent: () => import('./features/goals/goals').then((m) => m.Goals) },
+      { path: 'metas', loadComponent: () => import('./features/goals/goals').then((m) => m.GoalsComponent) },
       {
         path: 'configuracoes',
         loadComponent: () => import('./features/settings/settings').then((m) => m.Settings),
