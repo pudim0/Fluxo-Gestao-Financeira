@@ -14,7 +14,7 @@ import { TransactionsService } from '../../services/transactions.service';
     <section class="page-shell">
       <header class="page-header">
         <div>
-          <p class="page-kicker">Transações</p>
+
           <h2 class="page-title">Movimentações recentes e recorrentes</h2>
           <p class="page-copy">Registre cada entrada e saída para manter o dashboard atualizado.</p>
         </div>
