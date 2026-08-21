@@ -18,14 +18,14 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
           </p>
           <br>
           <div class="button-config">
-              <ds-button (click)="mostrarAba('perfil')">Perfil</ds-button>
-              <ds-button (click)="mostrarAba('preferencias')">Preferências</ds-button>
-              <ds-button (click)="mostrarAba('acessibilidade')">Acessibilidade</ds-button>
+              <ds-button (click)="mostrarAba('perfil')" [class.selecionado]="abaAtiva() === 'perfil'">Perfil</ds-button>
+              <ds-button (click)="mostrarAba('preferencias')" [class.selecionado]="abaAtiva() === 'preferencias'">Preferências</ds-button>
+              <ds-button (click)="mostrarAba('acessibilidade')" [class.selecionado]="abaAtiva() === 'acessibilidade'">Acessibilidade</ds-button>
           </div>
         </div>
       </header>
 
-      /* add contato em acessibilidade */
+
       <section class="page-grid">
         @if (abaAtiva() === 'perfil') {
           <ds-card
@@ -46,12 +46,11 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
           <ds-card
             eyebrow="Preferências"
             title="Interface"
-            subtitle="Configurações que podem virar toggles reais depois."
+            subtitle="Linguagem de tela traduzida"
           >
             <div class="tag-row">
-              <span class="tag">Tema escuro</span>
-              <span class="tag">Modo compacto</span>
-              <span class="tag">Atalhos de teclado</span>
+              <button>PT-BR</button>
+              <button>ENG</button>
             </div>
           </ds-card>
         }
@@ -59,11 +58,14 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
         @if (abaAtiva() === 'acessibilidade') {
           <ds-card
             eyebrow="Acessibilidade"
-            title="Ajustes"
-            subtitle="Configurações que podem virar toggles reais depois."
+            title="Contato de suporte"
+            subtitle="Se você tiver algum problema, entre em contato com a gente pelos botões abaixo."
           >
-            
           </ds-card>
+          <div class="button-config">
+            <ds-button variant="secondary">E-mail</ds-button>
+            <ds-button variant="secondary">WhatsApp</ds-button>
+          </div>
         }
 
       </section>
