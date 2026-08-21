@@ -1,15 +1,11 @@
 <section class="page-shell">
-
   <header class="page-header">
-
     <div>
-    
       <p class="page-kicker">Planejamento</p>
       <h2 class="page-title">Minhas metas</h2>
       <p class="page-copy">
         Acompanhe seus objetivos financeiros e veja o quanto falta para cada conquista.
       </p>
-    
     </div>
   </header>
 
@@ -65,6 +61,7 @@
           <input #goalDeadline type="month" aria-label="Prazo da meta" />
           <button type="submit">Adicionar meta</button>
         </form>
+
         <div class="goals-carousel" aria-label="Carrossel de metas">
           <button
             class="carousel-arrow"
@@ -75,40 +72,91 @@
           >
             &#10094;
           </button>
+
           <div class="progress-window">
-            <div class="progress-track-list" [style.transform]="'translateX(-' + currentIndex() * 100 + '%)'">
+            <div
+              class="progress-track-list"
+              [style.transform]="'translateX(-' + currentIndex() * 100 + '%)'"
+            >
               @for (goal of goals(); track goal.id) {
-                <div class="progress-slide" [attr.aria-label]="'Meta ' + ($index + 1) + ' de ' + goals().length">
+                <div
+                  class="progress-slide"
+                  [attr.aria-label]="'Meta ' + ($index + 1) + ' de ' + goals().length"
+                >
                   <div class="progress-item">
                     <div class="progress-heading">
                       <span class="goal-icon">{{ goal.icon }}</span>
                       <div>
                         <strong>{{ goal.name }}</strong>
-                        <small>Meta: {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+                        <small
+                          >Meta: {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small
+                        >
                       </div>
                       <span class="progress-value">
-                        <b>{{ goal.saved / goal.target * 100 | number: '1.0-0' }}%</b>
-                        <small>{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} / {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small>
+                        <b>{{ (goal.saved / goal.target) * 100 | number: '1.0-0' }}%</b>
+                        <small
+                          >{{ goal.saved | currency: 'BRL' : 'symbol' : '1.0-0' }} /
+                          {{ goal.target | currency: 'BRL' : 'symbol' : '1.0-0' }}</small
+                        >
                       </span>
                     </div>
-                    <div class="progress-track"><div class="progress-fill" [style.width.%]="goal.saved / goal.target * 100"></div></div>
+
+                    <div class="progress-track">
+                      <div
+                        class="progress-fill"
+                        [style.width.%]="(goal.saved / goal.target) * 100"
+                      ></div>
+                    </div>
+
                     <div class="progress-footer">
                       <small>{{ goal.monthly | currency: 'BRL' : 'symbol' : '1.0-0' }}/mês</small>
                       <small>Prazo: {{ goal.deadlineLabel }}</small>
                     </div>
-                    <form class="contribution-form" (submit)="$event.preventDefault(); addContribution(goal.id, +contribution.value); contribution.value = ''">
-                      <input #contribution type="number" min="1" placeholder="Adicionar valor" aria-label="Valor para adicionar à meta" />
+
+                    <form
+                      class="contribution-form"
+                      (submit)="
+                        $event.preventDefault();
+                        addContribution(goal.id, +contribution.value);
+                        contribution.value = ''
+                      "
+                    >
+                      <input
+                        #contribution
+                        type="number"
+                        min="1"
+                        placeholder="Adicionar valor"
+                        aria-label="Valor para adicionar à meta"
+                      />
                       <button type="submit">Adicionar valor</button>
                     </form>
-                    <form class="contribution-form withdrawal-form" (submit)="$event.preventDefault(); removeContribution(goal.id, +withdrawal.value); withdrawal.value = ''">
-                      <input #withdrawal type="number" min="1" placeholder="Retirar valor" aria-label="Valor para retirar da meta" />
+
+                    <form
+                      class="contribution-form withdrawal-form"
+                      (submit)="
+                        $event.preventDefault();
+                        removeContribution(goal.id, +withdrawal.value);
+                        withdrawal.value = ''
+                      "
+                    >
+                      <input
+                        #withdrawal
+                        type="number"
+                        min="1"
+                        placeholder="Retirar valor"
+                        aria-label="Valor para retirar da meta"
+                      />
                       <button type="submit">Retirar valor</button>
                     </form>
-                    <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">Excluir meta</button>
+
+                    <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">
+                      Excluir meta
+                    </button>
                   </div>
                 </div>
               }
-              </div>
+            </div>
+
             <div class="carousel-dots" aria-label="Indicadores de metas">
               @for (goal of goals(); track goal.id) {
                 <button
@@ -122,6 +170,7 @@
               }
             </div>
           </div>
+
           <button
             class="carousel-arrow"
             type="button"
@@ -134,6 +183,7 @@
         </div>
       </ds-card>
     </div>
+
     <div class="goals-chart-card">
       <ds-card
         eyebrow="Acompanhamento"
@@ -178,6 +228,7 @@
         </div>
       </ds-card>
     </div>
+
     <aside class="assistant-tip" aria-label="Dica da IA financeira">
       <p class="assistant-tip__title"><span aria-hidden="true">●</span> Dicas da IA financeira</p>
       <p class="assistant-tip__copy">
@@ -186,6 +237,7 @@
         >, você antecipa a conquista em <strong>1 mês!</strong>
       </p>
     </aside>
+
     <div class="assistant-panel">
       <form
         class="assistant-prompt"
