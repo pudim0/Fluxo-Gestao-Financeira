@@ -34,4 +34,12 @@ describe('Dashboard', () => {
     const metrics = fixture.nativeElement.querySelectorAll('.metric-card');
     expect(metrics.length).toBeGreaterThan(0);
   });
+
+  it('should render the overview panels from the dashboard mockup', () => {
+    const overviewPanel = fixture.nativeElement.querySelector('.overview-panel');
+    const insightsPanel = fixture.nativeElement.querySelector('.insights-panel');
+
+    expect(overviewPanel).toBeTruthy();
+    expect(insightsPanel).toBeTruthy();
+  });
 });

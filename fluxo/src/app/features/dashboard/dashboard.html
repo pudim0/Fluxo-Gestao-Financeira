@@ -1,89 +1,165 @@
-<section class="page-shell">
-  <header class="page-header">
-    <div>
-      <p class="page-kicker">Dashboard</p>
-      <h2 class="page-title">Central Financeira</h2>
-      <p class="page-copy">
-        Aqui está um resumo do seu desempenho finaceiro.  
-        </p>
-    </div>
-
-    <div class="page-actions">
-      <a class="secondary-button" routerLink="/transacoes">Ver transações</a>
-      <a class="primary-button" routerLink="/orcamento">Ajustar orçamento</a>
-    </div>
-  </header>
-
-  @if (transactionsService.isLoading()) {
-    <ds-loading-state
-      label="Carregando indicadores"
-      detail="Calculando o resumo a partir das suas transações."
-    />
-  } @else if (transactionsService.hasError()) {
-    <section class="state-card" role="alert">
-      <strong>Não foi possível carregar os indicadores.</strong>
-      <p>Verifique os dados e tente novamente.</p>
-      <button class="secondary-button" type="button" (click)="transactionsService.load()">
-        Tentar novamente
+<section class="dashboard-shell">
+  <section class="overview-panel">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Dashboard</p>
+        <h2>Visão Geral</h2>
+      </div>
+      <button
+        class="primary-button"
+        type="button"
+        aria-label="Nova transação"
+        (click)="goToTransactions()"
+      >
+        <span class="button-text">+ Nova Transação</span>
       </button>
-    </section>
-  } @else if (transactionsService.isEmpty()) {
-    <ds-empty-state
-      title="Comece registrando uma transação"
-      description="Quando você adicionar receitas e despesas, o resumo financeiro aparecerá aqui."
-      actionLabel="Adicionar transação"
-      (action)="goToTransactions()"
-    />
-  } @else {
-    <section class="metrics-grid">
+    </div>
+
+    <div class="metrics-grid">
       @for (metric of metrics(); track metric.label) {
-        <article
-          class="metric-card"
-          [class.positive]="metric.tone === 'positive'"
-          [class.warning]="metric.tone === 'warning'"
-        >
+        <article class="metric-card" [class.positive]="metric.tone === 'positive'">
           <span class="metric-label">{{ metric.label }}</span>
-          <span class="metric-value">{{ metric.value }}</span>
-          <span class="metric-detail">{{ metric.detail }}</span>
+          <strong class="metric-value">{{ metric.value }}</strong>
+          <small class="metric-detail">{{ metric.detail }}</small>
         </article>
       }
-    </section>
+    </div>
+  </section>
 
-    <section class="page-grid">
-      <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculado do histórico">
-        <div class="tag-row">
-          @for (highlight of highlights(); track highlight) {
-            <span class="tag">{{ highlight }}</span>
-          }
+  <section class="insights-panel">
+    <div class="subpanel cash-panel">
+      <div class="panel-head">
+        <div>
+          <h3>Fluxo de Caixa</h3>
+          <p>Evolução das movimentações financeiras nos últimos 5 meses.</p>
         </div>
-      </ds-card>
+      </div>
 
-      <ds-card eyebrow="Movimento" title="Últimas transações" subtitle="As cinco movimentações mais recentes">
-        <div class="transaction-preview">
-          @for (transaction of recentTransactions(); track transaction.id) {
-            <div class="transaction-preview__row">
-              <span>
-                <strong>{{ transaction.description }}</strong>
-                <small>{{ transaction.category }} · {{ transaction.date | date: 'dd/MM' }}</small>
-              </span>
-              <strong
-                [class.income-value]="transaction.type === 'income'"
-                [class.expense-value]="transaction.type === 'expense'"
-              >
-                {{ transaction.type === 'income' ? '+' : '-' }}
-                {{ transaction.amount | currency: 'BRL' }}
-              </strong>
+      <div class="cash-layout">
+        <div
+          class="donut-chart"
+          [style.background]="'conic-gradient(#2dd4bf 0 30%, #3b82f6 30% 45%, #f59e0b 45% 60%, #a78bfa 60% 72%, #f97316 72% 100%)'"
+        >
+          <div class="donut-center"></div>
+        </div>
+
+        <ul class="breakdown-list">
+          @for (item of cashBreakdown; track item.name) {
+            <li class="breakdown-item">
+              <div class="breakdown-meta">
+                <span class="dot" [style.background]="item.color"></span>
+                <span>{{ item.name }}</span>
+              </div>
+              <div class="breakdown-values">
+                <strong>R$ {{ item.value.toFixed(2).replace('.', ',') }}</strong>
+                <span>{{ item.percentage }}%</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-grid">
+    <article class="subpanel alerts-panel">
+      <div class="panel-head compact-head">
+        <h3>Alertas</h3>
+        <a href="#">Ver todos</a>
+      </div>
+
+      <ul class="alert-list">
+        @for (alert of alerts; track alert.title) {
+          <li class="alert-item">
+            <span class="alert-badge">!</span>
+            <div>
+              <strong>{{ alert.title }}</strong>
+              <p>{{ alert.text }}</p>
             </div>
-          }
-        </div>
-      </ds-card>
-    </section>
+          </li>
+        }
+      </ul>
+    </article>
 
-    <section class="page-grid">
-      <ds-empty-state
-        title="Relatórios em preparação"
-        description="Em breve você poderá comparar períodos e entender a evolução do seu dinheiro."
-      />
-    </section>
-  }
+    <article class="subpanel transactions-panel">
+      <div class="panel-head compact-head">
+        <h3>Últimas Transações</h3>
+        <a href="#">Ver todos</a>
+      </div>
+
+      <div class="transaction-list">
+        @for (transaction of recentTransactions(); track transaction.id) {
+          <div class="transaction-row">
+            <div class="transaction-text">
+              <strong>{{ transaction.description }}</strong>
+              <small>{{ transaction.date | date: 'dd/MM' }}</small>
+            </div>
+            <div class="transaction-tag" [class.income]="transaction.type === 'income'">
+              {{ transaction.category }}
+            </div>
+            <strong
+              class="transaction-value"
+              [class.income-value]="transaction.type === 'income'"
+              [class.expense-value]="transaction.type === 'expense'"
+            >
+              {{ transaction.type === 'income' ? '+' : '-' }}
+              {{ transaction.amount | currency: 'BRL' }}
+            </strong>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="investment-panel">
+    <div class="panel-head compact-head">
+      <h3>Investimentos</h3>
+      <a href="#">Ver todos</a>
+    </div>
+
+    <div class="investment-grid">
+      <div class="mini-card">
+        <div class="mini-card-header">
+          <span>Patrimônio Total</span>
+          <span class="trend positive">+8.4%</span>
+        </div>
+        <div class="amount">R$ 32.450,00</div>
+        <div class="bar-chart" aria-label="Patrimônio total por mês">
+          <span style="height: 45%"></span>
+          <span style="height: 60%"></span>
+          <span style="height: 52%"></span>
+          <span style="height: 72%"></span>
+          <span style="height: 64%"></span>
+          <span style="height: 80%"></span>
+        </div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-card-header">
+          <span>Distribuição da Carteira</span>
+        </div>
+        <div class="ring-chart-wrapper">
+          <div class="ring-chart">
+            <div class="ring-center"></div>
+          </div>
+          <ul class="legend-list">
+            <li><span class="legend-dot dot-a"></span> Fundo A</li>
+            <li><span class="legend-dot dot-b"></span> Ações</li>
+            <li><span class="legend-dot dot-c"></span> Tesouro Direto</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-card-header">
+          <span>Rentabilidade</span>
+        </div>
+        <div class="rentability-list">
+          <div class="rentability-item"><span>No mês</span><strong>+ R$ 450,00</strong></div>
+          <div class="rentability-item"><span>No ano</span><strong>+ R$ 2.850,00</strong></div>
+          <div class="rentability-item"><span>Desde o início</span><strong>+ R$ 6.250,00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </section>

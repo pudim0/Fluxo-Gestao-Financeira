@@ -655,7 +655,7 @@ svg {
 .secondary-button,
 .ghost-button,
 .icon-button {
-  border-radius: 14px;
+  border-radius: 18px;
   font: inherit;
   cursor: pointer;
   transition:

@@ -1,47 +1,484 @@
-/* Minimal styles for the dashboard layout. Adjust as needed. */
-.page-shell {
+:host {
   display: block;
-  padding: 1rem;
 }
 
-.page-header {
+.dashboard-shell {
+  display: grid;
+  gap: 18px;
+  padding: 8px 8px 18px;
+}
+
+.overview-panel,
+.subpanel,
+.investment-panel {
+  background: rgba(13, 22, 34, 0.72);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.overview-panel {
+  padding: 18px 20px 20px;
+}
+
+.section-header,
+.panel-head,
+.mini-card-header,
+.transaction-row,
+.breakdown-item,
+.rentability-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.page-actions a {
-  margin-left: 0.5rem;
+.section-header {
+  margin-bottom: 18px;
+}
+
+.section-eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.section-header h2,
+.panel-head h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #37c8a0, #1ec957);
+  color: #05281b;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.95rem 1.3rem;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.button-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary-button:hover,
+.primary-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(31, 156, 0, 0.28);
+}
+
+@media (max-width: 480px) {
+  .primary-button {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+
+  .primary-button .button-text {
+    display: none;
+  }
+
+  .primary-button::before {
+    content: '+';
+    font-size: 2rem;
+    line-height: 1;
+    color: #05281b;
+    transform: translateY(-1px);
+  }
 }
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .metric-card {
-  padding: 1rem;
-  border-radius: 6px;
-  background: var(--card-bg, #fff);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 205px;
+  padding: 18px 20px 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(10, 26, 30, 0.95), rgba(14, 23, 34, 0.9));
+  border: 1px solid rgba(143, 173, 197, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
-.metric-card.positive { border-left: 4px solid #16a34a; }
-.metric-card.warning { border-left: 4px solid #f59e0b; }
+.metric-card.positive {
+  background: linear-gradient(180deg, rgba(11, 66, 56, 0.92), rgba(12, 28, 38, 0.9));
+  border-color: rgba(52, 216, 162, 0.18);
+}
 
-.transaction-preview__row {
+.metric-label {
+  color: rgba(196, 212, 225, 0.82);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 2vw, 3.1rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.metric-detail {
+  color: rgba(178, 196, 212, 0.84);
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+
+.insights-panel {
+  padding: 0;
+}
+
+.cash-panel {
+  padding: 18px 18px 20px;
+}
+
+.panel-head {
+  margin-bottom: 18px;
+}
+
+.panel-head p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.compact-head a {
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.cash-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.donut-chart {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.donut-center {
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  background: rgba(10, 17, 26, 0.96);
+  border: 1px solid rgba(146, 163, 184, 0.08);
+}
+
+.breakdown-list,
+.alert-list,
+.legend-list,
+.rentability-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breakdown-list {
+  display: grid;
+  gap: 8px;
+}
+
+.breakdown-item {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0,0,0,0.03);
+  gap: 14px;
+  padding: 8px 0;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
 }
 
-.income-value { color: #16a34a; }
-.expense-value { color: #dc2626; }
+.breakdown-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.76rem;
+}
 
-.tag-row { display:flex; gap:0.5rem; flex-wrap:wrap; }
-.tag { background: rgba(0,0,0,0.04); padding:0.25rem 0.5rem; border-radius:12px; }
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.breakdown-values {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.breakdown-values strong {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 18px;
+}
+
+.alerts-panel,
+.transactions-panel {
+  padding: 18px 18px 16px;
+}
+
+.alert-list {
+  display: grid;
+  gap: 12px;
+}
+
+.alert-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.alert-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(246, 173, 85, 0.14);
+  color: #f5c66a;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.alert-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.alert-item p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-size: 0.74rem;
+}
+
+.transaction-list {
+  display: grid;
+  gap: 8px;
+}
+
+.transaction-row {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.transaction-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.transaction-text small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.transaction-tag {
+  padding: 0.38rem 0.62rem;
+  border-radius: 999px;
+  background: rgba(89, 120, 255, 0.12);
+  color: #acc7ff;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.transaction-tag.income {
+  background: rgba(45, 212, 191, 0.1);
+  color: #8be6d7;
+}
+
+.transaction-value {
+  font-size: 0.9rem;
+}
+
+.income-value {
+  color: #57d8b3;
+}
+
+.expense-value {
+  color: #ff8d8d;
+}
+
+.investment-panel {
+  padding: 18px;
+}
+
+.investment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mini-card {
+  background: rgba(17, 27, 39, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.mini-card-header {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.trend {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.amount {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 22px;
+  font-family: var(--font-display);
+}
+
+.bar-chart {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  height: 110px;
+  padding-top: 10px;
+}
+
+.bar-chart span {
+  flex: 1;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #2dd4bf, #2d8cff);
+  opacity: 0.8;
+}
+
+.ring-chart-wrapper {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+
+.ring-chart {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#2dd4bf 0 38%, #60a5fa 38% 68%, #f59e0b 68% 100%);
+  margin: 0 auto;
+}
+
+.ring-center {
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: rgba(10, 17, 26, 0.96);
+}
+
+.legend-list {
+  display: grid;
+  gap: 8px;
+  color: #c9d9eb;
+  font-size: 0.76rem;
+}
+
+.legend-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot-a { background: #2dd4bf; }
+.dot-b { background: #60a5fa; }
+.dot-c { background: #f59e0b; }
+
+.rentability-list {
+  display: grid;
+  gap: 12px;
+}
+
+.rentability-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.rentability-item strong {
+  color: var(--text-primary);
+}
+
+@media (max-width: 980px) {
+  .bottom-grid,
+  .investment-grid,
+  .cash-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .layout-shell {
+    padding: 0;
+  }
+}
