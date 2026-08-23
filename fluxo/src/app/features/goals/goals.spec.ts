@@ -7,7 +7,7 @@ describe('GoalsComponent', () => {
   let fixture: ComponentFixture<GoalsComponent>;
 
   beforeEach(async () => {
-    localStorage.removeItem('fluxo.goals:anonymous');
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [GoalsComponent],
     }).compileComponents();

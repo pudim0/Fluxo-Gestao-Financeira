@@ -12,7 +12,7 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
           <p class="page-kicker">Orçamento</p>
           <h2 class="page-title">Categorias, limites e disciplina</h2>
           <p class="page-copy">
-            Esta página será o ponto de controle dos tetos de gasto e da distribuição por categoria.
+            Controle os tetos de gasto e acompanhe a distribuição por categoria em um único painel.
           </p>
         </div>
       </header>
@@ -21,7 +21,7 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
         <ds-card
           eyebrow="Categorias"
           title="Distribuição mensal"
-          subtitle="Visão inicial dos limites por grupo."
+          subtitle="Panorama dos limites atuais por grupo de despesas."
         >
           <div class="progress-list">
             <div class="progress-item">
@@ -42,7 +42,7 @@ import { Card as DsCard } from '../../shared/components/design-system/card/card'
         <ds-card
           eyebrow="Ações"
           title="Ajustes rápidos"
-          subtitle="Base para editar categoria, teto e recorrência."
+          subtitle="Atalhos para recalibrar o planejamento do mês."
         >
           <div class="tag-row">
             <span class="tag">Rebalancear</span>

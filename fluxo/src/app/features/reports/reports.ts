@@ -14,8 +14,7 @@ import { Table as DsTable } from '../../shared/components/design-system/table/ta
           <p class="page-kicker">Relatórios</p>
           <h2 class="page-title">Análises, tendências e leitura executiva</h2>
           <p class="page-copy">
-            O módulo receberá gráficos e comparativos. Nesta etapa, a estrutura de cards e tabelas
-            já está no lugar.
+            Compare períodos, acompanhe tendência de saldo e destaque decisões prioritárias.
           </p>
         </div>
       </header>
@@ -24,7 +23,7 @@ import { Table as DsTable } from '../../shared/components/design-system/table/ta
         <ds-card
           eyebrow="Comparativo"
           title="Resumo mensal"
-          subtitle="Base para evolução do consumo e receita."
+          subtitle="Leitura rápida da evolução de receitas, despesas e resultado."
         >
           <ds-table
             [columns]="['Mês', 'Receitas', 'Despesas', 'Saldo']"
@@ -37,8 +36,8 @@ import { Table as DsTable } from '../../shared/components/design-system/table/ta
         </ds-card>
 
         <ds-empty-state
-          title="Gráficos em construção"
-          description="O espaço já está reservado para linhas, barras e donuts na próxima etapa."
+          title="Próximos insights visuais"
+          description="A próxima iteração adiciona curvas de tendência, barras por categoria e participação por tipo de gasto."
         />
       </section>
     </section>
