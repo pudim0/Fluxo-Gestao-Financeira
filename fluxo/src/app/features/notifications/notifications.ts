@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
-import { NotificationCenterService, NotificationItem } from '../../services/notification-center.service';
+import { NotificationCenterService } from '../../services/notification-center.service';
 
 export interface NotificationSummary {
   label: string;
