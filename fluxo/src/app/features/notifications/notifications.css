@@ -204,6 +204,23 @@
   background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
   border: 1px solid var(--border-color);
   margin-bottom: 12px;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.notification-item:hover,
+.notification-item:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border-color));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.notification-item.is-read {
+  opacity: 0.78;
 }
 
 .notification-item:last-child {

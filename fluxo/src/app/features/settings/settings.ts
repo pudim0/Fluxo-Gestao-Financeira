@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { Input as DsInput } from '../../shared/components/design-system/input/input';
@@ -13,10 +14,8 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
       <header class="page-header">
         <div>
           <p class="page-copy">
-            O painel de configurações vai concentrar personalização, conta e comportamento da
-            interface.
+            Centralize preferências da conta, aparência e recursos de acessibilidade.
           </p>
-          <br>
           <div class="button-config">
               <ds-button (click)="mostrarAba('perfil')">Perfil</ds-button>
               <ds-button (click)="mostrarAba('preferencias')">Preferências</ds-button>
@@ -25,7 +24,6 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
         </div>
       </header>
 
-      /* add contato em acessibilidade */
       <section class="page-grid">
         @if (abaAtiva() === 'perfil') {
           <ds-card
@@ -46,10 +44,12 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
           <ds-card
             eyebrow="Preferências"
             title="Interface"
-            subtitle="Configurações que podem virar toggles reais depois."
+            subtitle="Ajustes visuais e de experiência para o seu dia a dia."
           >
             <div class="tag-row">
-              <span class="tag">Tema escuro</span>
+              <button type="button" class="tag" (click)="toggleTheme()">
+                {{ theme() === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro' }}
+              </button>
               <span class="tag">Modo compacto</span>
               <span class="tag">Atalhos de teclado</span>
             </div>
@@ -60,7 +60,7 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
           <ds-card
             eyebrow="Acessibilidade"
             title="Ajustes"
-            subtitle="Configurações que podem virar toggles reais depois."
+            subtitle="Recursos para tornar a navegação mais confortável."
           >
             
           </ds-card>
@@ -81,7 +81,10 @@ import { Input as DsInput } from '../../shared/components/design-system/input/in
 })
 
 export class Settings {
+  private readonly document = inject(DOCUMENT);
+
   abaAtiva = signal<'perfil' | 'preferencias' | 'acessibilidade'>('perfil');
+  theme = signal<'dark' | 'light'>(this.readTheme());
 
     nomeOriginal = '';
     emailOriginal = '';
@@ -91,6 +94,10 @@ export class Settings {
     emailAtual = signal('');
     senhaAntiga = signal('');
     novaSenha = signal('');
+
+    constructor() {
+      this.applyTheme(this.theme());
+    }
 
     cancelarAlteracoes(): void {
       this.nomeAtual.set(this.nomeOriginal);
@@ -130,5 +137,27 @@ export class Settings {
         this.senhaAntiga() !== this.senhaOriginal ||
         this.novaSenha() !== this.senhaOriginal
       );
+    }
+
+    toggleTheme(): void {
+      const next = this.theme() === 'dark' ? 'light' : 'dark';
+      this.theme.set(next);
+      try {
+        localStorage.setItem('fluxo.theme', next);
+      } catch {}
+      this.applyTheme(next);
+    }
+
+    private readTheme(): 'dark' | 'light' {
+      try {
+        const theme = localStorage.getItem('fluxo.theme');
+        return theme === 'light' || theme === 'dark' ? theme : 'dark';
+      } catch {
+        return 'dark';
+      }
+    }
+
+    private applyTheme(theme: 'dark' | 'light'): void {
+      this.document.documentElement.setAttribute('data-theme', theme);
     }
 }

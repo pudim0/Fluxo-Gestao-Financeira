@@ -443,6 +443,28 @@
 }
 
 @media (max-width: 560px) {
+  .new-goal-form,
+  .contribution-form {
+    grid-template-columns: 1fr;
+  }
+
+  .new-goal-form button,
+  .contribution-form button {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .progress-heading {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .progress-value {
+    grid-column: 2;
+    justify-items: start;
+    min-width: 0;
+    text-align: left;
+  }
+
   .goals-carousel {
     grid-template-columns: 36px minmax(0, 1fr) 36px;
     gap: 8px;

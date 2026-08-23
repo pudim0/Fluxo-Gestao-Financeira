@@ -18,7 +18,7 @@ import { TransactionsService } from '../../services/transactions.service';
         <div>
 
           <h2 class="page-title">Movimentações recentes e recorrentes</h2>
-          <p class="page-copy">Registre cada entrada e saída para manter o dashboard atualizado.</p>
+          <p class="page-copy">Registre cada entrada e saída para manter o painel atualizado.</p>
         </div>
         <button class="primary-button" type="button" (click)="startCreate()">Nova transação</button>
       </header>

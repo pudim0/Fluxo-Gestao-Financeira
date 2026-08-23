@@ -2,8 +2,9 @@
 
 :root {
   color-scheme: dark;
-  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  scroll-behavior: smooth;
+  --font-display: 'Sora', 'Manrope', sans-serif;
+  --font-body: 'Manrope', 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
   --page-bg: #071018;
@@ -32,7 +33,9 @@
   --status-neutral: #8eb3d6;
   --status-negative: #ff8585;
   --shadow-soft: 0 20px 45px rgba(0, 0, 0, 0.24);
-  --radius-xl: 24px;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
   --theme-transition: 180ms ease;
 }
 
@@ -123,50 +126,24 @@ svg {
   position: relative;
   isolation: isolate;
   display: flex;
-  padding: 16px;
-  background:
-    radial-gradient(circle at top left, rgba(77, 215, 156, 0.16), transparent 26%),
-    radial-gradient(circle at top right, rgba(115, 92, 255, 0.16), transparent 24%), var(--page-bg);
+  padding: 14px;
+  background-color: var(--page-bg);
+  background-image: linear-gradient(
+    rgba(132, 156, 177, 0.035) 1px,
+    transparent 1px
+  ), linear-gradient(90deg, rgba(132, 156, 177, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
   color: var(--text-primary);
   transition:
     background-color var(--theme-transition),
     color var(--theme-transition);
 }
 
-.app-shell::before,
-.app-shell::after {
-  content: '';
-  position: absolute;
-  inset: auto;
-  border-radius: 999px;
-  pointer-events: none;
-  opacity: 0.8;
-  z-index: -1;
-  filter: blur(18px);
-}
-
-.app-shell::before {
-  top: 72px;
-  right: 8%;
-  width: 220px;
-  height: 220px;
-  background: rgba(0, 232, 122, 0.08);
-}
-
-.app-shell::after {
-  left: 6%;
-  bottom: 8%;
-  width: 280px;
-  height: 280px;
-  background: rgba(115, 92, 255, 0.08);
-}
-
 .sidebar {
-  width: 290px;
   flex-shrink: 0;
-  padding: 24px;
+  padding: 20px;
   border: 1px solid var(--border-color);
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
   background: linear-gradient(
     180deg,
     color-mix(in srgb, var(--surface-strong) 94%, transparent),
@@ -262,14 +239,15 @@ svg {
 
 .nav-item {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   text-align: left;
   text-decoration: none;
   border: 1px solid transparent;
-  border-radius: 16px;
-  padding: 14px 15px;
+  border-radius: var(--radius-lg);
+  padding: 12px 13px;
   background: transparent;
   color: var(--text-primary);
   transition:
@@ -301,7 +279,26 @@ svg {
 .nav-label {
   display: block;
   font-weight: 700;
+}
 
+.nav-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.nav-item.active .nav-icon,
+.nav-item:hover .nav-icon,
+.nav-item:focus-visible .nav-icon {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  color: var(--accent);
 }
 
 .nav-hint {
@@ -328,6 +325,40 @@ svg {
 .route-view {
   display: grid;
   gap: 18px;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(root) {
+  animation-name: route-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: route-fade-in;
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes route-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .page-shell {
@@ -485,7 +516,7 @@ svg {
   margin-bottom: 18px;
   padding: 22px 22px 20px;
   border: 1px solid var(--border-color);
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
   background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(18px);
@@ -549,6 +580,24 @@ svg {
 
 .notification-trigger {
   font-size: 1.08rem;
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff5f5f;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  border: 1px solid color-mix(in srgb, #ff5f5f 70%, #ffffff 30%);
 }
 
 .settings-dropdown {
@@ -734,7 +783,7 @@ svg {
 .secondary-button,
 .ghost-button,
 .icon-button {
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   font: inherit;
   cursor: pointer;
   transition:
@@ -800,7 +849,7 @@ svg {
   width: 100%;
   min-height: 46px;
   padding: 0 1rem;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: var(--surface-elevated);
   color: var(--text-primary);
@@ -1103,7 +1152,7 @@ svg {
 
 .ds-card {
   padding: 22px;
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   background: linear-gradient(
     180deg,
