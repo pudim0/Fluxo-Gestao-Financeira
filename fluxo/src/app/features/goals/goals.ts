@@ -14,6 +14,7 @@ export interface Goal {
   saved: number;
   monthly: number;
   deadlineLabel: string;
+  contributionHistory?: Record<string, number>;
 }
 
 export interface ChartPoint {
@@ -62,14 +63,30 @@ export class GoalsComponent {
   });
 
   // --- Gráfico de Evolução ---
-  readonly chartData = signal([
-    { month: 'Jan', amount: 15000 },
-    { month: 'Fev', amount: 18000 },
-    { month: 'Mar', amount: 24000 },
-    { month: 'Abr', amount: 28000 },
-    { month: 'Mai', amount: 32000 },
-    { month: 'Jun', amount: 40000 },
-  ]);
+  readonly chartData = computed(() => {
+    const goal = this.goals()[this.currentIndex()];
+    if (!goal) return [];
+
+    const currentDate = new Date();
+    return Array.from({ length: 6 }, (_, index) => {
+      const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 5 + index, 1);
+      const monthsAgo = 5 - index;
+      const monthKey = this.getMonthKey(monthDate);
+      const contributions = Object.entries(goal.contributionHistory ?? {});
+      const recordedContributions = contributions.reduce((sum, [key, value]) => {
+        return key <= monthKey ? sum + value : sum;
+      }, 0);
+      const totalRecorded = contributions.reduce((sum, [, value]) => sum + value, 0);
+      const baselineSaved = Math.max(0, goal.saved - totalRecorded);
+      const baseline = Math.max(0, baselineSaved - goal.monthly * monthsAgo);
+      const amount = Math.min(goal.target, baseline + recordedContributions);
+
+      return {
+        month: monthDate.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
+        amount: Math.round(amount * 100) / 100,
+      };
+    });
+  });
 
   readonly chartPoints = computed<ChartPoint[]>(() => {
     const data = this.chartData();
@@ -81,7 +98,7 @@ export class GoalsComponent {
     const paddingX = 30;
 
     return data.map((d, index) => {
-      const x = paddingX + (index / (data.length - 1)) * (width - paddingX * 2);
+      const x = paddingX + (index / Math.max(data.length - 1, 1)) * (width - paddingX * 2);
       const y = height - (d.amount / maxVal) * (height - 30) + 20;
       const position = (x / width) * 100;
 
@@ -131,6 +148,7 @@ export class GoalsComponent {
       saved: 0,
       monthly: monthly || 0,
       deadlineLabel: deadline ? deadline.split('-').reverse().join('/') : 'A definir',
+      contributionHistory: {},
     };
 
     this.goals.update((items) => [...items, newGoal]);
@@ -141,7 +159,15 @@ export class GoalsComponent {
   addContribution(goalId: number, amount: number): void {
     if (!amount || amount <= 0) return;
     this.goals.update((items) =>
-      items.map((g) => (g.id === goalId ? { ...g, saved: g.saved + amount } : g)),
+      items.map((g) =>
+        g.id === goalId
+          ? {
+              ...g,
+              saved: g.saved + amount,
+              contributionHistory: this.updateContributionHistory(g, amount),
+            }
+          : g,
+      ),
     );
     this.persistGoals();
   }
@@ -149,7 +175,15 @@ export class GoalsComponent {
   removeContribution(goalId: number, amount: number): void {
     if (!amount || amount <= 0) return;
     this.goals.update((items) =>
-      items.map((g) => (g.id === goalId ? { ...g, saved: Math.max(0, g.saved - amount) } : g)),
+      items.map((g) =>
+        g.id === goalId
+          ? {
+              ...g,
+              saved: Math.max(0, g.saved - amount),
+              contributionHistory: this.updateContributionHistory(g, -amount),
+            }
+          : g,
+      ),
     );
     this.persistGoals();
   }
@@ -207,6 +241,24 @@ export class GoalsComponent {
   private getStorageKey(): string {
     const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
     return `${GOALS_STORAGE_PREFIX}${email}`;
+  }
+
+  private updateContributionHistory(goal: Goal, amount: number): Record<string, number> {
+    const monthKey = this.getMonthKey(new Date());
+    const history = { ...(goal.contributionHistory ?? {}) };
+    const nextAmount = (history[monthKey] ?? 0) + amount;
+
+    if (nextAmount > 0) {
+      history[monthKey] = nextAmount;
+    } else {
+      delete history[monthKey];
+    }
+
+    return history;
+  }
+
+  private getMonthKey(date: Date): string {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   }
 
   private defaultGoals(): Goal[] {

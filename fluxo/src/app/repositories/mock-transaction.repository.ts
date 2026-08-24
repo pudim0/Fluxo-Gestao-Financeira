@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 
 import { AuthService } from '../core/services/auth.service';
 import { NewTransaction, Transaction } from '../models/transaction.model';
+import { FinancialProfile } from '../models/financial-profile.model';
 import { TransactionRepository } from './transaction.repository';
 
 const TRANSACTIONS_STORAGE_PREFIX = 'fluxo.mock.transactions:';
@@ -100,7 +101,10 @@ export class MockTransactionRepository implements TransactionRepository {
       return this.defaultTransactions.map((transaction) => ({ ...transaction }));
     }
 
-    return this.defaultTransactions.map((transaction) => ({ ...transaction }));
+    return this.defaultTransactions.map((transaction) => ({
+      ...transaction,
+      ...(transaction.type === 'income' ? { amount: this.getInitialIncome() } : {}),
+    }));
   }
 
   private persist(): void {
@@ -113,6 +117,32 @@ export class MockTransactionRepository implements TransactionRepository {
 
   private getStorageKey(): string {
     return `${TRANSACTIONS_STORAGE_PREFIX}${this.getUserKey()}`;
+  }
+
+  private getInitialIncome(): number {
+    try {
+      const storedProfile = localStorage.getItem(`fluxo.profile:${this.getUserKey()}`);
+      const profile = storedProfile ? (JSON.parse(storedProfile) as FinancialProfile) : null;
+      const amount = this.parseAmount(profile?.incomeAmount ?? '');
+
+      if (!amount) return 6500;
+
+      const multiplier = {
+        Diariamente: 30,
+        Semanalmente: 52 / 12,
+        Quinzenalmente: 26 / 12,
+        Mensalmente: 1,
+        Eventualmente: 1,
+      }[profile?.incomeFrequency ?? 'Mensalmente'] ?? 1;
+
+      return Math.round(amount * multiplier * 100) / 100;
+    } catch {
+      return 6500;
+    }
+  }
+
+  private parseAmount(value: string): number {
+    return Number(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
   }
 
   private getUserKey(): string {

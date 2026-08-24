@@ -24,7 +24,6 @@ export class AppShell {
     { label: 'Painel', icon: '▦', route: '/dashboard' },
     { label: 'Transações', icon: '↕', route: '/transacoes' },
     { label: 'Orçamento', icon: '◫', route: '/orcamento' },
-    { label: 'Relatórios', icon: '⌁', route: '/relatorios' },
     { label: 'Metas', icon: '◎', route: '/metas' },
   ];
 
@@ -52,10 +51,6 @@ export class AppShell {
 
     if (url.startsWith('/orcamento')) {
       return 'Orçamento';
-    }
-
-    if (url.startsWith('/relatorios')) {
-      return 'Relatórios';
     }
 
     if (url.startsWith('/metas')) {

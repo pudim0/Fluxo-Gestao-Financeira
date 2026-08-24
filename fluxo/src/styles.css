@@ -944,7 +944,37 @@ svg {
 }
 
 .transaction-form {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.875fr) minmax(0, 0.875fr);
+  align-items: start;
+}
+
+.transaction-form .field {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+}
+
+.transaction-form .secondary-button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.category-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 46px;
+  gap: 8px;
+}
+
+.category-confirm-button {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  font-size: 1.25rem;
+}
+
+.category-confirm-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .field--wide {
@@ -1319,15 +1349,37 @@ svg {
   padding: 16px;
   background: rgba(5, 10, 20, 0.66);
   backdrop-filter: blur(4px);
+  animation: modal-backdrop-in 180ms ease-out both;
 }
 
 .ds-modal {
-  width: min(560px, 100%);
+  width: min(760px, 100%);
   border-radius: 24px;
   border: 1px solid var(--border-color);
   background: var(--surface-strong);
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
   padding: 22px;
+  animation: modal-panel-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .ds-modal__header {
@@ -1439,7 +1491,7 @@ svg {
   }
 
   .topbar-actions {
-    justify-start: flex-start;
+    justify-content: flex-start;
   }
 }
 
