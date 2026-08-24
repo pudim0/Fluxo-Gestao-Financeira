@@ -2,11 +2,14 @@
   <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
   <aside class="sidebar" [class.open]="sidebarOpen()" id="app-sidebar">
     <div class="sidebar-top">
-      <div class="brand-mark">F$</div>
+      <div class="brand-lockup">
+        <div class="brand-mark">F$</div>
         <div>
           <p class="brand-name">Flu$o</p>
           <p class="brand-note">Gestão financeira</p>
-        </div><button
+        </div>
+      </div>
+      <button
         class="icon-button mobile-only"
         type="button"
         (click)="closeSidebar()"

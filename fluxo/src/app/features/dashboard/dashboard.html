@@ -70,13 +70,18 @@
     </div>
 
     <section class="dashboard-grid">
-      <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculated do histórico">
+      <article class="ds-card">
+        <header class="ds-card__header">
+          <p class="ds-card__eyebrow">Indicadores</p>
+          <h3 class="ds-card__title">Saúde financeira</h3>
+          <p class="ds-card__subtitle">Resumo calculated do histórico</p>
+        </header>
         <div class="tag-row">
           @for (highlight of highlights(); track highlight) {
             <span class="tag">{{ highlight }}</span>
           }
         </div>
-      </ds-card>
+      </article>
     </section>
   </section>
 
@@ -228,7 +233,12 @@
   </section>
 
   <section class="dashboard-grid dashboard-grid--lower">
-    <ds-card eyebrow="Fluxo" title="Entradas e saídas" subtitle="Comparação baseada nas transações atuais.">
+    <article class="ds-card">
+      <header class="ds-card__header">
+        <p class="ds-card__eyebrow">Fluxo</p>
+        <h3 class="ds-card__title">Entradas e saídas</h3>
+        <p class="ds-card__subtitle">Comparação baseada nas transações atuais.</p>
+      </header>
       <div class="dashboard-chart" aria-label="Comparação entre entradas e saídas">
         @for (item of chartData(); track item.label) {
           <div class="dashboard-chart__row">
@@ -246,19 +256,24 @@
           </div>
         }
       </div>
-    </ds-card>
+    </article>
 
-    <ds-card eyebrow="Alertas" title="Ações rápidas" subtitle="Atalhos para áreas críticas da sua rotina.">
+    <article class="ds-card">
+      <header class="ds-card__header">
+        <p class="ds-card__eyebrow">Alertas</p>
+        <h3 class="ds-card__title">Ações rápidas</h3>
+        <p class="ds-card__subtitle">Atalhos para áreas críticas da sua rotina.</p>
+      </header>
       <div class="alert-links">
-        <a class="alert-link" routerLink="/notificacoes">
+        <a class="alert-link" [routerLink]="['/notificacoes']">
           <span class="alert-link__title">Alertas</span>
           <span class="alert-link__detail">Abrir central de notificações</span>
         </a>
-        <a class="alert-link" routerLink="/transacoes">
+        <a class="alert-link" [routerLink]="['/transacoes']">
           <span class="alert-link__title">Últimas transações</span>
           <span class="alert-link__detail">Ver histórico completo</span>
         </a>
-        <a class="alert-link" routerLink="/metas">
+        <a class="alert-link" [routerLink]="['/metas']">
           <span class="alert-link__title">Investimentos</span>
           <span class="alert-link__detail">Acompanhar metas e aportes</span>
         </a>
@@ -271,6 +286,6 @@
           </a>
         }
       </div>
-    </ds-card>
+    </article>
   </section>
 </section>
