@@ -18,6 +18,7 @@
   },
 
   "settings": {
+    "tituloPaginaDashboard": "Dashboard",
     "tituloPaginaConfig": "Configurações",
     "tituloPaginaMetas": "Metas",
     "tituloPaginaTransacoes": "Transações",
