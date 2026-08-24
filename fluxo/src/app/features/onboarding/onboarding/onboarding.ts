@@ -1,6 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
+
+const PROFILE_STORAGE_PREFIX = 'fluxo.profile:';
 
 type Question =
   | 'goal'
@@ -45,21 +49,12 @@ type AnswerField = Exclude<
   styleUrl: './onboarding.css'
 })
 export class Onboarding {
+  private readonly authService = inject(AuthService);
   started = false;
   currentStep = 0;
   showSummary = false;
 
-  profile: FinancialProfile = {
-    goal: '',
-    incomeSource: '',
-    incomeFrequency: '',
-    incomeType: '',
-    hasDebt: '',
-    debtTypes: [],
-    debtAmount: '',
-    hasEmergencyFund: '',
-    concern: ''
-  };
+  profile: FinancialProfile = this.readProfile();
 
   readonly goals = [
     'Organizar minhas finanças',
@@ -242,9 +237,36 @@ export class Onboarding {
 
   finish(): void {
     try {
-      localStorage.setItem('financialProfile', JSON.stringify(this.profile));
+      localStorage.setItem(this.getProfileStorageKey(), JSON.stringify(this.profile));
     } catch {
     }
     this.router.navigate(['/dashboard']);
+  }
+
+  private getProfileStorageKey(): string {
+    const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
+    return `${PROFILE_STORAGE_PREFIX}${email}`;
+  }
+
+  private readProfile(): FinancialProfile {
+    try {
+      const stored = localStorage.getItem(this.getProfileStorageKey());
+      if (stored) {
+        return JSON.parse(stored) as FinancialProfile;
+      }
+    } catch {
+    }
+
+    return {
+      goal: '',
+      incomeSource: '',
+      incomeFrequency: '',
+      incomeType: '',
+      hasDebt: '',
+      debtTypes: [],
+      debtAmount: '',
+      hasEmergencyFund: '',
+      concern: ''
+    };
   }
 } 

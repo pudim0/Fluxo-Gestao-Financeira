@@ -25,9 +25,9 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-areas:
-    "main chart"
-    "main tip"
-    "main prompt";
+    'main chart'
+    'main tip'
+    'main prompt';
   gap: 16px;
   margin-top: 16px;
 }
@@ -146,7 +146,10 @@
   cursor: pointer;
   font-size: 1.3rem;
   line-height: 1;
-  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .carousel-arrow:hover:not(:disabled),
@@ -195,7 +198,9 @@
   border-radius: 50%;
   background: rgba(115, 155, 190, 0.35);
   cursor: pointer;
-  transition: transform 140ms ease, background-color 140ms ease;
+  transition:
+    transform 140ms ease,
+    background-color 140ms ease;
 }
 
 .carousel-dot:hover,
@@ -378,7 +383,9 @@
   outline: none;
   stroke: var(--surface-strong);
   stroke-width: 2px;
-  transition: r 140ms ease, stroke-width 140ms ease;
+  transition:
+    r 140ms ease,
+    stroke-width 140ms ease;
 }
 
 .goals-chart circle:hover,
@@ -428,15 +435,36 @@
 
   .goals-layout {
     grid-template-areas:
-      "tip"
-      "prompt"
-      "main"
-      "chart";
+      'tip'
+      'prompt'
+      'main'
+      'chart';
   }
-
 }
 
 @media (max-width: 560px) {
+  .new-goal-form,
+  .contribution-form {
+    grid-template-columns: 1fr;
+  }
+
+  .new-goal-form button,
+  .contribution-form button {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .progress-heading {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .progress-value {
+    grid-column: 2;
+    justify-items: start;
+    min-width: 0;
+    text-align: left;
+  }
+
   .goals-carousel {
     grid-template-columns: 36px minmax(0, 1fr) 36px;
     gap: 8px;
@@ -462,10 +490,10 @@
   .goals-layout {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "tip"
-      "prompt"
-      "main"
-      "chart";
+      'tip'
+      'prompt'
+      'main'
+      'chart';
   }
 
   .progress-list {
