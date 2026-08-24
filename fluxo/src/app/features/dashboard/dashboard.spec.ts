@@ -35,6 +35,14 @@ describe('Dashboard', () => {
     expect(metrics.length).toBeGreaterThan(0);
   });
 
+  it('should render the overview panels from the dashboard mockup', () => {
+    const overviewPanel = fixture.nativeElement.querySelector('.overview-panel');
+    const insightsPanel = fixture.nativeElement.querySelector('.insights-panel');
+
+    expect(overviewPanel).toBeTruthy();
+    expect(insightsPanel).toBeTruthy();
+  });
+
   it('shows only three recent transactions in the dashboard preview', () => {
     const rows = fixture.nativeElement.querySelectorAll('.transaction-preview__row');
     expect(rows.length).toBe(3);
