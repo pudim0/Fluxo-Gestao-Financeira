@@ -1,12 +1,12 @@
 <main class="auth-page">
   <section class="auth-showcase" aria-label="Sobre o Flu$o">
     <div class="auth-showcase__content">
-      <a class="brand" routerLink="/login"><span class="brand__mark">↯</span>Flu$o</a>
+      <a class="brand" routerLink="/login"><span class="brand__mark">F$</span>Flu$o</a>
       <h1>Seu dinheiro, inteligente.</h1>
       <p>
         Tenha clareza para decidir melhor. Organize contas, despesas e objetivos em um só lugar.
       </p>
-      <span class="open-finance">● Open Finance integrado</span>
+      <span class="open-finance">● Ecossistema financeiro integrado</span>
       <div class="auth-stats" aria-label="Indicadores da plataforma">
         <div><strong>100%</strong><span>visão financeira</span></div>
         <div><strong>24/7</strong><span>sempre com você</span></div>
@@ -17,17 +17,22 @@
   <section class="auth-form-area">
     <div class="auth-card">
       <a class="brand auth-card__brand" routerLink="/login"
-        ><span class="brand__mark">↯</span>Flu$o</a
+        ><span class="brand__mark">F$</span>Flu$o</a
       >
       <h1>Bem-vindo de volta</h1>
       <p class="auth-card__intro">Entre na sua conta para continuar</p>
+
+      @if (validationMessage()) {
+        <p class="auth-message auth-message--error" role="alert" aria-live="assertive">{{ validationMessage() }}</p>
+      }
       @if (route.snapshot.queryParamMap.get('reason') === 'session-expired') {
-        <p class="auth-message">Sua sessão expirou. Entre novamente para continuar.</p>
+        <p class="auth-message" role="status" aria-live="polite">Sua sessão expirou. Entre novamente para continuar.</p>
       }
       <form class="auth-form" (ngSubmit)="submit()">
-        <label class="auth-field"
+        <label class="auth-field" for="login-email"
           ><span class="auth-field__header">E-mail</span
           ><input
+            id="login-email"
             type="email"
             name="email"
             [(ngModel)]="email"
@@ -35,14 +40,16 @@
             autocomplete="email"
             required
         /></label>
-        <label class="auth-field"
+        <label class="auth-field" for="login-password"
           ><span class="auth-field__header"
             >Senha <a class="auth-link" routerLink="/recuperar-senha">Esqueci a senha</a></span
           ><span class="auth-password"
             ><input
+              id="login-password"
               [type]="passwordVisible() ? 'text' : 'password'"
               name="password"
               [(ngModel)]="password"
+              minlength="8"
               placeholder="••••••••"
               autocomplete="current-password"
               required
@@ -66,17 +73,25 @@
           disabled
           title="Disponível quando a autenticação social for integrada"
         >
-          Google</button
-        ><button
+          <span class="social-icon social-icon--google" aria-hidden="true">G</span>
+          Google
+        </button>
+        <button
           type="button"
           disabled
           title="Disponível quando a autenticação social for integrada"
         >
+          <svg class="social-icon social-icon--apple" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M16.77 12.74c.02 2.06 1.8 2.75 1.82 2.76-.02.05-.28.96-.93 1.9-.56.81-1.14 1.62-2.06 1.64-.9.02-1.2-.53-2.24-.53-1.05 0-1.38.51-2.23.55-.9.03-1.58-.88-2.15-1.69-1.17-1.65-2.06-4.67-.86-6.71.6-1.01 1.67-1.65 2.83-1.67.88-.02 1.72.58 2.24.58.52 0 1.5-.72 2.53-.61.43.02 1.65.17 2.43 1.31-.06.04-1.45.84-1.43 2.47ZM15.11 7.9c.47-.57.79-1.37.7-2.16-.68.03-1.5.45-1.99 1.02-.43.5-.81 1.32-.71 2.1.76.06 1.53-.39 2-.96Z"
+            />
+          </svg>
           Apple
         </button>
       </div>
       <p class="auth-footnote">
-        Não tem uma conta? <a class="auth-link" routerLink="/cadastro">Criar conta grátis</a>
+        Não tem uma conta? <a class="auth-link" routerLink="/register">Criar conta grátis</a>
       </p>
       <p class="auth-footer">© 2026 Flu$o · Todos os direitos reservados</p>
     </div>

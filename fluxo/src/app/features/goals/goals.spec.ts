@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Goals } from './goals';
+import { GoalsComponent } from './goals';
 
-describe('Goals', () => {
-  let component: Goals;
-  let fixture: ComponentFixture<Goals>;
+describe('GoalsComponent', () => {
+  let component: GoalsComponent;
+  let fixture: ComponentFixture<GoalsComponent>;
 
   beforeEach(async () => {
-    localStorage.removeItem('fluxo.goals.state');
+    localStorage.clear();
     await TestBed.configureTestingModule({
-      imports: [Goals],
+      imports: [GoalsComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Goals);
+    fixture = TestBed.createComponent(GoalsComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
@@ -27,43 +27,17 @@ describe('Goals', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(component.chartData()[2].month);
-    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain('9.500');
+    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain('24.000');
   });
 
-  it('should recalculate the line when monthly values change', () => {
-    const initialPolyline = fixture.nativeElement.querySelector('polyline').getAttribute('points');
-    component.chartValues.set([1000, 2200, 900]);
-    fixture.detectChanges();
-
-    const updatedPolyline = fixture.nativeElement.querySelector('polyline').getAttribute('points');
-
-    expect(updatedPolyline).not.toBe(initialPolyline);
-    expect(fixture.nativeElement.querySelectorAll('.chart-labels small')).toHaveLength(3);
-  });
-
-  it('should answer questions about the emergency reserve', () => {
-    component.askFinancialAssistant('Como está minha reserva de emergência?');
-    fixture.detectChanges();
-
-    expect(fixture.nativeElement.querySelector('.assistant-response')?.textContent).toContain('R$');
-    expect(fixture.nativeElement.querySelector('.assistant-response')?.textContent).toContain('40%');
-  });
-
-  it('should add a contribution and update the saved total', () => {
+  it('should add and remove contributions', () => {
     const savedBefore = component.goals()[0].saved;
-    const chartBefore = component.chartData().at(-1)?.value;
     component.addContribution(component.goals()[0].id, 300);
-
     expect(component.goals()[0].saved).toBe(savedBefore + 300);
-    expect(component.chartData().at(-1)?.value).toBe((chartBefore ?? 0) + 300);
-  });
 
-  it('should remove only the requested amount from a goal', () => {
-    const savedBefore = component.goals()[0].saved;
     component.removeContribution(component.goals()[0].id, 500);
 
-    expect(component.goals()[0].saved).toBe(savedBefore - 500);
-    expect(component.monthlySaved()).toBe(550);
+    expect(component.goals()[0].saved).toBe(savedBefore - 200);
   });
 
   it('should add a new goal with zero saved amount', () => {
@@ -76,9 +50,8 @@ describe('Goals', () => {
   it('should persist goal changes in local storage', () => {
     component.addContribution(component.goals()[0].id, 300);
 
-    const savedState = JSON.parse(localStorage.getItem('fluxo.goals.state') ?? '{}');
+    const savedState = JSON.parse(localStorage.getItem('fluxo.goals:anonymous') ?? '[]');
 
-    expect(savedState.goals[0].saved).toBe(2400);
-    expect(savedState.monthlySaved).toBe(1350);
+    expect(savedState[0].saved).toBe(12300);
   });
 });

@@ -42,8 +42,10 @@
         @for (tab of tabs(); track tab.label) {
           <button
             type="button"
+            role="tab"
             class="feed-tab"
             [class.is-active]="activeCategory() === tab.label"
+            [attr.aria-selected]="activeCategory() === tab.label"
             (click)="selectCategory(tab.label)"
           >
             {{ tab.label }} <span>{{ tab.count }}</span>
@@ -51,7 +53,7 @@
         }
       </div>
 
-      <div class="feed-group">
+      <div class="feed-group" role="tabpanel" aria-label="Lista de notificações">
         <div class="feed-date">HOJE</div>
 
         @if (filteredNotifications().length > 0) {
@@ -59,6 +61,7 @@
             <article
               class="notification-item"
               [class.is-read]="item.read"
+              [attr.aria-label]="'Notificação: ' + item.title"
               role="button"
               tabindex="0"
               (click)="markAsRead(item.id)"

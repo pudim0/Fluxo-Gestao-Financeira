@@ -20,8 +20,30 @@ export class Dashboard {
   protected readonly metrics = computed(() => this.transactionsService.metrics());
   protected readonly highlights = computed(() => this.transactionsService.highlights());
   protected readonly recentTransactions = computed(() =>
-    this.transactionsService.transactions().slice(0, 5),
+    this.transactionsService.transactions().slice(0, 3),
   );
+  protected readonly latestAlerts = computed(() => {
+    const transactions = this.transactionsService.transactions().slice(0, 3);
+    return transactions.map((transaction) => ({
+      id: transaction.id,
+      label: transaction.description,
+      detail: `${transaction.category} • ${transaction.amount.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      })}`,
+      route: '/notificacoes',
+    }));
+  });
+  protected readonly chartData = computed(() => {
+    const income = this.transactionsService.totalIncome();
+    const expense = this.transactionsService.totalExpense();
+    const maximum = Math.max(income, expense, 1);
+
+    return [
+      { label: 'Entradas', value: income, percentage: (income / maximum) * 100, tone: 'income' },
+      { label: 'Saídas', value: expense, percentage: (expense / maximum) * 100, tone: 'expense' },
+    ];
+  });
 
   protected goToTransactions(): void {
     void this.router.navigateByUrl('/transacoes');

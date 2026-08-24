@@ -9,7 +9,7 @@ describe('TransactionsService', () => {
   let service: TransactionsService;
 
   beforeEach(() => {
-    localStorage.removeItem('fluxo.mock.transactions');
+    localStorage.removeItem('fluxo.mock.transactions:anonymous');
     TestBed.configureTestingModule({
       providers: [
         TransactionsService,
@@ -49,5 +49,25 @@ describe('TransactionsService', () => {
     service.delete(created.id);
     expect(service.transactions()).toHaveLength(4);
     expect(service.totalIncome()).toBe(6500);
+  });
+
+  it('reuses existing category when only casing, accents or spaces differ', () => {
+    const duplicatedCategoryTransaction: NewTransaction = {
+      description: 'Mercado bairro',
+      amount: 152.3,
+      type: 'expense',
+      category: '  alimentacao  ',
+      date: '2026-08-14',
+      account: 'Conta principal',
+    };
+
+    service.create(duplicatedCategoryTransaction);
+
+    const created = service.transactions().find((item) => item.description === 'Mercado bairro');
+    expect(created).toBeTruthy();
+    expect(created?.category).toBe('Alimentação');
+
+    const normalizedCategories = service.categories().map((category) => category.toLowerCase());
+    expect(normalizedCategories.filter((category) => category === 'alimentação')).toHaveLength(1);
   });
 });

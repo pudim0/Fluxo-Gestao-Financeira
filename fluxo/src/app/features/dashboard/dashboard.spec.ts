@@ -11,7 +11,7 @@ describe('Dashboard', () => {
   let fixture: ComponentFixture<Dashboard>;
 
   beforeEach(async () => {
-    localStorage.removeItem('fluxo.mock.transactions');
+    localStorage.removeItem('fluxo.mock.transactions:anonymous');
     await TestBed.configureTestingModule({
       imports: [Dashboard, RouterTestingModule],
       providers: [
@@ -33,5 +33,21 @@ describe('Dashboard', () => {
   it('should render metric cards', () => {
     const metrics = fixture.nativeElement.querySelectorAll('.metric-card');
     expect(metrics.length).toBeGreaterThan(0);
+  });
+
+  it('shows only three recent transactions in the dashboard preview', () => {
+    const rows = fixture.nativeElement.querySelectorAll('.transaction-preview__row');
+    expect(rows.length).toBe(3);
+  });
+
+  it('renders quick links to notificacoes, transacoes and metas', () => {
+    const links = Array.from(
+      fixture.nativeElement.querySelectorAll('.alert-links a'),
+    ) as HTMLAnchorElement[];
+
+    expect(links.length).toBe(3);
+    expect(links[0].getAttribute('href')).toContain('/notificacoes');
+    expect(links[1].getAttribute('href')).toContain('/transacoes');
+    expect(links[2].getAttribute('href')).toContain('/metas');
   });
 });

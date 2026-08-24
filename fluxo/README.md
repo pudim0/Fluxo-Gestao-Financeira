@@ -44,6 +44,17 @@ To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use th
 ng test
 ```
 
+## Authentication and persistence
+
+The current authentication is a front-end demonstration. The app stores a demo
+token and the normalized email in `localStorage` so the session survives reloads.
+Transactions, goals, and onboarding profiles use email-scoped keys for local
+demonstration data; the theme remains global. This is not a security boundary.
+
+Before production, replace `AuthService` with a backend integration that verifies
+credentials, issues server-side tokens, and authorizes every user-owned record by
+the authenticated user ID.
+
 ## Running end-to-end tests
 
 For end-to-end (e2e) testing, run:

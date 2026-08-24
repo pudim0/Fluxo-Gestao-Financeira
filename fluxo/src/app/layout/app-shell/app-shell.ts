@@ -1,8 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationCenterService } from '../../services/notification-center.service';
 
 @Component({
   selector: 'app-shell',
@@ -13,21 +14,24 @@ export class AppShell {
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  protected readonly theme = signal<'dark' | 'light'>(this.readTheme());
+  private readonly notificationCenter = inject(NotificationCenterService);
   protected readonly sidebarOpen = signal(false);
   protected readonly settingsOpen = signal(false);
+  protected readonly unreadNotifications = computed(
+    () => this.notificationCenter.notifications().filter((item) => !item.read).length,
+  );
   protected readonly navigation = [
-    { label: 'Dashboard', route: '/dashboard' },
-    { label: 'Transações', route: '/transacoes' },
-    { label: 'Orçamento', route: '/orcamento' },
-    { label: 'Relatórios', route: '/relatorios' },
-    { label: 'Metas', route: '/metas' },
+    { label: 'Painel', icon: '▦', route: '/dashboard' },
+    { label: 'Transações', icon: '↕', route: '/transacoes' },
+    { label: 'Orçamento', icon: '◫', route: '/orcamento' },
+    { label: 'Relatórios', icon: '⌁', route: '/relatorios' },
+    { label: 'Metas', icon: '◎', route: '/metas' },
   ];
 
   protected readonly mensagem = signal('Visão geral');
 
   constructor() {
-    this.applyTheme(this.theme());
+    this.applyTheme(this.readTheme());
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -39,7 +43,7 @@ export class AppShell {
 
   private getMensagem(url: string): string {
     if (url.startsWith('/dashboard')) {
-      return 'Dashboard';
+      return 'Painel';
     }
 
     if (url.startsWith('/transacoes')) {
@@ -62,17 +66,13 @@ export class AppShell {
       return 'Configurações';
     }
 
+    if (url.startsWith('/notificacoes')) {
+      return 'Notificações';
+    }
+
     return 'Visão geral';
   }
 
-  protected toggleTheme(): void {
-    const next = this.theme() === 'dark' ? 'light' : 'dark';
-    this.theme.set(next);
-    try {
-      localStorage.setItem('fluxo.theme', next);
-    } catch {}
-    this.applyTheme(next);
-  }
   protected toggleSidebar(): void {
     this.sidebarOpen.update((open) => !open);
   }

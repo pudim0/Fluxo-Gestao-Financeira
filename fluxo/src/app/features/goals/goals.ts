@@ -1,7 +1,10 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
+import { AuthService } from '../../core/services/auth.service';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
+
+const GOALS_STORAGE_PREFIX = 'fluxo.goals:';
 
 export interface Goal {
   id: number;
@@ -30,36 +33,8 @@ export interface ChartPoint {
   styleUrl: './goals.css',
 })
 export class GoalsComponent {
-  // --- Estados Principais ---
-  readonly goals = signal<Goal[]>([
-    {
-      id: 1,
-      icon: '🛡️',
-      name: 'Reserva de emergência',
-      target: 15000,
-      saved: 12000,
-      monthly: 500,
-      deadlineLabel: '12/2026',
-    },
-    {
-      id: 2,
-      icon: '✈️',
-      name: 'Viagem Europa',
-      target: 20000,
-      saved: 6000,
-      monthly: 800,
-      deadlineLabel: '07/2027',
-    },
-    {
-      id: 3,
-      icon: '🚗',
-      name: 'Troca de carro',
-      target: 35000,
-      saved: 22000,
-      monthly: 1200,
-      deadlineLabel: '11/2027',
-    },
-  ]);
+  private readonly authService = inject(AuthService);
+  readonly goals = signal<Goal[]>(this.readGoals());
 
   readonly currentIndex = signal<number>(0);
   readonly activeChartPoint = signal<ChartPoint | null>(null);
@@ -160,6 +135,7 @@ export class GoalsComponent {
 
     this.goals.update((items) => [...items, newGoal]);
     this.currentIndex.set(this.goals().length - 1);
+    this.persistGoals();
   }
 
   addContribution(goalId: number, amount: number): void {
@@ -167,6 +143,7 @@ export class GoalsComponent {
     this.goals.update((items) =>
       items.map((g) => (g.id === goalId ? { ...g, saved: g.saved + amount } : g)),
     );
+    this.persistGoals();
   }
 
   removeContribution(goalId: number, amount: number): void {
@@ -174,13 +151,20 @@ export class GoalsComponent {
     this.goals.update((items) =>
       items.map((g) => (g.id === goalId ? { ...g, saved: Math.max(0, g.saved - amount) } : g)),
     );
+    this.persistGoals();
   }
 
   removeGoal(goalId: number): void {
+    const goal = this.goals().find((item) => item.id === goalId);
+    if (!goal || !window.confirm(`Excluir a meta "${goal.name}"?`)) {
+      return;
+    }
+
     this.goals.update((items) => items.filter((g) => g.id !== goalId));
     if (this.currentIndex() >= this.goals().length && this.currentIndex() > 0) {
       this.currentIndex.update((i) => i - 1);
     }
+    this.persistGoals();
   }
 
   // --- Interações com Gráfico e IA ---
@@ -197,5 +181,39 @@ export class GoalsComponent {
     this.assistantResponse.set(
       `Analisando sua pergunta ("${question}")... Com base nos seus aportes atuais, manter o ritmo reduzirá seu prazo geral em até 2 meses.`,
     );
+  }
+
+  private readGoals(): Goal[] {
+    try {
+      const stored = localStorage.getItem(this.getStorageKey());
+      if (stored) {
+        return JSON.parse(stored) as Goal[];
+      }
+    } catch {
+      return this.defaultGoals();
+    }
+
+    return this.defaultGoals();
+  }
+
+  private persistGoals(): void {
+    try {
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(this.goals()));
+    } catch {
+      // Storage may be unavailable in some test environments.
+    }
+  }
+
+  private getStorageKey(): string {
+    const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
+    return `${GOALS_STORAGE_PREFIX}${email}`;
+  }
+
+  private defaultGoals(): Goal[] {
+    return [
+      { id: 1, icon: '🛡️', name: 'Reserva de emergência', target: 15000, saved: 12000, monthly: 500, deadlineLabel: '12/2026' },
+      { id: 2, icon: '✈️', name: 'Viagem Europa', target: 20000, saved: 6000, monthly: 800, deadlineLabel: '07/2027' },
+      { id: 3, icon: '🚗', name: 'Troca de carro', target: 35000, saved: 22000, monthly: 1200, deadlineLabel: '11/2027' },
+    ];
   }
 }
