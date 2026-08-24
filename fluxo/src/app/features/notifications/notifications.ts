@@ -21,6 +21,7 @@ export interface FeedTab {
 })
 export class Notifications {
   private readonly notificationCenter = inject(NotificationCenterService);
+
   // --- Estado Reativo (Signals) ---
   readonly activeCategory = signal<string>('Todas');
   readonly notifications = this.notificationCenter.notifications;
@@ -80,16 +81,6 @@ export class Notifications {
   // --- Ações ---
   selectCategory(category: string): void {
     this.activeCategory.set(category);
-  }
-
-  markAsRead(notificationId: number): void {
-    this.notifications.update((items) =>
-      items.map((item) =>
-        item.id === notificationId && !item.read
-          ? { ...item, read: true }
-          : item,
-      ),
-    );
   }
 
   markAllAsRead(): void {

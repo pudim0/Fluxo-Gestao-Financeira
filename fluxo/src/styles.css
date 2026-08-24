@@ -325,6 +325,7 @@ svg {
 .route-view {
   display: grid;
   gap: 18px;
+  margin-left: 10px;
 }
 
 ::view-transition-old(root),
@@ -1097,6 +1098,12 @@ svg {
   place-items: center;
 }
 
+:root[data-theme='light'] .icon-button {
+  background: var(--surface-strong);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
 .mobile-only {
   display: none;
 }
@@ -1451,6 +1458,10 @@ svg {
 
   .page {
     padding: 16px 16px 32px;
+  }
+
+  .route-view {
+    margin-left: 0;
   }
 
   .topbar {
