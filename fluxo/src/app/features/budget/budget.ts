@@ -24,53 +24,60 @@ import { Button as DsButton } from '../../shared/components/design-system/button
               </ds-button>
           </div>
           <p class="page-copy">
-            Controle os tetos de gasto e acompanhe a distribuição por categoria em um único painel.
+            {{ 'budget.descricao' | translate }}
           </p>
       </header>
 
       <section class="page-grid">
-        <ds-card
-          eyebrow="Categorias"
-          title="Distribuição mensal"
-          subtitle="Panorama dos limites atuais por grupo de despesas."
-        >
-          <div class="progress-list">
-            <div class="progress-item">
-              <div class="progress-top"><span>Alimentação</span><span>72%</span></div>
-              <div class="budget-info"><span><strong>Limite:</strong> R$ 1.200,00</span><span><strong>Usado:</strong> R$ 864,00</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 72%"></div>              
-            </div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-top"><span>Transporte</span><span>44%</span></div>
-              <div class="budget-info"><span><strong>Limite:</strong> R$ 500,00</span><span><strong>Usado:</strong> R$ 220,00</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 44%"></div></div>
-            </div>
-            <div class="progress-item">
-              <div class="progress-top"><span>Assinaturas</span><span>81%</span></div>
-              <div class="budget-info"><span><strong>Limite:</strong> R$ 300,00</span><span><strong>Usado:</strong> R$ 243,00</span></div>
-              <div class="progress-track"><div class="progress-fill" style="width: 81%"></div></div>
-            </div>
-          </div>
-        </ds-card>
 
-        <ds-card
-          eyebrow="Limites"
-          title="Alterar teto de gastos"
-          subtitle="Panorama dos limites atuais por grupo de despesas."
-        >
-        </ds-card>
+        @if (abaAtivaBudget() === 'categorias') {
+          <ds-card
+            eyebrow="{{ 'budget.categorias' | translate }}"
+            title="{{ 'budget.msgCategorias' | translate }}"
+            subtitle="{{ 'budget.msgDescricaoCategorias' | translate }}"
+          >
+            <div class="progress-list">
+              <div class="progress-item">
+                <div class="progress-top"><span>Alimentação</span><span>72%</span></div>
+                <div class="budget-info"><span><strong>Limite:</strong> R$ 1.200,00</span><span><strong>Usado:</strong> R$ 864,00</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width: 72%"></div>              
+              </div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-top"><span>Transporte</span><span>44%</span></div>
+                <div class="budget-info"><span><strong>Limite:</strong> R$ 500,00</span><span><strong>Usado:</strong> R$ 220,00</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width: 44%"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-top"><span>Assinaturas</span><span>81%</span></div>
+                <div class="budget-info"><span><strong>Limite:</strong> R$ 300,00</span><span><strong>Usado:</strong> R$ 243,00</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width: 81%"></div></div>
+              </div>
+            </div>
+          </ds-card>
+        }
 
-        <ds-card
-        eyebrow="Disciplina"
-          title="Adicionar e ou remover categorias"
-          subtitle="Panorama dos limites atuais por grupo de despesas."
-        >
-        </ds-card>
-        <ds-card class=button-budget>
-          <ds-button variant="primary">Adicionar</ds-button>
-          <ds-button variant="secondary">Remover</ds-button>
-        </ds-card>
+        @if (abaAtivaBudget() === 'limites') {
+          <ds-card
+            eyebrow="{{ 'budget.limites' | translate }}"
+            title="{{ 'budget.msgLimites' | translate }}"
+            subtitle="{{ 'budget.msgDescricaoLimites' | translate }}"
+          >
+          </ds-card>
+        }
+
+        @if (abaAtivaBudget() === 'disciplina') {
+          <ds-card
+          eyebrow="{{ 'budget.disciplina' | translate }}"
+            title="{{ 'budget.msgDisciplina' | translate }}"
+            subtitle="{{ 'budget.msgDescricaoDisciplina' | translate }}"
+          >
+          </ds-card>
+          <ds-card class=button-budget>
+            <ds-button variant="primary">Adicionar</ds-button>
+            <ds-button variant="secondary">Remover</ds-button>
+          </ds-card>
+        }
 
         <ds-card
           eyebrow="Ações"
@@ -83,6 +90,8 @@ import { Button as DsButton } from '../../shared/components/design-system/button
             <span class="tag">Receber alerta</span>
           </div>
         </ds-card>
+        
+
       </section>
     </section>
   `,
