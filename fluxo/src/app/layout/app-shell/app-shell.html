@@ -33,7 +33,7 @@
           [attr.aria-current]="link.isActive ? 'page' : null"
           (click)="closeSidebar()"
           ><span class="nav-icon" aria-hidden="true">{{ item.icon }}</span
-          ><span class="nav-label">{{ item.label }}</span></a
+          ><span class="nav-label">{{ item.label | translate }}</span></a
         >
       }
     </nav>
@@ -61,7 +61,7 @@
         </button>
         <div>
           <p class="eyebrow">Flu$o</p>
-          <h1 class="texto-categoria">{{ mensagem() }}</h1>
+          <h1 class="texto-categoria">{{ mensagem() | translate }}</h1>
         </div>
       </div>
       <div class="topbar-actions">

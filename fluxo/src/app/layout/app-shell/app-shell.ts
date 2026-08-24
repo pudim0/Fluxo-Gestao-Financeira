@@ -1,4 +1,5 @@
 import { DOCUMENT } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -7,7 +8,12 @@ import { NotificationCenterService } from '../../services/notification-center.se
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    TranslatePipe,
+  ],
   templateUrl: './app-shell.html',
 })
 export class AppShell {
@@ -23,12 +29,13 @@ export class AppShell {
   );
   protected readonly navigation = [
     { label: 'Painel', icon: '▦', route: '/dashboard' },
-    { label: 'Transações', icon: '↕', route: '/transacoes' },
-    { label: 'Orçamento', icon: '◫', route: '/orcamento' },
-    { label: 'Metas', icon: '◎', route: '/metas' },
+    { label: 'settings.tituloPaginaTransacoes', icon: '↕', route: '/transacoes' },
+    { label: 'settings.tituloOrcamento', icon: '◫', route: '/orcamento' },
+    { label: 'settings.tituloPaginaConfigRelatorios', icon: '⌁', route: '/relatorios' },
+    { label: 'settings.tituloPaginaMetas', icon: '◎', route: '/metas' },
   ];
 
-  protected readonly mensagem = signal('Visão geral');
+  protected readonly mensagem = signal('app.visaoGeral');
 
   constructor() {
     const theme = this.readTheme();
@@ -39,6 +46,7 @@ export class AppShell {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => {
         const url = (event as NavigationEnd).urlAfterRedirects;
+
         this.mensagem.set(this.getMensagem(url));
       });
   }
@@ -49,19 +57,23 @@ export class AppShell {
     }
 
     if (url.startsWith('/transacoes')) {
-      return 'Transações';
+      return 'settings.tituloPaginaTransacoes';
     }
 
     if (url.startsWith('/orcamento')) {
-      return 'Orçamento';
+      return 'settings.tituloOrcamento';
+    }
+
+    if (url.startsWith('/relatorios')) {
+      return 'settings.tituloPaginaConfigRelatorios';
     }
 
     if (url.startsWith('/metas')) {
-      return 'Metas';
+      return 'settings.tituloPaginaMetas';
     }
 
     if (url.startsWith('/configuracoes')) {
-      return 'Configurações';
+      return 'settings.tituloPaginaConfig';
     }
 
     if (url.startsWith('/notificacoes')) {
@@ -74,12 +86,15 @@ export class AppShell {
   protected toggleSidebar(): void {
     this.sidebarOpen.update((open) => !open);
   }
+
   protected toggleSettings(): void {
     this.settingsOpen.update((open) => !open);
   }
+
   protected closeSettings(): void {
     this.settingsOpen.set(false);
   }
+
   protected toggleTheme(): void {
     const next = this.theme() === 'dark' ? 'light' : 'dark';
     this.theme.set(next);
@@ -91,26 +106,35 @@ export class AppShell {
       // Storage may be unavailable in some test environments.
     }
   }
+
   protected closeSidebar(): void {
     this.sidebarOpen.set(false);
   }
+
   protected logout(): void {
     this.closeSettings();
     this.authService.logout();
     void this.router.navigate(['/login']);
   }
-  @HostListener('window:keydown.escape') protected onEscape(): void {
+
+  @HostListener('window:keydown.escape')
+  protected onEscape(): void {
     this.closeSidebar();
     this.closeSettings();
   }
+
   private readTheme(): 'dark' | 'light' {
     try {
       const theme = localStorage.getItem('fluxo.theme');
-      return theme === 'light' || theme === 'dark' ? theme : 'dark';
+
+      return theme === 'light' || theme === 'dark'
+        ? theme
+        : 'dark';
     } catch {
       return 'dark';
     }
   }
+
   private applyTheme(theme: 'dark' | 'light'): void {
     this.document.documentElement.setAttribute('data-theme', theme);
   }
