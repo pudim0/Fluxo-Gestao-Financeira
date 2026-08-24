@@ -334,6 +334,55 @@
   color: #ff5f5f;
 }
 
+:host-context([data-theme='light']) {
+  --notifications-surface: rgba(255, 255, 255, 0.9);
+  --notifications-muted: #607085;
+  --notifications-border: rgba(15, 23, 35, 0.1);
+  --notifications-active: rgba(10, 145, 91, 0.38);
+  --notifications-green: #087f52;
+}
+
+:host-context([data-theme='light']) .mark-all,
+:host-context([data-theme='light']) .summary-card.is-success .summary-label,
+:host-context([data-theme='light']) .summary-card.is-success .summary-value,
+:host-context([data-theme='light']) .amount-positive { color: var(--notifications-green); }
+
+:host-context([data-theme='light']) .summary-card,
+:host-context([data-theme='light']) .notification-item { background: var(--notifications-surface); border-color: var(--notifications-border); }
+
+:host-context([data-theme='light']) .summary-card:hover,
+:host-context([data-theme='light']) .summary-card:focus-visible,
+:host-context([data-theme='light']) .notification-item:hover,
+:host-context([data-theme='light']) .notification-item:focus-visible { border-color: var(--notifications-active); }
+
+:host-context([data-theme='light']) .summary-card.is-active,
+:host-context([data-theme='light']) .feed-tab.is-active { background: #e2f5ec; border-color: var(--notifications-active); color: #075f3e; }
+
+:host-context([data-theme='light']) .feed-date { color: var(--notifications-muted); }
+
+:host-context([data-theme='light']) .summary-card.is-danger .summary-label,
+:host-context([data-theme='light']) .summary-card.is-danger .summary-value,
+:host-context([data-theme='light']) .amount-negative { color: #c2413b; }
+
+:host-context([data-theme='light']) .summary-card.is-warning .summary-label,
+:host-context([data-theme='light']) .summary-card.is-warning .summary-value { color: #a46700; }
+
+:host-context([data-theme='light']) .summary-card.is-info .summary-label,
+:host-context([data-theme='light']) .summary-card.is-info .summary-value { color: #2563a8; }
+
+:host-context([data-theme='light']) .feed-shell { background: rgba(255, 255, 255, 0.76); border-color: var(--notifications-border); }
+
+:host-context([data-theme='light']) .feed-tab { background: #f5f8fc; border-color: var(--notifications-border); }
+:host-context([data-theme='light']) .feed-tab:hover,
+:host-context([data-theme='light']) .feed-tab:focus-visible { background: #e8f5ef; border-color: var(--notifications-active); color: #15533e; }
+
+:host-context([data-theme='light']) .notification-item.is-read { background: rgba(248, 250, 252, 0.9); }
+:host-context([data-theme='light']) .notification-icon.danger { background: #fce8e6; color: #b93832; }
+:host-context([data-theme='light']) .notification-icon.success { background: #def5e9; color: var(--notifications-green); }
+:host-context([data-theme='light']) .notification-icon.warning { background: #fff3d5; color: #996300; }
+:host-context([data-theme='light']) .notification-icon.info { background: #e2efff; color: #2563a8; }
+:host-context([data-theme='light']) .notification-dot { background: #0b9b63; box-shadow: 0 0 0 3px rgba(11, 155, 99, 0.14); }
+
 @media (max-width: 700px) {
   .notifications-header {
     flex-direction: column;
