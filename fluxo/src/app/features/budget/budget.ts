@@ -11,6 +11,9 @@ import { Button as DsButton } from '../../shared/components/design-system/button
     <section class="page-shell">
       <header class="page-header">
         <div>
+          <p class="page-copy">
+            {{ 'budget.descricao' | translate }}
+          </p>
         </div>
         <div class="button-budget">
               <ds-button (click)="mostrarAbaBudget('categorias')" [class.selecionado]="abaAtivaBudget() === 'categorias'">
@@ -23,9 +26,6 @@ import { Button as DsButton } from '../../shared/components/design-system/button
                 {{ 'budget.disciplina' | translate }}
               </ds-button>
           </div>
-          <p class="page-copy">
-            {{ 'budget.descricao' | translate }}
-          </p>
       </header>
 
       <section class="page-grid">
@@ -105,6 +105,7 @@ import { Button as DsButton } from '../../shared/components/design-system/button
     </section>
   `,
 })
+
 export class Budget {
   private readonly document = inject(DOCUMENT);
 
