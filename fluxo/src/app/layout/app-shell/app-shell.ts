@@ -64,7 +64,7 @@ export class AppShell {
     if (url.startsWith('/configuracoes')) return 'settings.tituloPaginaConfig';
     if (url.startsWith('/notificacoes')) return 'Notificações';
 
-    return 'app.visaoGeral';
+    return 'Visão Geral';
   });
 
   constructor() {
