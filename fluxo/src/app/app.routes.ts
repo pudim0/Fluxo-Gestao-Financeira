@@ -8,7 +8,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'dashboard',
+    redirectTo: 'register',
   },
   {
     path: 'login',
@@ -16,7 +16,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login').then((m) => m.Login),
   },
   {
-    path: 'cadastro',
+    path: 'register',
     canMatch: [guestGuard],
     loadComponent: () => import('./features/auth/register').then((m) => m.Register),
   },

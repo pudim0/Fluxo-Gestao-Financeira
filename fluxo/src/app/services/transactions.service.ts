@@ -36,7 +36,7 @@ export class TransactionsService {
       value: currency.format(this.balance()),
       detail:
         this.balance() >= 0 ? 'Resultado acumulado no período' : 'Atenção ao resultado acumulado',
-      tone: this.balance() >= 0 ? 'positive' : 'warning',
+      tone: this.balance() >= 0 ? 'positive' : 'negative',
     },
     {
       label: 'Receitas',
@@ -54,7 +54,7 @@ export class TransactionsService {
       label: 'Transações',
       value: String(this.transactions().length),
       detail: 'Movimentações no histórico',
-      tone: 'positive',
+      tone: 'neutral',
     }
   ]);
   readonly highlights = computed(() => [

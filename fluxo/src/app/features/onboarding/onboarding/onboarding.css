@@ -155,7 +155,7 @@ p {
 .primary-button {
   margin-left: auto;
   background: var(--accent);
-  color: white;
+  color: var(--text-primary);
 }
 
 .primary-button:hover:not(:disabled) {

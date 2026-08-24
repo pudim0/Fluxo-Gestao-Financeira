@@ -40,6 +40,8 @@
           class="metric-card"
           [class.positive]="metric.tone === 'positive'"
           [class.warning]="metric.tone === 'warning'"
+          [class.neutral]="metric.tone === 'neutral'"
+          [class.negative]="metric.tone === 'negative'"
         >
           <span class="metric-label">{{ metric.label }}</span>
           <span class="metric-value">{{ metric.value }}</span>
@@ -48,7 +50,7 @@
       }
     </section>
 
-    <section class="page-grid">
+    <section class="dashboard-grid">
       <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculado do histórico">
         <div class="tag-row">
           @for (highlight of highlights(); track highlight) {
@@ -57,7 +59,7 @@
         </div>
       </ds-card>
 
-      <ds-card eyebrow="Movimento" title="Últimas transações" subtitle="As cinco movimentações mais recentes">
+      <ds-card eyebrow="Movimento" title="Últimas transações" subtitle="As três movimentações mais recentes.">
         <div class="transaction-preview">
           @for (transaction of recentTransactions(); track transaction.id) {
             <div class="transaction-preview__row">
@@ -78,11 +80,51 @@
       </ds-card>
     </section>
 
-    <section class="page-grid">
-      <ds-empty-state
-        title="Relatórios em preparação"
-        description="Em breve você poderá comparar períodos e entender a evolução do seu dinheiro."
-      />
+    <section class="dashboard-grid dashboard-grid--lower">
+      <ds-card eyebrow="Fluxo" title="Entradas e saídas" subtitle="Comparação baseada nas transações atuais.">
+        <div class="dashboard-chart" aria-label="Comparação entre entradas e saídas">
+          @for (item of chartData(); track item.label) {
+            <div class="dashboard-chart__row">
+              <div class="dashboard-chart__label">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.value | currency: 'BRL' }}</strong>
+              </div>
+              <div class="dashboard-chart__track">
+                <span
+                  class="dashboard-chart__bar"
+                  [class.dashboard-chart__bar--expense]="item.tone === 'expense'"
+                  [style.width.%]="item.percentage"
+                ></span>
+              </div>
+            </div>
+          }
+        </div>
+      </ds-card>
+
+      <ds-card eyebrow="Alertas" title="Ações rápidas" subtitle="Atalhos para áreas críticas da sua rotina.">
+        <div class="alert-links">
+          <a class="alert-link" routerLink="/notificacoes">
+            <span class="alert-link__title">Alertas</span>
+            <span class="alert-link__detail">Abrir central de notificações</span>
+          </a>
+          <a class="alert-link" routerLink="/transacoes">
+            <span class="alert-link__title">Últimas transações</span>
+            <span class="alert-link__detail">Ver histórico completo</span>
+          </a>
+          <a class="alert-link" routerLink="/metas">
+            <span class="alert-link__title">Investimentos</span>
+            <span class="alert-link__detail">Acompanhar metas e aportes</span>
+          </a>
+        </div>
+        <div class="alert-preview">
+          @for (alert of latestAlerts(); track alert.id) {
+            <a class="alert-preview__item" [routerLink]="alert.route">
+              <strong>{{ alert.label }}</strong>
+              <small>{{ alert.detail }}</small>
+            </a>
+          }
+        </div>
+      </ds-card>
     </section>
   }
 </section>
