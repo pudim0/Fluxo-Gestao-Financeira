@@ -75,6 +75,22 @@
         </div>
       }
 
+      @if (currentQuestion === 'incomeAmount') {
+        <div>
+          <h1>Quanto você recebe {{ profile.incomeFrequency.toLowerCase() }}?</h1>
+
+          <label class="visually-hidden" for="income-amount">Valor da renda</label>
+          <input
+            id="income-amount"
+            class="amount-input"
+            type="text"
+            inputmode="decimal"
+            placeholder="Ex.: R$ 2.500"
+            [value]="profile.incomeAmount"
+            (input)="profile.incomeAmount = $any($event.target).value">
+        </div>
+      }
+
       @if (currentQuestion === 'incomeType') {
         <div>
           <h1>Sua renda costuma ser:</h1>
@@ -204,6 +220,11 @@
       <div class="profile-row">
         <span>Fonte de renda</span>
         <strong>{{ profile.incomeSource }}</strong>
+      </div>
+
+      <div class="profile-row">
+        <span>Renda {{ profile.incomeFrequency.toLowerCase() }}</span>
+        <strong>{{ profile.incomeAmount }}</strong>
       </div>
 
       <div class="profile-row">
