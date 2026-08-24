@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import { DOCUMENT } from '@angular/common';
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
 import { Component, inject, signal } from '@angular/core';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
@@ -19,11 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <header class="page-header">
         <div>
           <p class="page-copy">
-<<<<<<< HEAD
             {{ 'settings.descricao' | translate }}
-=======
-            Centralize preferências da conta, aparência e recursos de acessibilidade.
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
           </p>
           <div class="button-config">
               <ds-button (click)="mostrarAba('perfil')" [class.selecionado]="abaAtiva() === 'perfil'">
@@ -39,10 +32,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         </div>
       </header>
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
       <section class="page-grid">
         @if (abaAtiva() === 'perfil') {
           <ds-card
@@ -61,7 +51,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 
         @if (abaAtiva() === 'preferencias') {
           <ds-card
-<<<<<<< HEAD
             eyebrow="{{'settings.preferencias' | translate}}"
             title="{{'settings.interface' | translate}}"
             subtitle="{{'settings.dadosContaDescricao' | translate}}"
@@ -69,33 +58,23 @@ import { TranslatePipe } from '@ngx-translate/core';
             <div class="linguagens">
               <button class="button-linguagem" (click)="mudarIdioma('pt-BR')" [class.linguagem-atual]="idioma() === 'pt-BR'">PT-BR</button>
               <button class="button-linguagem" (click)="mudarIdioma('en')"  [class.linguagem-atual]="idioma() === 'en'">ENG</button>
-=======
-            eyebrow="Preferências"
-            title="Interface"
-            subtitle="Ajustes visuais e de experiência para o seu dia a dia."
-          >
+            </div>
+
             <div class="tag-row">
               <button type="button" class="tag" (click)="toggleTheme()">
                 {{ theme() === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro' }}
               </button>
               <span class="tag">Modo compacto</span>
               <span class="tag">Atalhos de teclado</span>
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
             </div>
           </ds-card>
         }
 
         @if (abaAtiva() === 'acessibilidade') {
           <ds-card
-<<<<<<< HEAD
             eyebrow="{{'settings.acessibilidade' | translate}}"
             title="{{'settings.contatoSuporte' | translate}}"
             subtitle="{{'settings.dadosContaDescricao' | translate}}"
-=======
-            eyebrow="Acessibilidade"
-            title="Ajustes"
-            subtitle="Recursos para tornar a navegação mais confortável."
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
           >
           </ds-card>
           <div class="button-config">
@@ -133,7 +112,6 @@ export class Settings {
     senhaAntiga = signal('');
     novaSenha = signal('');
 
-<<<<<<< HEAD
     private readonly languageService = inject(LanguageService);
 
     idioma = this.languageService.idioma;
@@ -143,12 +121,10 @@ export class Settings {
     }
 
 
-=======
     constructor() {
       this.applyTheme(this.theme());
     }
 
->>>>>>> c4594b06df0384f7b6f7f9471d72e4afa32f9abf
     cancelarAlteracoes(): void {
       this.nomeAtual.set(this.nomeOriginal);
       this.emailAtual.set(this.emailOriginal);
