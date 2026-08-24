@@ -76,11 +76,11 @@ import { TranslatePipe } from '@ngx-translate/core';
             title="{{'settings.contatoSuporte' | translate}}"
             subtitle="{{'settings.dadosContaDescricao' | translate}}"
           >
-          </ds-card>
-          <div class="button-config">
-            <ds-button variant="secondary">E-mail</ds-button>
-            <ds-button variant="secondary">WhatsApp</ds-button>
+            <div class="button-config">
+              <ds-button variant="primary">E-mail</ds-button>
+              <ds-button variant="primary">WhatsApp</ds-button>
           </div>
+          </ds-card>
         }
 
       </section>

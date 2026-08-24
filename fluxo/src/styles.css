@@ -437,10 +437,11 @@ svg {
 .button-budget {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
   width: 100%;
+  margin-top: 20px;
 }
 
 .button-save {
