@@ -1,4 +1,9 @@
 {
+
+  "budget": {
+    "titulo": "Budget"
+  },
+
   "settings": {
     "tituloPaginaConfig": "Settings",
     "tituloPaginaMetas": "Goals",
