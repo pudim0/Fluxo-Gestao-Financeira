@@ -1,40 +1,24 @@
-<section class="page-shell">
-  <header class="page-header">
-    <div>
-      <h2 class="page-title">Resumo financeiro central</h2>
-      <p class="page-copy">
-        Acompanhe o que entrou, saiu e precisa da sua atenção neste ciclo financeiro.
-      </p>
-    </div>
-
-    <div class="page-actions">
-      <a class="secondary-button" routerLink="/transacoes">Ver transações</a>
-      <a class="primary-button" routerLink="/orcamento">Ajustar orçamento</a>
-    </div>
-  </header>
-
-  @if (transactionsService.isLoading()) {
-    <ds-loading-state
-      label="Carregando indicadores"
-      detail="Calculando o resumo a partir das suas transações."
-    />
-  } @else if (transactionsService.hasError()) {
-    <section class="state-card" role="alert">
-      <strong>Não foi possível carregar os indicadores.</strong>
-      <p>Verifique os dados e tente novamente.</p>
-      <button class="secondary-button" type="button" (click)="transactionsService.load()">
-        Tentar novamente
+<section class="dashboard-shell page-shell">
+  <section class="overview-panel">
+    <header class="page-header dashboard-header">
+      <div>
+        <p class="page-kicker">Planejamento</p>
+        <h2 class="page-title">Meu dashboard</h2>
+        <p class="page-copy">
+          Acompanhe seus objetivos financeiros e veja como está sua evolução mês a mês.
+        </p>
+      </div>
+      <button
+        class="primary-button dashboard-cta"
+        type="button"
+        aria-label="Nova transação"
+        (click)="goToTransactions()"
+      >
+        <span class="button-text">+ Nova transação</span>
       </button>
-    </section>
-  } @else if (transactionsService.isEmpty()) {
-    <ds-empty-state
-      title="Comece registrando uma transação"
-      description="Quando você adicionar receitas e despesas, o resumo financeiro aparecerá aqui."
-      actionLabel="Adicionar transação"
-      (action)="goToTransactions()"
-    />
-  } @else {
-    <section class="metrics-grid">
+    </header>
+
+    <div class="metrics-grid dashboard-metrics" aria-label="Resumo financeiro">
       @for (metric of metrics(); track metric.label) {
         <article
           class="metric-card"
@@ -44,87 +28,249 @@
           [class.negative]="metric.tone === 'negative'"
         >
           <span class="metric-label">{{ metric.label }}</span>
-          <span class="metric-value">{{ metric.value }}</span>
-          <span class="metric-detail">{{ metric.detail }}</span>
+          <strong class="metric-value">{{ metric.value }}</strong>
+          <small class="metric-detail">{{ metric.detail }}</small>
         </article>
       }
-    </section>
+    </div>
+  </section>
+
+  <section class="insights-panel">
+    <div class="subpanel cash-panel">
+      <div class="panel-head">
+        <div>
+          <h3>Fluxo de Caixa</h3>
+          <p>Evolução das movimentações financeiras nos últimos 5 meses.</p>
+        </div>
+      </div>
+
+      <div class="cash-layout">
+        <div
+          class="donut-chart"
+          [style.background]="'conic-gradient(#2dd4bf 0 30%, #3b82f6 30% 45%, #f59e0b 45% 60%, #a78bfa 60% 72%, #f97316 72% 100%)'"
+        >
+          <div class="donut-center"></div>
+        </div>
+
+        <ul class="breakdown-list">
+          @for (item of cashBreakdown(); track item.name) {
+            <li class="breakdown-item">
+              <div class="breakdown-meta">
+                <span class="dot" [style.background]="item.color"></span>
+                <span>{{ item.name }}</span>
+              </div>
+              <div class="breakdown-values">
+                <strong>{{ item.value | currency: 'BRL' }}</strong>
+                <span>{{ item.percentage }}%</span>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
 
     <section class="dashboard-grid">
-      <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculado do histórico">
+      <ds-card eyebrow="Indicadores" title="Saúde financeira" subtitle="Resumo calculated do histórico">
         <div class="tag-row">
           @for (highlight of highlights(); track highlight) {
             <span class="tag">{{ highlight }}</span>
           }
         </div>
       </ds-card>
+    </section>
+  </section>
 
-      <ds-card eyebrow="Movimento" title="Últimas transações" subtitle="As três movimentações mais recentes.">
-        <div class="transaction-preview">
-          @for (transaction of recentTransactions(); track transaction.id) {
-            <div class="transaction-preview__row">
-              <span>
-                <strong>{{ transaction.description }}</strong>
-                <small>{{ transaction.category }} · {{ transaction.date | date: 'dd/MM' }}</small>
-              </span>
-              <strong
-                [class.income-value]="transaction.type === 'income'"
-                [class.expense-value]="transaction.type === 'expense'"
-              >
-                {{ transaction.type === 'income' ? '+' : '-' }}
-                {{ transaction.amount | currency: 'BRL' }}
-              </strong>
+  <section class="bottom-grid">
+    <article class="subpanel alerts-panel">
+      <div class="panel-head compact-head panel-head--stacked-mobile">
+        <h3>Alertas</h3>
+        <div class="panel-actions">
+          <a href="#">Ver todos</a>
+          <button
+            class="panel-toggle"
+            type="button"
+            [attr.aria-expanded]="showAllAlerts()"
+            aria-label="Expandir alertas"
+            (click)="toggleAlerts()"
+          >
+            <span class="panel-toggle__icon" [class.open]="showAllAlerts()">⌄</span>
+          </button>
+        </div>
+      </div>
+
+      <ul class="alert-list">
+        @for (alert of visibleAlerts(); track alert.title) {
+          <li class="alert-item">
+            <span class="alert-badge">!</span>
+            <div>
+              <strong>{{ alert.title }}</strong>
+              <p>{{ alert.text }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </article>
+
+    <article class="subpanel transactions-panel">
+      <div class="panel-head compact-head panel-head--stacked-mobile">
+        <h3>Últimas Transações</h3>
+        <div class="panel-actions">
+          <a href="#">Ver todos</a>
+          <button
+            class="panel-toggle"
+            type="button"
+            [attr.aria-expanded]="showAllTransactions()"
+            aria-label="Expandir transações"
+            (click)="toggleTransactions()"
+          >
+            <span class="panel-toggle__icon" [class.open]="showAllTransactions()">⌄</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="transaction-list">
+        @for (transaction of visibleTransactions(); track transaction.id) {
+          <div class="transaction-row">
+            <div class="transaction-text">
+              <strong>{{ transaction.description }}</strong>
+              <small>{{ transaction.date | date: 'dd/MM' }}</small>
+            </div>
+            <div class="transaction-tag" [class.income]="transaction.type === 'income'">
+              {{ transaction.category }}
+            </div>
+            <strong
+              class="transaction-value"
+              [class.income-value]="transaction.type === 'income'"
+              [class.expense-value]="transaction.type === 'expense'"
+            >
+              {{ transaction.type === 'income' ? '+' : '-' }}
+              {{ transaction.amount | currency: 'BRL' }}
+            </strong>
+          </div>
+        }
+      </div>
+    </article>
+  </section>
+
+  <section class="investment-panel">
+    <div class="panel-head compact-head panel-head--stacked-mobile">
+      <h3>Investimentos</h3>
+      <div class="panel-actions">
+        <a href="#">Ver todos</a>
+        <button
+          class="panel-toggle"
+          type="button"
+          [attr.aria-expanded]="showAllInvestments()"
+          aria-label="Expandir investimentos"
+          (click)="toggleInvestments()"
+        >
+          <span class="panel-toggle__icon" [class.open]="showAllInvestments()">⌄</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="investment-grid">
+      @for (card of visibleInvestments(); track card.title) {
+        <div class="mini-card">
+          <div class="mini-card-header">
+            <span>{{ card.title }}</span>
+            @if (card.type === 'bars') {
+              <span class="trend positive">{{ card.highlight }}</span>
+            }
+          </div>
+
+          @if (card.type === 'bars') {
+            <div class="amount">{{ card.value }}</div>
+            <div class="bar-chart" aria-label="Patrimônio total por mês">
+              <span style="height: 45%"></span>
+              <span style="height: 60%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 72%"></span>
+              <span style="height: 64%"></span>
+              <span style="height: 80%"></span>
+            </div>
+          }
+
+          @if (card.type === 'ring') {
+            <div class="ring-chart-wrapper">
+              <div class="ring-chart">
+                <div class="ring-center"></div>
+              </div>
+              <ul class="legend-list">
+                @for (legendItem of card.legend; track legendItem) {
+                  <li>
+                    <span
+                      class="legend-dot"
+                      [class.dot-a]="$index === 0"
+                      [class.dot-b]="$index === 1"
+                      [class.dot-c]="$index === 2"
+                    ></span>
+                    {{ legendItem }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (card.type === 'list') {
+            <div class="rentability-list">
+              @for (item of card.items; track item.label) {
+                <div class="rentability-item">
+                  <span>{{ item.label }}</span>
+                  <strong>{{ item.value }}</strong>
+                </div>
+              }
             </div>
           }
         </div>
-      </ds-card>
-    </section>
+      }
+    </div>
+  </section>
 
-    <section class="dashboard-grid dashboard-grid--lower">
-      <ds-card eyebrow="Fluxo" title="Entradas e saídas" subtitle="Comparação baseada nas transações atuais.">
-        <div class="dashboard-chart" aria-label="Comparação entre entradas e saídas">
-          @for (item of chartData(); track item.label) {
-            <div class="dashboard-chart__row">
-              <div class="dashboard-chart__label">
-                <span>{{ item.label }}</span>
-                <strong>{{ item.value | currency: 'BRL' }}</strong>
-              </div>
-              <div class="dashboard-chart__track">
-                <span
-                  class="dashboard-chart__bar"
-                  [class.dashboard-chart__bar--expense]="item.tone === 'expense'"
-                  [style.width.%]="item.percentage"
-                ></span>
-              </div>
+  <section class="dashboard-grid dashboard-grid--lower">
+    <ds-card eyebrow="Fluxo" title="Entradas e saídas" subtitle="Comparação baseada nas transações atuais.">
+      <div class="dashboard-chart" aria-label="Comparação entre entradas e saídas">
+        @for (item of chartData(); track item.label) {
+          <div class="dashboard-chart__row">
+            <div class="dashboard-chart__label">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value | currency: 'BRL' }}</strong>
             </div>
-          }
-        </div>
-      </ds-card>
+            <div class="dashboard-chart__track">
+              <span
+                class="dashboard-chart__bar"
+                [class.dashboard-chart__bar--expense]="item.tone === 'expense'"
+                [style.width.%]="item.percentage"
+              ></span>
+            </div>
+          </div>
+        }
+      </div>
+    </ds-card>
 
-      <ds-card eyebrow="Alertas" title="Ações rápidas" subtitle="Atalhos para áreas críticas da sua rotina.">
-        <div class="alert-links">
-          <a class="alert-link" routerLink="/notificacoes">
-            <span class="alert-link__title">Alertas</span>
-            <span class="alert-link__detail">Abrir central de notificações</span>
+    <ds-card eyebrow="Alertas" title="Ações rápidas" subtitle="Atalhos para áreas críticas da sua rotina.">
+      <div class="alert-links">
+        <a class="alert-link" routerLink="/notificacoes">
+          <span class="alert-link__title">Alertas</span>
+          <span class="alert-link__detail">Abrir central de notificações</span>
+        </a>
+        <a class="alert-link" routerLink="/transacoes">
+          <span class="alert-link__title">Últimas transações</span>
+          <span class="alert-link__detail">Ver histórico completo</span>
+        </a>
+        <a class="alert-link" routerLink="/metas">
+          <span class="alert-link__title">Investimentos</span>
+          <span class="alert-link__detail">Acompanhar metas e aportes</span>
+        </a>
+      </div>
+      <div class="alert-preview">
+        @for (alert of latestAlerts(); track alert.id) {
+          <a class="alert-preview__item" [routerLink]="alert.route">
+            <strong>{{ alert.label }}</strong>
+            <small>{{ alert.detail }}</small>
           </a>
-          <a class="alert-link" routerLink="/transacoes">
-            <span class="alert-link__title">Últimas transações</span>
-            <span class="alert-link__detail">Ver histórico completo</span>
-          </a>
-          <a class="alert-link" routerLink="/metas">
-            <span class="alert-link__title">Investimentos</span>
-            <span class="alert-link__detail">Acompanhar metas e aportes</span>
-          </a>
-        </div>
-        <div class="alert-preview">
-          @for (alert of latestAlerts(); track alert.id) {
-            <a class="alert-preview__item" [routerLink]="alert.route">
-              <strong>{{ alert.label }}</strong>
-              <small>{{ alert.detail }}</small>
-            </a>
-          }
-        </div>
-      </ds-card>
-    </section>
-  }
+        }
+      </div>
+    </ds-card>
+  </section>
 </section>

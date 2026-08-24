@@ -1458,7 +1458,7 @@ svg {
   }
 
   .topbar-actions {
-    justify-content: flex-start;
+    justify-start: flex-start;
   }
 }
 

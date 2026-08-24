@@ -28,8 +28,12 @@ export class Notifications {
   // --- Indicadores Calculados (Computed) ---
   readonly unreadCount = computed(() => this.notifications().filter((n) => !n.read).length);
 
+  readonly unreadNotifications = computed(() =>
+    this.notifications().filter((notification) => !notification.read),
+  );
+
   readonly summaries = computed<NotificationSummary[]>(() => {
-    const list = this.notifications();
+    const list = this.unreadNotifications();
     return [
       {
         label: 'Alertas',
@@ -55,7 +59,7 @@ export class Notifications {
   });
 
   readonly tabs = computed<FeedTab[]>(() => {
-    const list = this.notifications();
+    const list = this.unreadNotifications();
     return [
       { label: 'Todas', count: list.length },
       { label: 'Alertas', count: list.filter((n) => n.category === 'Alertas').length },
@@ -76,6 +80,16 @@ export class Notifications {
   // --- Ações ---
   selectCategory(category: string): void {
     this.activeCategory.set(category);
+  }
+
+  markAsRead(notificationId: number): void {
+    this.notifications.update((items) =>
+      items.map((item) =>
+        item.id === notificationId && !item.read
+          ? { ...item, read: true }
+          : item,
+      ),
+    );
   }
 
   markAllAsRead(): void {
