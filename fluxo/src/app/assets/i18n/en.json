@@ -1,7 +1,11 @@
 {
 
   "budget": {
-    "titulo": "Budget"
+    "titulo": "Budget",
+
+    "categorias": "Categories",
+    "limites": "Limits",
+    "disciplina": "Discipline"
   },
 
   "settings": {
@@ -38,6 +42,7 @@
     "interfaceDescricao": "Settings that can become real toggles later.",
 
     "temaEscuro": "Dark theme",
+    "temaClaro": "Light theme",
     "modoCompacto": "Compact mode",
     "atalhosTeclado": "Keyboard shortcuts",
 
