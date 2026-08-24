@@ -52,7 +52,6 @@ export class AppShell {
     { label: 'settings.tituloPaginaDashboard', icon: '▦', route: '/dashboard' },
     { label: 'settings.tituloPaginaTransacoes', icon: '↕', route: '/transacoes' },
     { label: 'settings.tituloOrcamento', icon: '◫', route: '/orcamento' },
-    { label: 'settings.tituloPaginaConfigRelatorios', icon: '⌁', route: '/relatorios' },
     { label: 'settings.tituloPaginaMetas', icon: '◎', route: '/metas' },
   ];
 
@@ -63,7 +62,7 @@ export class AppShell {
 
     if (matchedItem) return matchedItem.label;
     if (url.startsWith('/configuracoes')) return 'settings.tituloPaginaConfig';
-    if (url.startsWith('/notificacoes')) return 'nav.notificacoes';
+    if (url.startsWith('/notificacoes')) return 'Notificações';
 
     return 'app.visaoGeral';
   });

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,9 +11,13 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './auth-page.css',
 })
 export class PasswordRecovery {
-  protected readonly email = signal('');
+  // Use model() para compatibilidade com [(ngModel)]
+  protected readonly email = model('');
   protected readonly sent = signal(false);
+
   protected submit(): void {
-    if (this.email()) this.sent.set(true);
+    if (this.email().trim()) {
+      this.sent.set(true);
+    }
   }
 }
