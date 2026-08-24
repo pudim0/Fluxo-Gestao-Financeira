@@ -216,6 +216,20 @@
   background: rgba(13, 28, 35, 0.249);
   border: 1px solid rgba(148, 163, 184, 0.08);
   margin-bottom: 12px;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.notification-item:hover,
+.notification-item:focus-visible {
+  transform: translateY(-1px);
+  background-color: rgba(18, 38, 47, 0.38);
+  border-color: rgba(66, 211, 146, 0.28);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .notification-item:last-child {

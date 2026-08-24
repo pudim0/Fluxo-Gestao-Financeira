@@ -56,7 +56,15 @@
 
         @if (filteredNotifications().length > 0) {
           @for (item of filteredNotifications(); track item.id) {
-            <article class="notification-item" [class.is-read]="item.read">
+            <article
+              class="notification-item"
+              [class.is-read]="item.read"
+              role="button"
+              tabindex="0"
+              (click)="markAsRead(item.id)"
+              (keydown.enter)="markAsRead(item.id)"
+              (keydown.space)="markAsRead(item.id); $event.preventDefault()"
+            >
               <div class="notification-icon" [class]="item.tone">
                 <span aria-hidden="true">{{ item.icon }}</span>
               </div>

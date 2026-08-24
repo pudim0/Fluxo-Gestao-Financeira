@@ -138,6 +138,16 @@ export class Notifications {
     this.activeCategory.set(category);
   }
 
+  markAsRead(notificationId: number): void {
+    this.notifications.update((items) =>
+      items.map((item) =>
+        item.id === notificationId && !item.read
+          ? { ...item, read: true }
+          : item,
+      ),
+    );
+  }
+
   markAllAsRead(): void {
     this.notifications.update((items) => items.map((item) => ({ ...item, read: true })));
   }
