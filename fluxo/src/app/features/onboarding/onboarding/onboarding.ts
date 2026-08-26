@@ -2,14 +2,14 @@ import { DecimalPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../../../core/services/auth.service';
-
-const PROFILE_STORAGE_PREFIX = 'fluxo.profile:';
+import { FinancialProfile } from '../../../models/financial-profile.model';
+import { FinancialProfileService } from '../../../services/financial-profile.service';
 
 type Question =
   | 'goal'
   | 'incomeSource'
   | 'incomeFrequency'
+  | 'incomeAmount'
   | 'incomeType'
   | 'hasDebt'
   | 'debtTypes'
@@ -17,24 +17,7 @@ type Question =
   | 'hasEmergencyFund'
   | 'concern';
 
-type DebtType =
-  | 'Cartão de crédito'
-  | 'Empréstimo'
-  | 'Financiamento'
-  | 'Cheque especial'
-  | 'Outra';
-
-interface FinancialProfile {
-  goal: string;
-  incomeSource: string;
-  incomeFrequency: string;
-  incomeType: string;
-  hasDebt: 'Sim' | 'Não' | '';
-  debtTypes: DebtType[];
-  debtAmount: string;
-  hasEmergencyFund: 'Sim' | 'Não' | '';
-  concern: string;
-}
+import { DebtType } from '../../../models/financial-profile.model';
 
 type AnswerField = Exclude<
   keyof FinancialProfile,
@@ -49,7 +32,7 @@ type AnswerField = Exclude<
   styleUrl: './onboarding.css'
 })
 export class Onboarding {
-  private readonly authService = inject(AuthService);
+  private readonly profileService = inject(FinancialProfileService);
   started = false;
   currentStep = 0;
   showSummary = false;
@@ -107,6 +90,7 @@ export class Onboarding {
       'goal',
       'incomeSource',
       'incomeFrequency',
+      'incomeAmount',
       'incomeType',
       'hasDebt'
     ];
@@ -198,6 +182,9 @@ export class Onboarding {
       case 'incomeFrequency':
         return !!this.profile.incomeFrequency;
 
+      case 'incomeAmount':
+        return this.parseAmount(this.profile.incomeAmount) > 0;
+
       case 'incomeType':
         return !!this.profile.incomeType;
 
@@ -236,37 +223,15 @@ export class Onboarding {
   }
 
   finish(): void {
-    try {
-      localStorage.setItem(this.getProfileStorageKey(), JSON.stringify(this.profile));
-    } catch {
-    }
+    this.profileService.save(this.profile);
     this.router.navigate(['/dashboard']);
   }
 
-  private getProfileStorageKey(): string {
-    const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
-    return `${PROFILE_STORAGE_PREFIX}${email}`;
+  private readProfile(): FinancialProfile {
+    return { ...this.profileService.profile(), debtTypes: [...this.profileService.profile().debtTypes] };
   }
 
-  private readProfile(): FinancialProfile {
-    try {
-      const stored = localStorage.getItem(this.getProfileStorageKey());
-      if (stored) {
-        return JSON.parse(stored) as FinancialProfile;
-      }
-    } catch {
-    }
-
-    return {
-      goal: '',
-      incomeSource: '',
-      incomeFrequency: '',
-      incomeType: '',
-      hasDebt: '',
-      debtTypes: [],
-      debtAmount: '',
-      hasEmergencyFund: '',
-      concern: ''
-    };
+  private parseAmount(value: string): number {
+    return Number(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
   }
 } 

@@ -3,7 +3,7 @@
     <header class="page-header dashboard-header">
       <div>
         <p class="page-kicker">Planejamento</p>
-        <h2 class="page-title">Meu dashboard</h2>
+        <h2 class="page-title">{{ userName ? 'Olá, ' + userName : 'Meu dashboard' }}</h2>
         <p class="page-copy">
           Acompanhe seus objetivos financeiros e veja como está sua evolução mês a mês.
         </p>
@@ -47,7 +47,7 @@
       <div class="cash-layout">
         <div
           class="donut-chart"
-          [style.background]="'conic-gradient(#2dd4bf 0 30%, #3b82f6 30% 45%, #f59e0b 45% 60%, #a78bfa 60% 72%, #f97316 72% 100%)'"
+          [style.background]="cashChartBackground()"
         >
           <div class="donut-center"></div>
         </div>
@@ -65,6 +65,9 @@
               </div>
             </li>
           }
+          @if (!cashBreakdown().length) {
+            <li class="breakdown-item">Nenhuma despesa registrada.</li>
+          }
         </ul>
       </div>
     </div>
@@ -74,9 +77,13 @@
         <header class="ds-card__header">
           <p class="ds-card__eyebrow">Indicadores</p>
           <h3 class="ds-card__title">Saúde financeira</h3>
-          <p class="ds-card__subtitle">Resumo calculated do histórico</p>
+          <p class="ds-card__subtitle">{{ profileSummary() }}</p>
         </header>
         <div class="tag-row">
+          @if (profile().goal) {
+            <span class="tag">Objetivo: {{ profile().goal }}</span>
+            <span class="tag">Foco: {{ profile().concern }}</span>
+          }
           @for (highlight of highlights(); track highlight) {
             <span class="tag">{{ highlight }}</span>
           }

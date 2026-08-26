@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink } from '@angular/router';
 
 import { TransactionsService } from '../../services/transactions.service';
+import { FinancialProfileService } from '../../services/financial-profile.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +17,17 @@ import { TransactionsService } from '../../services/transactions.service';
 export class DashboardComponent {
   private readonly router = inject(Router);
   protected readonly transactionsService = inject(TransactionsService);
+  private readonly authService = inject(AuthService);
+  protected readonly profileService = inject(FinancialProfileService);
+  protected readonly userName = this.authService.getCurrentUserName();
+  protected readonly profile = this.profileService.profile;
+  protected readonly profileSummary = computed(() => {
+    const profile = this.profile();
+    if (!profile.goal) return 'Complete seu onboarding para personalizar este resumo.';
+    const debt = profile.hasDebt === 'Sim' ? 'Você informou que possui dívidas.' : 'Você informou que não possui dívidas.';
+    const reserve = profile.hasEmergencyFund === 'Sim' ? 'Sua reserva de emergência está ativa.' : 'A criação de uma reserva pode ser uma prioridade.';
+    return `${debt} ${reserve}`;
+  });
 
   // Inicia todos como 'true' para carregar a página com tudo aberto
   protected readonly showAllAlerts = signal<boolean>(true);
@@ -50,15 +63,44 @@ export class DashboardComponent {
     ];
   });
 
-  // Signal do fluxo de caixa
-  protected readonly cashBreakdown = signal([
-    { name: 'Alimentação', value: 3210.5, percentage: 30, color: '#3ecf8e' },
-    { name: 'Transporte', value: 1802.1, percentage: 15, color: '#f7b948' },
-    { name: 'Lazer', value: 1390.4, percentage: 10, color: '#60a5fa' },
-    { name: 'Saúde', value: 1041.0, percentage: 12, color: '#a78bfa' },
-    { name: 'Moradia', value: 2123.5, percentage: 25, color: '#2dd4bf' },
-    { name: 'Educação', value: 792.3, percentage: 8, color: '#f97316' },
-  ]);
+  protected readonly cashBreakdown = computed(() => {
+    const expenses = this.transactionsService
+      .transactions()
+      .filter((transaction) => transaction.type === 'expense');
+    const total = expenses.reduce((sum, transaction) => sum + transaction.amount, 0);
+    const totalsByCategory = new Map<string, number>();
+
+    for (const transaction of expenses) {
+      totalsByCategory.set(
+        transaction.category,
+        (totalsByCategory.get(transaction.category) ?? 0) + transaction.amount,
+      );
+    }
+
+    return [...totalsByCategory.entries()]
+      .sort(([, firstValue], [, secondValue]) => secondValue - firstValue)
+      .map(([name, value], index) => ({
+        name,
+        value,
+        percentage: total ? Math.round((value / total) * 100) : 0,
+        color: ['#3ecf8e', '#f7b948', '#60a5fa', '#a78bfa', '#2dd4bf', '#f97316'][index % 6],
+      }));
+  });
+
+  protected readonly cashChartBackground = computed(() => {
+    const breakdown = this.cashBreakdown();
+    if (!breakdown.length) return 'conic-gradient(#334155 0 100%)';
+
+    let start = 0;
+    const segments = breakdown.map((item) => {
+      const end = start + item.percentage;
+      const segment = `${item.color} ${start}% ${end}%`;
+      start = end;
+      return segment;
+    });
+
+    return `conic-gradient(${segments.join(', ')})`;
+  });
 
   // Listas de dados
   protected readonly alerts = [

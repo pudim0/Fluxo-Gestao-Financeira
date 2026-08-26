@@ -23,6 +23,7 @@ export class AppShell {
   private readonly notificationCenter = inject(NotificationCenterService);
   protected readonly sidebarOpen = signal(false);
   protected readonly settingsOpen = signal(false);
+  protected readonly theme = signal<'dark' | 'light'>('dark');
   protected readonly unreadNotifications = computed(
     () => this.notificationCenter.notifications().filter((item) => !item.read).length,
   );
@@ -37,7 +38,9 @@ export class AppShell {
   protected readonly mensagem = signal('app.visaoGeral');
 
   constructor() {
-    this.applyTheme(this.readTheme());
+    const theme = this.readTheme();
+    this.theme.set(theme);
+    this.applyTheme(theme);
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -90,6 +93,18 @@ export class AppShell {
 
   protected closeSettings(): void {
     this.settingsOpen.set(false);
+  }
+
+  protected toggleTheme(): void {
+    const next = this.theme() === 'dark' ? 'light' : 'dark';
+    this.theme.set(next);
+    this.applyTheme(next);
+
+    try {
+      localStorage.setItem('fluxo.theme', next);
+    } catch {
+      // Storage may be unavailable in some test environments.
+    }
   }
 
   protected closeSidebar(): void {

@@ -637,6 +637,12 @@
   }
 }
 
+@container dashboard-page (max-width: 460px) {
+  .dashboard-metrics.metrics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 560px) {
   .transaction-preview__row {
     align-items: flex-start;

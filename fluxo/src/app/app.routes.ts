@@ -50,10 +50,6 @@ export const routes: Routes = [
         path: 'orcamento',
         loadComponent: () => import('./features/budget/budget').then((m) => m.Budget),
       },
-      {
-        path: 'relatorios',
-        loadComponent: () => import('./features/reports/reports').then((m) => m.Reports),
-      },
       { path: 'metas', loadComponent: () => import('./features/goals/goals').then((m) => m.GoalsComponent) },
       {
         path: 'configuracoes',
