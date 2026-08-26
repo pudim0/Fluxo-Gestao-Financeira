@@ -33,6 +33,7 @@
   },
 
   "settings": {
+    "tituloPaginaDashboard": "Dashboard",
     "tituloPaginaConfig": "Settings",
     "tituloPaginaMetas": "Goals",
     "tituloPaginaTransacoes": "Transactions",

@@ -63,7 +63,7 @@ import { TranslatePipe } from '@ngx-translate/core';
             <div class="tag-row">
               <button type="button" class="tag" (click)="toggleTheme()">
                 {{ theme() === 'dark' ? ('settings.temaClaro' | translate) : ('settings.temaEscuro' | translate) }}
-              </button>
+            </button>
               <span class="tag">{{'settings.modoCompacto' | translate}}</span>
               <span class="tag">{{'settings.atalhosTeclado' | translate}}</span>
             </div>

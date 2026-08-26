@@ -33,10 +33,10 @@
   },
 
   "settings": {
+    "tituloPaginaDashboard": "Painel",
     "tituloPaginaConfig": "Configurações",
     "tituloPaginaMetas": "Metas",
     "tituloPaginaTransacoes": "Transações",
-    "tituloPaginaConfigRelatorios": "Relatórios",
     "tituloOrcamento": "Orçamento",
 
     "perfil": "Perfil",

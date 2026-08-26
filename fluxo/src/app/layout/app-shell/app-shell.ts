@@ -1,10 +1,17 @@
 import { DOCUMENT } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationCenterService } from '../../services/notification-center.service';
+
+interface NavItem {
+  label: string;
+  icon: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-shell',
@@ -21,70 +28,56 @@ export class AppShell {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly notificationCenter = inject(NotificationCenterService);
+
+  // State Signals
   protected readonly sidebarOpen = signal(false);
   protected readonly settingsOpen = signal(false);
-  protected readonly theme = signal<'dark' | 'light'>('dark');
-  protected readonly unreadNotifications = computed(
-    () => this.notificationCenter.notifications().filter((item) => !item.read).length,
+  protected readonly theme = signal<'dark' | 'light'>(this.readTheme());
+
+  // Convert Router events into a reactive Signal safely
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
   );
-  protected readonly navigation = [
-    { label: 'Painel', icon: '▦', route: '/dashboard' },
+
+  protected readonly unreadNotifications = computed(
+    () => this.notificationCenter.notifications().filter((item) => !item.read).length
+  );
+
+  // Navigation Config (Standardized with i18n keys)
+  protected readonly navigation: NavItem[] = [
+    { label: 'settings.tituloPaginaDashboard', icon: '▦', route: '/dashboard' },
     { label: 'settings.tituloPaginaTransacoes', icon: '↕', route: '/transacoes' },
     { label: 'settings.tituloOrcamento', icon: '◫', route: '/orcamento' },
-    { label: 'settings.tituloPaginaConfigRelatorios', icon: '⌁', route: '/relatorios' },
     { label: 'settings.tituloPaginaMetas', icon: '◎', route: '/metas' },
   ];
 
-  protected readonly mensagem = signal('app.visaoGeral');
+  // Derived Title Signal
+  protected readonly mensagem = computed(() => {
+    const url = this.currentUrl();
+    const matchedItem = this.navigation.find((item) => url.startsWith(item.route));
+
+    if (matchedItem) return matchedItem.label;
+    if (url.startsWith('/configuracoes')) return 'settings.tituloPaginaConfig';
+    if (url.startsWith('/notificacoes')) return 'Notificações';
+
+    return 'Visão Geral';
+  });
 
   constructor() {
-    const theme = this.readTheme();
-    this.theme.set(theme);
-    this.applyTheme(theme);
-
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        const url = (event as NavigationEnd).urlAfterRedirects;
-
-        this.mensagem.set(this.getMensagem(url));
-      });
+    this.applyTheme(this.theme());
   }
 
-  private getMensagem(url: string): string {
-    if (url.startsWith('/dashboard')) {
-      return 'Painel';
-    }
-
-    if (url.startsWith('/transacoes')) {
-      return 'settings.tituloPaginaTransacoes';
-    }
-
-    if (url.startsWith('/orcamento')) {
-      return 'settings.tituloOrcamento';
-    }
-
-    if (url.startsWith('/relatorios')) {
-      return 'settings.tituloPaginaConfigRelatorios';
-    }
-
-    if (url.startsWith('/metas')) {
-      return 'settings.tituloPaginaMetas';
-    }
-
-    if (url.startsWith('/configuracoes')) {
-      return 'settings.tituloPaginaConfig';
-    }
-
-    if (url.startsWith('/notificacoes')) {
-      return 'Notificações';
-    }
-
-    return 'Visão geral';
-  }
-
+  // User Actions
   protected toggleSidebar(): void {
     this.sidebarOpen.update((open) => !open);
+  }
+
+  protected closeSidebar(): void {
+    this.sidebarOpen.set(false);
   }
 
   protected toggleSettings(): void {
@@ -103,12 +96,8 @@ export class AppShell {
     try {
       localStorage.setItem('fluxo.theme', next);
     } catch {
-      // Storage may be unavailable in some test environments.
+      // Storage unavailable in restricted/test environments
     }
-  }
-
-  protected closeSidebar(): void {
-    this.sidebarOpen.set(false);
   }
 
   protected logout(): void {
@@ -123,13 +112,11 @@ export class AppShell {
     this.closeSettings();
   }
 
+  // Theme Helpers
   private readTheme(): 'dark' | 'light' {
     try {
-      const theme = localStorage.getItem('fluxo.theme');
-
-      return theme === 'light' || theme === 'dark'
-        ? theme
-        : 'dark';
+      const stored = localStorage.getItem('fluxo.theme');
+      return stored === 'light' || stored === 'dark' ? stored : 'dark';
     } catch {
       return 'dark';
     }
