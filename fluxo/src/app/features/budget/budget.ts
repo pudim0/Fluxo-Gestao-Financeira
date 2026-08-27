@@ -2,11 +2,12 @@ import { Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-budget',
   standalone: true,
-  imports: [DsCard, DsButton, TranslatePipe],
+  imports: [DsCard, DsButton, TranslatePipe, DecimalPipe],
   template: `
     <section class="page-shell">
       <header class="page-header">
@@ -33,36 +34,27 @@ import { Button as DsButton } from '../../shared/components/design-system/button
         @if (abaAtivaBudget() === 'categorias') {
           <div class="progress-list">
 
-          @for (categoria of categorias; track categoria.nome) {
-
+          @for (categoria of categorias(); track categoria.nome) {
             <div class="progress-item">
 
               <div class="progress-top">
                 <span>{{ categoria.nome }}</span>
 
                 <span>
-                  {{ progressoAtualPorcentagem(categoria) }}%
+                  {{ progressoAtualPorcentagem(categoria) | number:'1.0-0' }}%
                 </span>
               </div>
 
               <div class="budget-info">
-
                 <span>
-                  <strong>
-                    {{ 'budget.limite' | translate }}:
-                  </strong>
-
+                  <strong>{{ 'budget.limite' | translate }}:</strong>
                   R$ {{ categoria.limite }}
                 </span>
 
                 <span>
-                  <strong>
-                    {{ 'budget.usado' | translate }}:
-                  </strong>
-
+                  <strong>{{ 'budget.usos' | translate }}:</strong>
                   R$ {{ categoria.usado }}
                 </span>
-
               </div>
 
               <span>
@@ -71,16 +63,13 @@ import { Button as DsButton } from '../../shared/components/design-system/button
               </span>
 
               <div class="progress-track">
-
                 <div
                   class="progress-fill"
                   [style.width.%]="progressoAtualPorcentagem(categoria)"
                 ></div>
-
               </div>
 
             </div>
-
           }
 
         </div>
@@ -92,6 +81,85 @@ import { Button as DsButton } from '../../shared/components/design-system/button
             title="{{ 'budget.msgLimites' | translate }}"
             subtitle="{{ 'budget.msgDescricaoLimites' | translate }}"
           >
+
+            <div class="button-budget">
+              <ds-button
+                variant="secondary"
+                (click)="mostrarAbaLimites('limites')"
+                [class.selecionado]="abaLimiteAtiva() === 'limites'"
+              >
+                {{ 'budget.limites' | translate }}
+              </ds-button>
+
+              <ds-button
+                variant="secondary"
+                (click)="mostrarAbaLimites('usos')"
+                [class.selecionado]="abaLimiteAtiva() === 'usos'"
+              >
+                {{ 'budget.usos' | translate }}
+              </ds-button>
+            </div>
+
+            @if (abaLimiteAtiva() === 'limites') {
+
+              <div class="progress-list">
+
+                @for (categoria of categorias(); track categoria.nome) {
+
+                  <div class="progress-item">
+
+                    <div class="progress-top">
+                      <span>{{ categoria.nome }}</span>
+                      <span>R$ {{ categoria.limite }}</span>
+                    </div>
+
+                    <div class="button-budget">
+                      <ds-button
+                        variant="primary"
+                        (click)="abrirPopupLimite(categoria)"
+                      >
+                        Alterar limite
+                      </ds-button>
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+            @if (abaLimiteAtiva() === 'usos') {
+
+              <div class="progress-list">
+
+                @for (categoria of categorias(); track categoria.nome) {
+
+                  <div class="progress-item">
+
+                    <div class="progress-top">
+                      <span>{{ categoria.nome }}</span>
+                      <span>R$ {{ categoria.usado }}</span>
+                    </div>
+
+                    <div class="button-budget">
+                      <ds-button
+                        variant="primary"
+                        (click)="abrirPopupUso(categoria)"
+                      >
+                        Adicionar uso
+                      </ds-button>
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
           </ds-card>
         }
 
@@ -251,7 +319,7 @@ import { Button as DsButton } from '../../shared/components/design-system/button
 
               <div class="progress-list">
 
-                @for (categoria of categorias; track $index) {
+                @for (categoria of categorias(); track $index) {
 
                   <button
                     type="button"
@@ -299,6 +367,170 @@ import { Button as DsButton } from '../../shared/components/design-system/button
 
         </div>
       }
+
+      @if (popupLimite()) {
+        <div class="ds-modal__backdrop">
+
+          <div class="ds-modal">
+
+            <div class="ds-modal__header">
+              <div>
+                <span class="ds-modal__eyebrow">
+                  {{ 'budget.limites' | translate }}
+                </span>
+
+                <h2 class="ds-modal__title">
+                  Alterar limite
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                class="ds-modal__close"
+                (click)="fecharPopupLimite()"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="ds-modal__body">
+
+              @if (categoriaSelecionada(); as categoria) {
+
+                <p class="modal-copy">
+                  Alterando o limite de
+                  <strong>{{ categoria.nome }}</strong>.
+                </p>
+
+                <label class="field">
+                  <span>Limite atual</span>
+
+                  <input
+                    type="text"
+                    [value]="'R$ ' + categoria.limite"
+                    disabled
+                  />
+                </label>
+
+                <label class="field">
+                  <span>Novo limite</span>
+
+                  <input
+                    type="number"
+                    min="0"
+                    [value]="novoLimite()"
+                    (input)="novoLimite.set(+$any($event.target).value)"
+                  />
+                </label>
+
+                <div class="modal-actions">
+
+                  <ds-button
+                    variant="secondary"
+                    (click)="fecharPopupLimite()"
+                  >
+                    Cancelar
+                  </ds-button>
+
+                  <ds-button
+                    variant="primary"
+                    (click)="confirmarNovoLimite()"
+                  >
+                    Salvar
+                  </ds-button>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+      }
+
+      @if (popupUso()) {
+        <div class="ds-modal__backdrop">
+
+          <div class="ds-modal">
+
+            <div class="ds-modal__header">
+              <div>
+                <span class="ds-modal__eyebrow">
+                  {{ 'budget.usos' | translate }}
+                </span>
+
+                <h2 class="ds-modal__title">
+                  Adicionar uso
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                class="ds-modal__close"
+                (click)="fecharPopupUso()"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="ds-modal__body">
+
+              @if (categoriaSelecionada(); as categoria) {
+
+                <p class="modal-copy">
+                  Adicionando um novo uso em
+                  <strong>{{ categoria.nome }}</strong>.
+                </p>
+
+                <label class="field">
+                  <span>Total usado atualmente</span>
+
+                  <input
+                    type="text"
+                    [value]="'R$ ' + categoria.usado"
+                    disabled
+                  />
+                </label>
+
+                <label class="field">
+                  <span>Quanto foi usado?</span>
+
+                  <input
+                    type="number"
+                    min="0"
+                    [value]="valorUso()"
+                    (input)="valorUso.set(+$any($event.target).value)"
+                  />
+                </label>
+
+                <div class="modal-actions">
+
+                  <ds-button
+                    variant="secondary"
+                    (click)="fecharPopupUso()"
+                  >
+                    Cancelar
+                  </ds-button>
+
+                  <ds-button
+                    variant="primary"
+                    (click)="confirmarUso()"
+                  >
+                    Adicionar
+                  </ds-button>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+      }
       
       </section>
     </section>
@@ -310,11 +542,30 @@ export class Budget {
 
   abaAtivaBudget = signal<'categorias' | 'limites' | 'disciplina'>('categorias');
 
+  abaLimiteAtiva = signal<'limites' | 'usos'>('limites');
+
+  mostrarAbaLimites(
+    aba: 'limites' | 'usos'
+  ): void {
+    this.abaLimiteAtiva.set(aba);
+  }
   popupAdicionar = signal(false);
 
   popupRemover = signal(false);
 
   categoriaSelecionadaRemover = signal<number | null>(null);
+
+  popupLimite = signal(false);
+  popupUso = signal(false);
+
+  categoriaSelecionada = signal<{
+    nome: string;
+    limite: number;
+    usado: number;
+  } | null>(null);
+
+  novoLimite = signal(0);
+  valorUso = signal(0);
 
   novaCategoria = signal({
     nome: '',
@@ -326,7 +577,7 @@ export class Budget {
       this.abaAtivaBudget.set(aba);
     }
 
-  categorias = [
+  categorias = signal([
   {
     nome: 'Alimentação',
     limite: 1200,
@@ -342,7 +593,7 @@ export class Budget {
     limite: 300,
     usado: 243
   }
-  ];
+  ]);
 
   progressoAtualPorcentagem(categoria: { limite: number; usado: number }): number {
     if (categoria.limite <= 0) {
@@ -356,6 +607,91 @@ export class Budget {
 
   valorRestante(categoria: { limite: number; usado: number }): number {
     return Math.max(categoria.limite - categoria.usado, 0);
+  }
+
+  abrirPopupLimite(categoria: {
+    nome: string;
+    limite: number;
+    usado: number;
+  }): void {
+    this.categoriaSelecionada.set(categoria);
+    this.novoLimite.set(categoria.limite);
+    this.popupLimite.set(true);
+  }
+
+  fecharPopupLimite(): void {
+    this.popupLimite.set(false);
+    this.categoriaSelecionada.set(null);
+  }
+
+  confirmarNovoLimite(): void {
+    const categoria = this.categoriaSelecionada();
+
+    if (!categoria) {
+      return;
+    }
+
+    const novoLimite = this.novoLimite();
+
+    if (novoLimite < 0) {
+      return;
+    }
+
+    this.categorias.update(categorias =>
+      categorias.map(item =>
+        item.nome === categoria.nome
+          ? {
+              ...item,
+              limite: novoLimite
+            }
+          : item
+      )
+    );
+
+    this.fecharPopupLimite();
+  }
+
+  abrirPopupUso(categoria: {
+    nome: string;
+    limite: number;
+    usado: number;
+  }): void {
+    this.categoriaSelecionada.set(categoria);
+    this.valorUso.set(0);
+    this.popupUso.set(true);
+  }
+
+  fecharPopupUso(): void {
+    this.popupUso.set(false);
+    this.categoriaSelecionada.set(null);
+    this.valorUso.set(0);
+  }
+
+  confirmarUso(): void {
+    const categoria = this.categoriaSelecionada();
+
+    if (!categoria) {
+      return;
+    }
+
+    const valor = this.valorUso();
+
+    if (valor <= 0) {
+      return;
+    }
+
+    this.categorias.update(categorias =>
+      categorias.map(item =>
+        item.nome === categoria.nome
+          ? {
+              ...item,
+              usado: item.usado + valor
+            }
+          : item
+      )
+    );
+
+    this.fecharPopupUso();
   }
 
   adicionarCategoria(): void {
@@ -375,11 +711,11 @@ export class Budget {
       return;
     }
 
-    this.categorias.push({
+    this.categorias.update(categorias => [...categorias, {
       nome: categoria.nome.trim(),
       limite: categoria.limite,
       usado: categoria.usado
-    });
+    }]);
 
     this.popupAdicionar.set(false);
   }
@@ -396,7 +732,11 @@ export class Budget {
       return;
     }
 
-    this.categorias.splice(indice, 1);
+    this.categorias.update(categorias => {
+      const novasCategorias = [...categorias];
+      novasCategorias.splice(indice, 1);
+      return novasCategorias;
+    });
 
     this.categoriaSelecionadaRemover.set(null);
     this.popupRemover.set(false);
