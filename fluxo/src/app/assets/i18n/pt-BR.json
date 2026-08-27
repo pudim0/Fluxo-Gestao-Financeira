@@ -1,5 +1,20 @@
 {
 
+   "painel": {
+    "titulo": "Painel"
+   },
+
+   "metas": {
+   "titulo": "Metas ativas",
+    "descricao": "Acompanhe o progresso das suas metas e defina novos objetivos para o seu orçamento.",
+
+    "msgDescricaoMetas": "Panorama do progresso atual por meta.",
+    "totalMetas": "Total de metas"
+
+
+   },
+
+
     "budget": {
     "titulo": "Orçamento",
     "descricao": "Controle os tetos de gasto e acompanhe a distribuição por categoria em um único painel.",

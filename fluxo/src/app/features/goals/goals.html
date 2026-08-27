@@ -4,21 +4,21 @@
       <p class="page-kicker">Planejamento</p>
       <h2 class="page-title">Minhas metas</h2>
       <p class="page-copy">
-        Acompanhe seus objetivos financeiros e veja o quanto falta para cada conquista.
+        {{ 'metas.msgDescricaoMetas' | translate }}
       </p>
     </div>
   </header>
 
   <section class="metrics-grid goals-summary" aria-label="Resumo das metas">
     <article class="metric-card positive">
-      <span class="metric-label">Total em metas</span>
+      <span class="metric-label">{{ 'metas.totalMetas' | translate }}</span>
       <span class="metric-value">{{ totalTarget() | currency: 'BRL' : 'symbol' : '1.0-0' }}</span>
-      <span class="metric-detail">{{ goals().length }} metas ativas</span>
+      <span class="metric-detail">{{ goals().length }} {{ 'metas.titulo' | translate }}</span>
     </article>
     <article class="metric-card">
       <span class="metric-label">Economizado</span>
       <span class="metric-value">{{ totalSaved() | currency: 'BRL' : 'symbol' : '1.0-0' }}</span>
-      <span class="metric-detail">{{ overallProgress() }}% do total acumulado</span>
+      <span class="metric-detail">{{ overallProgress() }} {{ 'metasprogresso' | translate }}</span>
     </article>
     <article class="metric-card">
       <span class="metric-label">Próxima meta</span>

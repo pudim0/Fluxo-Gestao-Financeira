@@ -1,6 +1,6 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 
@@ -29,7 +29,7 @@ export interface ChartPoint {
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe, DsCard],
+  imports: [CurrencyPipe, DecimalPipe, DsCard, TranslatePipe],
   templateUrl: './goals.html',
   styleUrl: './goals.css',
 })

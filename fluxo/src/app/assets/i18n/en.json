@@ -1,5 +1,16 @@
 {
 
+  "metas": {
+    "titulo": "Goals",
+    "descricao": "Track the progress of your goals and set new objectives for your budget.",
+
+    "msgDescricaoMetas": "Overview of current progress by goal.",
+
+    "totalMetas": "Total goals"
+ 
+
+  },
+
   "budget": {
     "titulo": "Budget",
     "descricao":"The settings panel will centralize personalization, account and interface behavior.",
