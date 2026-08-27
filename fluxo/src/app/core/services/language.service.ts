@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export type Idioma = 'pt-BR' | 'en';
@@ -8,20 +8,12 @@ export type Idioma = 'pt-BR' | 'en';
 })
 export class LanguageService {
 
-  idioma = signal<Idioma>('pt-BR');
+  private readonly translate = inject(TranslateService);
 
-  constructor(private translate: TranslateService) {
-    const idiomaSalvo = localStorage.getItem('idioma') as Idioma | null;
+  idioma = signal<Idioma>(this.carregarIdioma());
 
-    const idiomaInicial: Idioma =
-      idiomaSalvo === 'en' || idiomaSalvo === 'pt-BR'
-        ? idiomaSalvo
-        : 'pt-BR';
-
-    this.idioma.set(idiomaInicial);
-
-    this.translate.setFallbackLang('pt-BR');
-    this.translate.use(idiomaInicial);
+  constructor() {
+    this.translate.use(this.idioma());
   }
 
   mudarIdioma(idioma: Idioma): void {
@@ -30,5 +22,19 @@ export class LanguageService {
     localStorage.setItem('idioma', idioma);
 
     this.translate.use(idioma);
+  }
+
+  texto(pt: string, en: string): string {
+    return this.idioma() === 'pt-BR' ? pt : en;
+  }
+
+  private carregarIdioma(): Idioma {
+    const idiomaSalvo = localStorage.getItem('idioma');
+
+    if (idiomaSalvo === 'pt-BR' || idiomaSalvo === 'en') {
+      return idiomaSalvo;
+    }
+
+    return 'pt-BR';
   }
 }
