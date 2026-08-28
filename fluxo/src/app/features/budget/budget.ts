@@ -27,7 +27,9 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
   imports: [CurrencyPipe, FormsModule, DsCard, DsModal],
   template: `
     <section class="page-shell">
+
       <header class="page-header">
+
         <div>
           <p class="page-kicker">Orçamento</p>
           <h2 class="page-title">Orçamento mensal</h2>
@@ -137,6 +139,7 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
               }}</strong></span
             >
           </div>
+
         </ds-card>
       </section>
 
