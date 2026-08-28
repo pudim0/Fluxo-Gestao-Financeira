@@ -24,8 +24,14 @@ export class DashboardComponent {
   protected readonly profileSummary = computed(() => {
     const profile = this.profile();
     if (!profile.goal) return 'Complete seu onboarding para personalizar este resumo.';
-    const debt = profile.hasDebt === 'Sim' ? 'Você informou que possui dívidas.' : 'Você informou que não possui dívidas.';
-    const reserve = profile.hasEmergencyFund === 'Sim' ? 'Sua reserva de emergência está ativa.' : 'A criação de uma reserva pode ser uma prioridade.';
+    const debt =
+      profile.hasDebt === 'Sim'
+        ? 'Você informou que possui dívidas.'
+        : 'Você informou que não possui dívidas.';
+    const reserve =
+      profile.hasEmergencyFund === 'Sim'
+        ? 'Sua reserva de emergência está ativa.'
+        : 'A criação de uma reserva pode ser uma prioridade.';
     return `${debt} ${reserve}`;
   });
 
