@@ -1,26 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { Dashboard } from './dashboard';
+import { DashboardComponent } from './dashboard';
 import { TransactionsService } from '../../services/transactions.service';
 import { MockTransactionRepository } from '../../repositories/mock-transaction.repository';
 import { TRANSACTION_REPOSITORY } from '../../repositories/transaction.repository';
 
-describe('Dashboard', () => {
-  let component: Dashboard;
-  let fixture: ComponentFixture<Dashboard>;
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
 
   beforeEach(async () => {
     localStorage.removeItem('fluxo.mock.transactions:anonymous');
     await TestBed.configureTestingModule({
-      imports: [Dashboard, RouterTestingModule],
+      imports: [DashboardComponent, RouterTestingModule],
       providers: [
         TransactionsService,
         { provide: TRANSACTION_REPOSITORY, useClass: MockTransactionRepository },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Dashboard);
+    fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
     fixture.detectChanges();
@@ -35,8 +35,16 @@ describe('Dashboard', () => {
     expect(metrics.length).toBeGreaterThan(0);
   });
 
+  it('should render the overview panels from the dashboard mockup', () => {
+    const overviewPanel = fixture.nativeElement.querySelector('.overview-panel');
+    const insightsPanel = fixture.nativeElement.querySelector('.insights-panel');
+
+    expect(overviewPanel).toBeTruthy();
+    expect(insightsPanel).toBeTruthy();
+  });
+
   it('shows only three recent transactions in the dashboard preview', () => {
-    const rows = fixture.nativeElement.querySelectorAll('.transaction-preview__row');
+    const rows = fixture.nativeElement.querySelectorAll('.transaction-row');
     expect(rows.length).toBe(3);
   });
 

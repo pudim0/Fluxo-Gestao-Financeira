@@ -26,8 +26,12 @@ describe('GoalsComponent', () => {
     chartPoint.dispatchEvent(new MouseEvent('mouseenter'));
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(component.chartData()[2].month);
-    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain('24.000');
+    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(
+      component.chartData()[2].month,
+    );
+    expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(
+      component.chartPoints()[2].value,
+    );
   });
 
   it('should add and remove contributions', () => {

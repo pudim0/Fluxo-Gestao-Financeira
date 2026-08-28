@@ -33,7 +33,8 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+        loadComponent: () =>
+          import('./features/dashboard/dashboard').then((m) => m.DashboardComponent),
       },
       {
         path: 'onboarding',
@@ -53,7 +54,10 @@ export const routes: Routes = [
         path: 'relatorios',
         loadComponent: () => import('./features/reports/reports').then((m) => m.Reports),
       },
-      { path: 'metas', loadComponent: () => import('./features/goals/goals').then((m) => m.GoalsComponent) },
+      {
+        path: 'metas',
+        loadComponent: () => import('./features/goals/goals').then((m) => m.GoalsComponent),
+      },
       {
         path: 'configuracoes',
         loadComponent: () => import('./features/settings/settings').then((m) => m.Settings),

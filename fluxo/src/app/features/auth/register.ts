@@ -41,7 +41,7 @@ export class Register {
     }
 
     this.validationMessage = '';
-    this.authService.startDemoSession(this.email);
+    this.authService.startDemoSession(this.email, this.name);
     void this.router.navigateByUrl('/onboarding');
   }
 

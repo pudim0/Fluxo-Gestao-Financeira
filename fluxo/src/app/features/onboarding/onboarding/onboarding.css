@@ -26,7 +26,9 @@
     color-mix(in srgb, var(--surface-elevated) 88%, transparent)
   );
   box-shadow: var(--shadow-soft);
-  transition: background var(--theme-transition), border-color var(--theme-transition),
+  transition:
+    background var(--theme-transition),
+    border-color var(--theme-transition),
     box-shadow var(--theme-transition);
 }
 

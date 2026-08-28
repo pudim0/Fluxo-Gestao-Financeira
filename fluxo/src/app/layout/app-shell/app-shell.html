@@ -2,11 +2,14 @@
   <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
   <aside class="sidebar" [class.open]="sidebarOpen()" id="app-sidebar">
     <div class="sidebar-top">
-      <div class="brand-mark">F$</div>
+      <div class="brand-lockup">
+        <img class="brand-mark" src="https://i.imgur.com/VKYc3m3.png" alt="Flu$o" />
         <div>
           <p class="brand-name">Flu$o</p>
           <p class="brand-note">Gestão financeira</p>
-        </div><button
+        </div>
+      </div>
+      <button
         class="icon-button mobile-only"
         type="button"
         (click)="closeSidebar()"
@@ -25,7 +28,7 @@
           [attr.aria-current]="link.isActive ? 'page' : null"
           (click)="closeSidebar()"
           ><span class="nav-icon" aria-hidden="true">{{ item.icon }}</span
-          ><span class="nav-label">{{ item.label }}</span></a
+          ><span class="nav-label">{{ item.label | translate }}</span></a
         >
       }
     </nav>
@@ -53,7 +56,7 @@
         </button>
         <div>
           <p class="eyebrow">Flu$o</p>
-          <h1 class="texto-categoria">{{ mensagem() }}</h1>
+          <h1 class="texto-categoria">{{ mensagem() | translate }}</h1>
         </div>
       </div>
       <div class="topbar-actions">
@@ -113,6 +116,16 @@
                 <span aria-hidden="true">⚙</span>
                 Configurações
               </a>
+              <button
+                class="settings-menu-item"
+                type="button"
+                role="menuitem"
+                (click)="toggleTheme()"
+                [attr.aria-label]="theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'"
+              >
+                <span aria-hidden="true">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
+                {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}
+              </button>
               <button
                 class="settings-menu-item settings-menu-item--danger"
                 type="button"

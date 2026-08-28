@@ -55,7 +55,7 @@ export class TransactionsService {
       value: String(this.transactions().length),
       detail: 'Movimentações no histórico',
       tone: 'neutral',
-    }
+    },
   ]);
   readonly highlights = computed(() => [
     `${this.transactions().length} movimentações`,

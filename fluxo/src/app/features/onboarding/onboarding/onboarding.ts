@@ -2,14 +2,14 @@ import { DecimalPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../../../core/services/auth.service';
-
-const PROFILE_STORAGE_PREFIX = 'fluxo.profile:';
+import { FinancialProfile } from '../../../models/financial-profile.model';
+import { FinancialProfileService } from '../../../services/financial-profile.service';
 
 type Question =
   | 'goal'
   | 'incomeSource'
   | 'incomeFrequency'
+  | 'incomeAmount'
   | 'incomeType'
   | 'hasDebt'
   | 'debtTypes'
@@ -17,66 +17,35 @@ type Question =
   | 'hasEmergencyFund'
   | 'concern';
 
-type DebtType =
-  | 'Cartão de crédito'
-  | 'Empréstimo'
-  | 'Financiamento'
-  | 'Cheque especial'
-  | 'Outra';
+import { DebtType } from '../../../models/financial-profile.model';
 
-interface FinancialProfile {
-  goal: string;
-  incomeSource: string;
-  incomeFrequency: string;
-  incomeType: string;
-  hasDebt: 'Sim' | 'Não' | '';
-  debtTypes: DebtType[];
-  debtAmount: string;
-  hasEmergencyFund: 'Sim' | 'Não' | '';
-  concern: string;
-}
-
-type AnswerField = Exclude<
-  keyof FinancialProfile,
-  'debtTypes' | 'debtAmount'
->;
+type AnswerField = Exclude<keyof FinancialProfile, 'debtTypes' | 'debtAmount'>;
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
   imports: [DecimalPipe],
   templateUrl: './onboarding.html',
-  styleUrl: './onboarding.css'
+  styleUrl: './onboarding.css',
 })
 export class Onboarding {
-  private readonly authService = inject(AuthService);
+  private readonly profileService = inject(FinancialProfileService);
   started = false;
   currentStep = 0;
   showSummary = false;
 
   profile: FinancialProfile = this.readProfile();
 
-  readonly goals = [
-    'Organizar minhas finanças',
-    'Quitar dívidas',
-    'Criar uma reserva',
-    'Investir'
-  ];
+  readonly goals = ['Organizar minhas finanças', 'Quitar dívidas', 'Criar uma reserva', 'Investir'];
 
-  readonly incomeSources = [
-    'Salário',
-    'Autônomo',
-    'Empreendedor',
-    'Aposentadoria',
-    'Outra'
-  ];
+  readonly incomeSources = ['Salário', 'Autônomo', 'Empreendedor', 'Aposentadoria', 'Outra'];
 
   readonly incomeFrequencies = [
     'Diariamente',
     'Semanalmente',
     'Quinzenalmente',
     'Mensalmente',
-    'Eventualmente'
+    'Eventualmente',
   ];
 
   readonly incomeTypes = ['Fixa', 'Variável', 'Fixa e variável'];
@@ -88,7 +57,7 @@ export class Onboarding {
     'Empréstimo',
     'Financiamento',
     'Cheque especial',
-    'Outra'
+    'Outra',
   ];
 
   readonly emergencyFundAnswers: Array<'Sim' | 'Não'> = ['Sim', 'Não'];
@@ -97,7 +66,7 @@ export class Onboarding {
     'Controlar gastos',
     'Quitar dívidas',
     'Aumentar minha renda',
-    'Começar a investir'
+    'Começar a investir',
   ];
 
   constructor(private readonly router: Router) {}
@@ -107,8 +76,9 @@ export class Onboarding {
       'goal',
       'incomeSource',
       'incomeFrequency',
+      'incomeAmount',
       'incomeType',
-      'hasDebt'
+      'hasDebt',
     ];
 
     if (this.profile.hasDebt === 'Sim') {
@@ -170,9 +140,7 @@ export class Onboarding {
 
   toggleDebtType(type: DebtType): void {
     if (this.profile.debtTypes.includes(type)) {
-      this.profile.debtTypes = this.profile.debtTypes.filter(
-        (debt) => debt !== type
-      );
+      this.profile.debtTypes = this.profile.debtTypes.filter((debt) => debt !== type);
       return;
     }
 
@@ -197,6 +165,9 @@ export class Onboarding {
 
       case 'incomeFrequency':
         return !!this.profile.incomeFrequency;
+
+      case 'incomeAmount':
+        return this.parseAmount(this.profile.incomeAmount) > 0;
 
       case 'incomeType':
         return !!this.profile.incomeType;
@@ -236,37 +207,25 @@ export class Onboarding {
   }
 
   finish(): void {
-    try {
-      localStorage.setItem(this.getProfileStorageKey(), JSON.stringify(this.profile));
-    } catch {
-    }
+    this.profileService.save(this.profile);
     this.router.navigate(['/dashboard']);
   }
 
-  private getProfileStorageKey(): string {
-    const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
-    return `${PROFILE_STORAGE_PREFIX}${email}`;
-  }
-
   private readProfile(): FinancialProfile {
-    try {
-      const stored = localStorage.getItem(this.getProfileStorageKey());
-      if (stored) {
-        return JSON.parse(stored) as FinancialProfile;
-      }
-    } catch {
-    }
-
     return {
-      goal: '',
-      incomeSource: '',
-      incomeFrequency: '',
-      incomeType: '',
-      hasDebt: '',
-      debtTypes: [],
-      debtAmount: '',
-      hasEmergencyFund: '',
-      concern: ''
+      ...this.profileService.profile(),
+      debtTypes: [...this.profileService.profile().debtTypes],
     };
   }
-} 
+
+  private parseAmount(value: string): number {
+    return (
+      Number(
+        value
+          .replace(/\./g, '')
+          .replace(',', '.')
+          .replace(/[^\d.-]/g, ''),
+      ) || 0
+    );
+  }
+}
