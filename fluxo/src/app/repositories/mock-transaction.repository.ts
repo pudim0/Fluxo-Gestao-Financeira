@@ -127,13 +127,14 @@ export class MockTransactionRepository implements TransactionRepository {
 
       if (!amount) return 6500;
 
-      const multiplier = {
-        Diariamente: 30,
-        Semanalmente: 52 / 12,
-        Quinzenalmente: 26 / 12,
-        Mensalmente: 1,
-        Eventualmente: 1,
-      }[profile?.incomeFrequency ?? 'Mensalmente'] ?? 1;
+      const multiplier =
+        {
+          Diariamente: 30,
+          Semanalmente: 52 / 12,
+          Quinzenalmente: 26 / 12,
+          Mensalmente: 1,
+          Eventualmente: 1,
+        }[profile?.incomeFrequency ?? 'Mensalmente'] ?? 1;
 
       return Math.round(amount * multiplier * 100) / 100;
     } catch {
@@ -142,7 +143,14 @@ export class MockTransactionRepository implements TransactionRepository {
   }
 
   private parseAmount(value: string): number {
-    return Number(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
+    return (
+      Number(
+        value
+          .replace(/\./g, '')
+          .replace(',', '.')
+          .replace(/[^\d.-]/g, ''),
+      ) || 0
+    );
   }
 
   private getUserKey(): string {

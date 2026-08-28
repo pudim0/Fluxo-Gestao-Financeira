@@ -1,7 +1,9 @@
 <main class="auth-page">
   <section class="auth-showcase" aria-label="Sobre o Flu$o">
     <div class="auth-showcase__content">
-      <a class="brand" routerLink="/login"><img class="brand__logo" src="https://i.imgur.com/aZ5TZHt.png" alt="Flu$o" /></a>
+      <a class="brand" routerLink="/login"
+        ><img class="brand__logo" src="https://i.imgur.com/aZ5TZHt.png" alt="Flu$o"
+      /></a>
       <h1>Seu dinheiro, inteligente.</h1>
       <p>
         Tenha clareza para decidir melhor. Organize contas, despesas e objetivos em um só lugar.
@@ -16,15 +18,21 @@
 
   <section class="auth-form-area">
     <div class="auth-card">
-      <a class="brand auth-card__brand" routerLink="/login"><img class="brand__logo" src="https://i.imgur.com/aZ5TZHt.png" alt="Flu$o" /></a>
+      <a class="brand auth-card__brand" routerLink="/login"
+        ><img class="brand__logo" src="https://i.imgur.com/aZ5TZHt.png" alt="Flu$o"
+      /></a>
       <h1>Bem-vindo de volta</h1>
       <p class="auth-card__intro">Entre na sua conta para continuar</p>
 
       @if (validationMessage()) {
-        <p class="auth-message auth-message--error" role="alert" aria-live="assertive">{{ validationMessage() }}</p>
+        <p class="auth-message auth-message--error" role="alert" aria-live="assertive">
+          {{ validationMessage() }}
+        </p>
       }
       @if (route.snapshot.queryParamMap.get('reason') === 'session-expired') {
-        <p class="auth-message" role="status" aria-live="polite">Sua sessão expirou. Entre novamente para continuar.</p>
+        <p class="auth-message" role="status" aria-live="polite">
+          Sua sessão expirou. Entre novamente para continuar.
+        </p>
       }
       <form class="auth-form" (ngSubmit)="submit()">
         <label class="auth-field" for="login-email"

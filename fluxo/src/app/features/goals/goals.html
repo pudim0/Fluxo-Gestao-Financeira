@@ -46,21 +46,9 @@
           <label class="visually-hidden" for="goal-name">Nome da meta</label>
           <input id="goal-name" #goalName type="text" placeholder="Nome da meta" />
           <label class="visually-hidden" for="goal-target">Valor total da meta</label>
-          <input
-            id="goal-target"
-            #goalTarget
-            type="number"
-            min="1"
-            placeholder="Valor total"
-          />
+          <input id="goal-target" #goalTarget type="number" min="1" placeholder="Valor total" />
           <label class="visually-hidden" for="goal-monthly">Aporte mensal</label>
-          <input
-            id="goal-monthly"
-            #goalMonthly
-            type="number"
-            min="1"
-            placeholder="Aporte mensal"
-          />
+          <input id="goal-monthly" #goalMonthly type="number" min="1" placeholder="Aporte mensal" />
           <label class="visually-hidden" for="goal-deadline">Prazo da meta</label>
           <input id="goal-deadline" #goalDeadline type="month" />
           <button type="submit">Adicionar meta</button>
@@ -125,7 +113,9 @@
                         contribution.value = ''
                       "
                     >
-                      <label class="visually-hidden" for="contribution-{{ goal.id }}">Valor para adicionar à meta</label>
+                      <label class="visually-hidden" for="contribution-{{ goal.id }}"
+                        >Valor para adicionar à meta</label
+                      >
                       <input
                         id="contribution-{{ goal.id }}"
                         #contribution
@@ -144,7 +134,9 @@
                         withdrawal.value = ''
                       "
                     >
-                      <label class="visually-hidden" for="withdrawal-{{ goal.id }}">Valor para retirar da meta</label>
+                      <label class="visually-hidden" for="withdrawal-{{ goal.id }}"
+                        >Valor para retirar da meta</label
+                      >
                       <input
                         id="withdrawal-{{ goal.id }}"
                         #withdrawal

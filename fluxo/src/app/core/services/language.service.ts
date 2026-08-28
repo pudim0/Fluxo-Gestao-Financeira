@@ -7,16 +7,13 @@ export type Idioma = 'pt-BR' | 'en';
   providedIn: 'root',
 })
 export class LanguageService {
-
   idioma = signal<Idioma>('pt-BR');
 
   constructor(private translate: TranslateService) {
     const idiomaSalvo = localStorage.getItem('idioma') as Idioma | null;
 
     const idiomaInicial: Idioma =
-      idiomaSalvo === 'en' || idiomaSalvo === 'pt-BR'
-        ? idiomaSalvo
-        : 'pt-BR';
+      idiomaSalvo === 'en' || idiomaSalvo === 'pt-BR' ? idiomaSalvo : 'pt-BR';
 
     this.idioma.set(idiomaInicial);
 

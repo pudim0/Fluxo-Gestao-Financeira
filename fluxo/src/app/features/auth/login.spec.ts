@@ -17,7 +17,9 @@ describe('Login', () => {
         { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { queryParamMap: convertToParamMap({ redirectTo: '/transacoes' }) } },
+          useValue: {
+            snapshot: { queryParamMap: convertToParamMap({ redirectTo: '/transacoes' }) },
+          },
         },
       ],
     }).compileComponents();

@@ -15,12 +15,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-shell',
-  imports: [
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet,
-    TranslatePipe,
-  ],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
   templateUrl: './app-shell.html',
 })
 export class AppShell {
@@ -38,13 +33,13 @@ export class AppShell {
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      map((e) => e.urlAfterRedirects)
+      map((e) => e.urlAfterRedirects),
     ),
-    { initialValue: this.router.url }
+    { initialValue: this.router.url },
   );
 
   protected readonly unreadNotifications = computed(
-    () => this.notificationCenter.notifications().filter((item) => !item.read).length
+    () => this.notificationCenter.notifications().filter((item) => !item.read).length,
   );
 
   // Navigation Config (Standardized with i18n keys)

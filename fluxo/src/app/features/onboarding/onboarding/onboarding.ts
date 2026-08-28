@@ -19,17 +19,14 @@ type Question =
 
 import { DebtType } from '../../../models/financial-profile.model';
 
-type AnswerField = Exclude<
-  keyof FinancialProfile,
-  'debtTypes' | 'debtAmount'
->;
+type AnswerField = Exclude<keyof FinancialProfile, 'debtTypes' | 'debtAmount'>;
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
   imports: [DecimalPipe],
   templateUrl: './onboarding.html',
-  styleUrl: './onboarding.css'
+  styleUrl: './onboarding.css',
 })
 export class Onboarding {
   private readonly profileService = inject(FinancialProfileService);
@@ -39,27 +36,16 @@ export class Onboarding {
 
   profile: FinancialProfile = this.readProfile();
 
-  readonly goals = [
-    'Organizar minhas finanças',
-    'Quitar dívidas',
-    'Criar uma reserva',
-    'Investir'
-  ];
+  readonly goals = ['Organizar minhas finanças', 'Quitar dívidas', 'Criar uma reserva', 'Investir'];
 
-  readonly incomeSources = [
-    'Salário',
-    'Autônomo',
-    'Empreendedor',
-    'Aposentadoria',
-    'Outra'
-  ];
+  readonly incomeSources = ['Salário', 'Autônomo', 'Empreendedor', 'Aposentadoria', 'Outra'];
 
   readonly incomeFrequencies = [
     'Diariamente',
     'Semanalmente',
     'Quinzenalmente',
     'Mensalmente',
-    'Eventualmente'
+    'Eventualmente',
   ];
 
   readonly incomeTypes = ['Fixa', 'Variável', 'Fixa e variável'];
@@ -71,7 +57,7 @@ export class Onboarding {
     'Empréstimo',
     'Financiamento',
     'Cheque especial',
-    'Outra'
+    'Outra',
   ];
 
   readonly emergencyFundAnswers: Array<'Sim' | 'Não'> = ['Sim', 'Não'];
@@ -80,7 +66,7 @@ export class Onboarding {
     'Controlar gastos',
     'Quitar dívidas',
     'Aumentar minha renda',
-    'Começar a investir'
+    'Começar a investir',
   ];
 
   constructor(private readonly router: Router) {}
@@ -92,7 +78,7 @@ export class Onboarding {
       'incomeFrequency',
       'incomeAmount',
       'incomeType',
-      'hasDebt'
+      'hasDebt',
     ];
 
     if (this.profile.hasDebt === 'Sim') {
@@ -154,9 +140,7 @@ export class Onboarding {
 
   toggleDebtType(type: DebtType): void {
     if (this.profile.debtTypes.includes(type)) {
-      this.profile.debtTypes = this.profile.debtTypes.filter(
-        (debt) => debt !== type
-      );
+      this.profile.debtTypes = this.profile.debtTypes.filter((debt) => debt !== type);
       return;
     }
 
@@ -228,10 +212,20 @@ export class Onboarding {
   }
 
   private readProfile(): FinancialProfile {
-    return { ...this.profileService.profile(), debtTypes: [...this.profileService.profile().debtTypes] };
+    return {
+      ...this.profileService.profile(),
+      debtTypes: [...this.profileService.profile().debtTypes],
+    };
   }
 
   private parseAmount(value: string): number {
-    return Number(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
+    return (
+      Number(
+        value
+          .replace(/\./g, '')
+          .replace(',', '.')
+          .replace(/[^\d.-]/g, ''),
+      ) || 0
+    );
   }
-} 
+}
