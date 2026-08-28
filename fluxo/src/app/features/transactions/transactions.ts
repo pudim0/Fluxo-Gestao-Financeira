@@ -5,20 +5,20 @@ import { FormsModule } from '@angular/forms';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { EmptyState as DsEmptyState } from '../../shared/components/design-system/empty-state/empty-state';
 import { LoadingState as DsLoadingState } from '../../shared/components/design-system/loading-state/loading-state';
+import { Modal as DsModal } from '../../shared/components/design-system/modal/modal';
 import { NewTransaction, Transaction, TransactionType } from '../../models/transaction.model';
 import { TransactionsService } from '../../services/transactions.service';
 
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard, DsEmptyState, DsLoadingState],
+  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard, DsEmptyState, DsLoadingState, DsModal],
   template: `
     <section class="page-shell">
       <header class="page-header">
         <div>
-
           <h2 class="page-title">Movimentações recentes e recorrentes</h2>
-          <p class="page-copy">Registre cada entrada e saída para manter o dashboard atualizado.</p>
+          <p class="page-copy">Registre cada entrada e saída para manter o painel atualizado.</p>
         </div>
         <button class="primary-button" type="button" (click)="startCreate()">Nova transação</button>
       </header>
@@ -76,7 +76,11 @@ import { TransactionsService } from '../../services/transactions.service';
               </label>
               <label class="field">
                 <span>Até</span>
-                <input type="date" [value]="endDate" (change)="endDate = $any($event.target).value" />
+                <input
+                  type="date"
+                  [value]="endDate"
+                  (change)="endDate = $any($event.target).value"
+                />
               </label>
             </div>
           </div>
@@ -104,10 +108,7 @@ import { TransactionsService } from '../../services/transactions.service';
       </section>
 
       @if (transactionsService.isLoading()) {
-        <ds-loading-state
-          label="Carregando transações"
-          detail="Buscando suas movimentações."
-        />
+        <ds-loading-state label="Carregando transações" detail="Buscando suas movimentações." />
       } @else if (transactionsService.hasError()) {
         <section class="state-card" role="alert">
           <strong>Não foi possível carregar as transações.</strong>
@@ -118,16 +119,19 @@ import { TransactionsService } from '../../services/transactions.service';
         </section>
       } @else if (filteredTransactions.length === 0) {
         <ds-empty-state
-          [title]="hasActiveFilters ? 'Nenhuma transação encontrada' : 'Comece registrando uma transação'"
-          [description]="hasActiveFilters ? 'Ajuste os filtros para encontrar outras movimentações.' : 'Adicione uma receita ou despesa para acompanhar seu fluxo financeiro.'"
+          [title]="
+            hasActiveFilters ? 'Nenhuma transação encontrada' : 'Comece registrando uma transação'
+          "
+          [description]="
+            hasActiveFilters
+              ? 'Ajuste os filtros para encontrar outras movimentações.'
+              : 'Adicione uma receita ou despesa para acompanhar seu fluxo financeiro.'
+          "
           [actionLabel]="hasActiveFilters ? 'Limpar filtros' : 'Nova transação'"
           (action)="hasActiveFilters ? clearFilters() : startCreate()"
         />
       } @else {
-        <ds-card
-          eyebrow="Extrato"
-          title="Histórico de movimentações"
-        >
+        <ds-card eyebrow="Extrato" title="Histórico de movimentações">
           <div class="transaction-table-wrap">
             <table class="ds-table">
               <thead>
@@ -175,22 +179,12 @@ import { TransactionsService } from '../../services/transactions.service';
       }
 
       @if (formOpen) {
-        <section class="transaction-form-panel" aria-labelledby="transaction-form-title">
-          <div class="card-head">
-            <div>
-              <p class="page-kicker">{{ editingId ? 'Editar' : 'Nova' }} transação</p>
-              <h3 id="transaction-form-title">Detalhes da movimentação</h3>
-            </div>
-            <button
-              class="icon-button"
-              type="button"
-              aria-label="Fechar formulário"
-              (click)="closeForm()"
-            >
-              ✕
-            </button>
-          </div>
-
+        <ds-modal
+          [open]="formOpen"
+          [eyebrow]="editingId ? 'Editar' : 'Nova'"
+          title="Detalhes da movimentação"
+          (close)="closeForm()"
+        >
           <form class="transaction-form" (ngSubmit)="save()">
             <label class="field field--wide">
               <span>Descrição</span>
@@ -226,6 +220,10 @@ import { TransactionsService } from '../../services/transactions.service';
                 <select name="category" required [(ngModel)]="form.category">
                   <option value="">Selecione uma categoria</option>
 
+                  @if (form.category && !transactionsService.categories().includes(form.category)) {
+                    <option [value]="form.category">{{ form.category }}</option>
+                  }
+
                   @for (category of transactionsService.categories(); track category) {
                     <option [value]="category">
                       {{ category }}
@@ -237,18 +235,30 @@ import { TransactionsService } from '../../services/transactions.service';
                   + Criar nova categoria
                 </button>
               } @else {
-                <input
-                  name="category"
-                  required
-                  [(ngModel)]="form.category"
-                  placeholder="Ex.: Alimentação"
-                />
+                <div class="category-input-row">
+                  <input
+                    name="category"
+                    required
+                    [(ngModel)]="form.category"
+                    placeholder="Ex.: Alimentação"
+                  />
+                  <button
+                    class="icon-button category-confirm-button"
+                    type="button"
+                    [disabled]="!form.category.trim()"
+                    (click)="confirmNewCategory()"
+                    aria-label="Confirmar categoria"
+                    title="Confirmar categoria"
+                  >
+                    →
+                  </button>
+                </div>
 
                 <button class="secondary-button" type="button" (click)="cancelNewCategory()">
                   Escolher categoria existente
                 </button>
-              }</label
-            >
+              }
+            </label>
             <label class="field">
               <span>Data</span>
               <input name="date" required type="date" [(ngModel)]="form.date" />
@@ -269,7 +279,7 @@ import { TransactionsService } from '../../services/transactions.service';
               <button class="secondary-button" type="button" (click)="closeForm()">Cancelar</button>
             </div>
           </form>
-        </section>
+        </ds-modal>
       }
     </section>
   `,
@@ -288,7 +298,9 @@ export class Transactions implements OnDestroy {
   protected feedbackMessage = '';
 
   protected get hasActiveFilters(): boolean {
-    return Boolean(this.search || this.selectedType || this.selectedCategory || this.startDate || this.endDate);
+    return Boolean(
+      this.search || this.selectedType || this.selectedCategory || this.startDate || this.endDate,
+    );
   }
 
   protected clearFilters(): void {
@@ -383,6 +395,13 @@ export class Transactions implements OnDestroy {
   protected startNewCategory(): void {
     this.creatingCategory = true;
     this.form.category = '';
+  }
+
+  protected confirmNewCategory(): void {
+    if (!this.form.category.trim()) return;
+
+    this.form.category = this.form.category.trim();
+    this.creatingCategory = false;
   }
 
   private emptyForm(): NewTransaction {

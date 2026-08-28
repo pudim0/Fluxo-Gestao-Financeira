@@ -1,134 +1,239 @@
-import { Component, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { Input as DsInput } from '../../shared/components/design-system/input/input';
+import { LanguageService } from '../../core/services/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [DsButton, DsCard, DsInput],
+  imports: [DsButton, DsCard, DsInput, TranslatePipe],
   template: `
-  
     <section class="page-shell">
       <header class="page-header">
         <div>
           <p class="page-copy">
-            O painel de configurações vai concentrar personalização, conta e comportamento da
-            interface.
+            {{ 'settings.descricao' | translate }}
           </p>
-          <br>
           <div class="button-config">
-              <ds-button (click)="mostrarAba('perfil')">Perfil</ds-button>
-              <ds-button (click)="mostrarAba('preferencias')">Preferências</ds-button>
-              <ds-button (click)="mostrarAba('acessibilidade')">Acessibilidade</ds-button>
+            <ds-button (click)="mostrarAba('perfil')" [class.selecionado]="abaAtiva() === 'perfil'">
+              {{ 'settings.perfil' | translate }}
+            </ds-button>
+            <ds-button
+              (click)="mostrarAba('preferencias')"
+              [class.selecionado]="abaAtiva() === 'preferencias'"
+            >
+              {{ 'settings.preferencias' | translate }}
+            </ds-button>
+            <ds-button
+              (click)="mostrarAba('acessibilidade')"
+              [class.selecionado]="abaAtiva() === 'acessibilidade'"
+            >
+              {{ 'settings.acessibilidade' | translate }}
+            </ds-button>
           </div>
         </div>
       </header>
 
-      /* add contato em acessibilidade */
       <section class="page-grid">
         @if (abaAtiva() === 'perfil') {
           <ds-card
-            eyebrow="Perfil"
-            title="Dados da conta"
-            subtitle="Campos base para personalização e contato."
+            eyebrow="{{ 'settings.perfil' | translate }}"
+            title="{{ 'settings.dadosConta' | translate }}"
+            subtitle="{{ 'settings.dadosContaDescricao' | translate }}"
           >
             <div class="stack">
-              <ds-input label="Nome" placeholder="Seu nome" [value]="nomeAtual()" (input)="atualizarNome($event)"/>
-              <ds-input label="E-mail" type="email" placeholder="voce@empresa.com" [value]="emailAtual()" (input)="atualizarEmail($event)"/>
-              <ds-input label="Senha antiga" type="password" placeholder="********" [value]="senhaAntiga()" (input)="atualizarSenhaAntiga($event)"/>
-              <ds-input label="Nova senha" type="password" placeholder="********" [value]="novaSenha()" (input)="atualizarNovaSenha($event)"/>
+              <ds-input
+                label="{{ 'settings.nome' | translate }}"
+                placeholder="Seu nome"
+                [value]="nomeAtual()"
+                (input)="atualizarNome($event)"
+              />
+              <ds-input
+                label="{{ 'settings.email' | translate }}"
+                type="email"
+                placeholder="voce@empresa.com"
+                [value]="emailAtual()"
+                (input)="atualizarEmail($event)"
+              />
+              <ds-input
+                label="{{ 'settings.senhaAntiga' | translate }}"
+                type="password"
+                placeholder="********"
+                [value]="senhaAntiga()"
+                (input)="atualizarSenhaAntiga($event)"
+              />
+              <ds-input
+                label="{{ 'settings.novaSenha' | translate }}"
+                type="password"
+                placeholder="********"
+                [value]="novaSenha()"
+                (input)="atualizarNovaSenha($event)"
+              />
             </div>
           </ds-card>
         }
 
         @if (abaAtiva() === 'preferencias') {
           <ds-card
-            eyebrow="Preferências"
-            title="Interface"
-            subtitle="Configurações que podem virar toggles reais depois."
+            eyebrow="{{ 'settings.preferencias' | translate }}"
+            title="{{ 'settings.interface' | translate }}"
+            subtitle="{{ 'settings.dadosContaDescricao' | translate }}"
           >
+            <div class="linguagens">
+              <button
+                class="button-linguagem"
+                (click)="mudarIdioma('pt-BR')"
+                [class.linguagem-atual]="idioma() === 'pt-BR'"
+              >
+                PT-BR
+              </button>
+              <button
+                class="button-linguagem"
+                (click)="mudarIdioma('en')"
+                [class.linguagem-atual]="idioma() === 'en'"
+              >
+                ENG
+              </button>
+            </div>
+
             <div class="tag-row">
-              <span class="tag">Tema escuro</span>
-              <span class="tag">Modo compacto</span>
-              <span class="tag">Atalhos de teclado</span>
+              <button type="button" class="tag" (click)="toggleTheme()">
+                {{
+                  theme() === 'dark'
+                    ? ('settings.temaClaro' | translate)
+                    : ('settings.temaEscuro' | translate)
+                }}
+              </button>
+              <span class="tag">{{ 'settings.modoCompacto' | translate }}</span>
+              <span class="tag">{{ 'settings.atalhosTeclado' | translate }}</span>
             </div>
           </ds-card>
         }
 
         @if (abaAtiva() === 'acessibilidade') {
           <ds-card
-            eyebrow="Acessibilidade"
-            title="Ajustes"
-            subtitle="Configurações que podem virar toggles reais depois."
+            eyebrow="{{ 'settings.acessibilidade' | translate }}"
+            title="{{ 'settings.contatoSuporte' | translate }}"
+            subtitle="{{ 'settings.dadosContaDescricao' | translate }}"
           >
-            
           </ds-card>
+          <div class="button-config">
+            <ds-button variant="secondary">E-mail</ds-button>
+            <ds-button variant="secondary">WhatsApp</ds-button>
+          </div>
         }
-
       </section>
 
       <section class="page-grid page-grid--single">
-        <ds-card eyebrow="Salvar" title="Substituir dados antigos pelas alterações">
+        <ds-card
+          eyebrow="{{ 'settings.salvar' | translate }}"
+          title="{{ 'settings.msgSalvar' | translate }}"
+        >
           <div class="page-actions">
-            <ds-button [style.opacity]="alterado ? '1' : '0.5'" [disabled]="!alterado" class="button-save">Salvar alterações</ds-button>
-            <ds-button (click)="cancelarAlteracoes()" variant="secondary">Cancelar</ds-button>
+            <ds-button
+              [style.opacity]="alterado ? '1' : '0.5'"
+              [disabled]="!alterado"
+              class="button-save"
+              >{{ 'settings.salvarAlteracoes' | translate }}</ds-button
+            >
+            <ds-button (click)="cancelarAlteracoes()" variant="secondary">{{
+              'settings.cancelar' | translate
+            }}</ds-button>
           </div>
         </ds-card>
       </section>
     </section>
   `,
 })
-
 export class Settings {
+  private readonly document = inject(DOCUMENT);
+
   abaAtiva = signal<'perfil' | 'preferencias' | 'acessibilidade'>('perfil');
+  theme = signal<'dark' | 'light'>(this.readTheme());
 
-    nomeOriginal = '';
-    emailOriginal = '';
-    senhaOriginal = '';
+  nomeOriginal = '';
+  emailOriginal = '';
+  senhaOriginal = '';
 
-    nomeAtual = signal('');
-    emailAtual = signal('');
-    senhaAntiga = signal('');
-    novaSenha = signal('');
+  nomeAtual = signal('');
+  emailAtual = signal('');
+  senhaAntiga = signal('');
+  novaSenha = signal('');
 
-    cancelarAlteracoes(): void {
-      this.nomeAtual.set(this.nomeOriginal);
-      this.emailAtual.set(this.emailOriginal);
-      this.senhaAntiga.set(this.senhaOriginal);
-      this.novaSenha.set(this.senhaOriginal);
+  private readonly languageService = inject(LanguageService);
+
+  idioma = this.languageService.idioma;
+
+  mudarIdioma(idioma: 'pt-BR' | 'en'): void {
+    this.languageService.mudarIdioma(idioma);
+  }
+
+  constructor() {
+    this.applyTheme(this.theme());
+  }
+
+  cancelarAlteracoes(): void {
+    this.nomeAtual.set(this.nomeOriginal);
+    this.emailAtual.set(this.emailOriginal);
+    this.senhaAntiga.set(this.senhaOriginal);
+    this.novaSenha.set(this.senhaOriginal);
+  }
+
+  mostrarAba(aba: 'perfil' | 'preferencias' | 'acessibilidade'): void {
+    this.abaAtiva.set(aba);
+  }
+
+  atualizarNome(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.nomeAtual.set(valor);
+  }
+
+  atualizarEmail(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.emailAtual.set(valor);
+  }
+
+  atualizarSenhaAntiga(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.senhaAntiga.set(valor);
+  }
+
+  atualizarNovaSenha(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
+    this.novaSenha.set(valor);
+  }
+
+  get alterado(): boolean {
+    return (
+      this.nomeAtual() !== this.nomeOriginal ||
+      this.emailAtual() !== this.emailOriginal ||
+      this.senhaAntiga() !== this.senhaOriginal ||
+      this.novaSenha() !== this.senhaOriginal
+    );
+  }
+
+  toggleTheme(): void {
+    const next = this.theme() === 'dark' ? 'light' : 'dark';
+    this.theme.set(next);
+    try {
+      localStorage.setItem('fluxo.theme', next);
+    } catch {}
+    this.applyTheme(next);
+  }
+
+  private readTheme(): 'dark' | 'light' {
+    try {
+      const theme = localStorage.getItem('fluxo.theme');
+      return theme === 'light' || theme === 'dark' ? theme : 'dark';
+    } catch {
+      return 'dark';
     }
+  }
 
-    mostrarAba(aba: 'perfil' | 'preferencias' | 'acessibilidade'): void {
-      this.abaAtiva.set(aba);
-    }
-
-    atualizarNome(event: Event): void {
-      const valor = (event.target as HTMLInputElement).value;
-      this.nomeAtual.set(valor);
-    }
-
-    atualizarEmail(event: Event): void {
-      const valor = (event.target as HTMLInputElement).value;
-      this.emailAtual.set(valor);
-    }
-
-    atualizarSenhaAntiga(event: Event): void {
-      const valor = (event.target as HTMLInputElement).value;
-      this.senhaAntiga.set(valor);
-    }
-
-    atualizarNovaSenha(event: Event): void {
-      const valor = (event.target as HTMLInputElement).value;
-      this.novaSenha.set(valor);
-    }
-
-    get alterado(): boolean {
-      return (
-        this.nomeAtual() !== this.nomeOriginal ||
-        this.emailAtual() !== this.emailOriginal ||
-        this.senhaAntiga() !== this.senhaOriginal ||
-        this.novaSenha() !== this.senhaOriginal
-      );
-    }
+  private applyTheme(theme: 'dark' | 'light'): void {
+    this.document.documentElement.setAttribute('data-theme', theme);
+  }
 }

@@ -54,6 +54,14 @@
   font-size: 1em;
   flex-shrink: 0;
 }
+
+.brand__logo {
+  display: block;
+  width: clamp(7rem, 14vw, 10rem);
+  max-height: 3.5rem;
+  height: auto;
+  object-fit: contain;
+}
 .auth-showcase h1 {
   margin: 3.5rem 0 1rem;
   max-width: 11ch;
@@ -236,7 +244,9 @@
   color: var(--text-primary);
   font-weight: 700;
   cursor: pointer;
-  transition: border-color 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 .auth-social button:hover {
   border-color: var(--auth-brand);

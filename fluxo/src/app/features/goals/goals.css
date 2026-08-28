@@ -34,6 +34,7 @@
 
 .goals-main-card {
   grid-area: main;
+  container: goals-main / inline-size;
 }
 
 .goals-chart-card {
@@ -152,6 +153,12 @@
     box-shadow 150ms ease;
 }
 
+:host-context([data-theme='light']) .carousel-arrow {
+  border-color: var(--border-color);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
 .carousel-arrow:hover:not(:disabled),
 .carousel-arrow:focus-visible {
   border-color: var(--accent);
@@ -169,6 +176,7 @@
 }
 
 .progress-window {
+  width: 100%;
   min-width: 0;
   overflow: hidden;
 }
@@ -281,6 +289,8 @@
 .progress-item {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   padding: 14px;
   border: 1px solid var(--border-color);
   border-radius: 16px;
@@ -443,6 +453,28 @@
 }
 
 @media (max-width: 560px) {
+  .new-goal-form,
+  .contribution-form {
+    grid-template-columns: 1fr;
+  }
+
+  .new-goal-form button,
+  .contribution-form button {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .progress-heading {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .progress-value {
+    grid-column: 2;
+    justify-items: start;
+    min-width: 0;
+    text-align: left;
+  }
+
   .goals-carousel {
     grid-template-columns: 36px minmax(0, 1fr) 36px;
     gap: 8px;
@@ -482,6 +514,17 @@
 @container goals-page (max-width: 560px) {
   .new-goal-form {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .new-goal-form input:first-of-type,
+  .new-goal-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+@container goals-main (max-width: 700px) {
+  .new-goal-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .new-goal-form input:first-of-type,

@@ -1,0 +1,59 @@
+{
+  "budget": {
+    "titulo": "Orçamento",
+    "descricao": "Controle os tetos de gasto e acompanhe a distribuição por categoria em um único painel.",
+
+    "categorias": "Categorias",
+    "limites": "Limites",
+
+    "msgCategorias": "Distribuição mensal",
+    "msgLimites": "Alterar teto de gastos",
+
+    "msgDescricaoCategorias": "Panorama dos limites atuais por grupo de despesas.",
+    "msgDescricaoLimites": "Panorama dos limites atuais por grupo de despesas."
+  },
+
+  "settings": {
+    "tituloPaginaDashboard": "Painel",
+    "tituloPaginaConfig": "Configurações",
+    "tituloPaginaMetas": "Metas",
+    "tituloPaginaTransacoes": "Transações",
+    "tituloOrcamento": "Orçamento",
+
+    "perfil": "Perfil",
+    "preferencias": "Preferências",
+    "acessibilidade": "Acessibilidade",
+
+    "contatoSuporte": "Contato com o suporte",
+    "msgSalvar": "Substituir dados antigos pelas alterações",
+    "salvar": "Salvar alterações",
+
+    "descricao": "O painel de configurações vai concentrar personalização, conta e comportamento da interface.",
+
+    "dadosConta": "Dados da conta",
+    "dadosContaDescricao": "Campos base para personalização e contato.",
+
+    "nome": "Nome",
+    "seuNome": "Seu nome",
+
+    "email": "E-mail",
+    "seuEmail": "voce@empresa.com",
+
+    "senhaAntiga": "Senha antiga",
+    "novaSenha": "Nova senha",
+
+    "interface": "Interface",
+    "interfaceDescricao": "Configurações que podem virar toggles reais depois.",
+
+    "temaEscuro": "Alternar tema escuro",
+    "temaClaro": "Alternar tema claro",
+    "modoCompacto": "Modo compacto",
+    "atalhosTeclado": "Atalhos de teclado",
+
+    "ajustes": "Ajustes",
+
+    "persistenciaFutura": "Persistência futura",
+    "salvarAlteracoes": "Salvar alterações",
+    "cancelar": "Cancelar"
+  }
+}

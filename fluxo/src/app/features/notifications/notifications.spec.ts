@@ -7,6 +7,7 @@ describe('Notifications', () => {
   let fixture: ComponentFixture<Notifications>;
 
   beforeEach(async () => {
+    localStorage.removeItem('fluxo.notifications:anonymous');
     await TestBed.configureTestingModule({
       imports: [Notifications],
     }).compileComponents();
@@ -34,5 +35,19 @@ describe('Notifications', () => {
     expect(component.notifications().length).toBe(4);
     expect(component.notifications()[0].title).toContain('Limite de gasto atingido');
     expect(component.notifications()[3].category).toBe('Lembretes');
+  });
+
+  it('marks a single notification as read', () => {
+    component.markAsRead(1);
+
+    expect(component.notifications().find((item) => item.id === 1)?.read).toBe(true);
+    expect(component.unreadCount()).toBe(3);
+  });
+
+  it('marks all notifications as read', () => {
+    component.markAllAsRead();
+
+    expect(component.notifications().every((item) => item.read)).toBe(true);
+    expect(component.unreadCount()).toBe(0);
   });
 });

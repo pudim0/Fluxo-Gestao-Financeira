@@ -49,7 +49,7 @@
 .mark-all {
   border: 0;
   background: transparent;
-  color: var(--accent);
+  color: rgb(22, 216, 126);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -60,6 +60,8 @@
 .mark-all:hover,
 .mark-all:focus-visible {
   opacity: 0.8;
+  color: rgb(0, 255, 76);
+  text-shadow: 2px 0px 5px rgba(0, 232, 124, 0.5);
 }
 
 .summary-grid {
@@ -163,6 +165,11 @@
   gap: 8px;
 }
 
+.feed-tab:hover {
+  background-color: rgba(35, 35, 35, 0.153);
+  border-color: rgba(38, 142, 71, 0.7);
+}
+
 .feed-tab span {
   display: inline-flex;
   align-items: center;
@@ -176,10 +183,15 @@
   font-size: 0.68rem;
 }
 
+.feed-tab:hover span {
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--text-primary);
+}
+
 .feed-tab.is-active {
   background: var(--surface-strong);
   color: var(--text-primary);
-  border-color: rgba(0, 232, 122, 0.2);
+  border-color: rgba(0, 232, 124, 0.573);
 }
 
 .feed-group {
@@ -204,6 +216,24 @@
   background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
   border: 1px solid var(--border-color);
   margin-bottom: 12px;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.notification-item:hover,
+.notification-item:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border-color));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.notification-item.is-read {
+  opacity: 0.78;
 }
 
 .notification-item:last-child {
@@ -306,6 +336,101 @@
 
 .amount-negative {
   color: #ff5f5f;
+}
+
+:host-context([data-theme='light']) {
+  --notifications-surface: rgba(255, 255, 255, 0.9);
+  --notifications-muted: #607085;
+  --notifications-border: rgba(15, 23, 35, 0.1);
+  --notifications-active: rgba(10, 145, 91, 0.38);
+  --notifications-green: #087f52;
+}
+
+:host-context([data-theme='light']) .mark-all,
+:host-context([data-theme='light']) .summary-card.is-success .summary-label,
+:host-context([data-theme='light']) .summary-card.is-success .summary-value,
+:host-context([data-theme='light']) .amount-positive {
+  color: var(--notifications-green);
+}
+
+:host-context([data-theme='light']) .summary-card,
+:host-context([data-theme='light']) .notification-item {
+  background: var(--notifications-surface);
+  border-color: var(--notifications-border);
+}
+
+:host-context([data-theme='light']) .summary-card:hover,
+:host-context([data-theme='light']) .summary-card:focus-visible,
+:host-context([data-theme='light']) .notification-item:hover,
+:host-context([data-theme='light']) .notification-item:focus-visible {
+  border-color: var(--notifications-active);
+}
+
+:host-context([data-theme='light']) .summary-card.is-active,
+:host-context([data-theme='light']) .feed-tab.is-active {
+  background: #e2f5ec;
+  border-color: var(--notifications-active);
+  color: #075f3e;
+}
+
+:host-context([data-theme='light']) .feed-date {
+  color: var(--notifications-muted);
+}
+
+:host-context([data-theme='light']) .summary-card.is-danger .summary-label,
+:host-context([data-theme='light']) .summary-card.is-danger .summary-value,
+:host-context([data-theme='light']) .amount-negative {
+  color: #c2413b;
+}
+
+:host-context([data-theme='light']) .summary-card.is-warning .summary-label,
+:host-context([data-theme='light']) .summary-card.is-warning .summary-value {
+  color: #a46700;
+}
+
+:host-context([data-theme='light']) .summary-card.is-info .summary-label,
+:host-context([data-theme='light']) .summary-card.is-info .summary-value {
+  color: #2563a8;
+}
+
+:host-context([data-theme='light']) .feed-shell {
+  background: rgba(255, 255, 255, 0.76);
+  border-color: var(--notifications-border);
+}
+
+:host-context([data-theme='light']) .feed-tab {
+  background: #f5f8fc;
+  border-color: var(--notifications-border);
+}
+:host-context([data-theme='light']) .feed-tab:hover,
+:host-context([data-theme='light']) .feed-tab:focus-visible {
+  background: #e8f5ef;
+  border-color: var(--notifications-active);
+  color: #15533e;
+}
+
+:host-context([data-theme='light']) .notification-item.is-read {
+  background: rgba(248, 250, 252, 0.9);
+}
+:host-context([data-theme='light']) .notification-icon.danger {
+  background: #fce8e6;
+  color: #b93832;
+}
+:host-context([data-theme='light']) .notification-icon.success {
+  background: #def5e9;
+  color: var(--notifications-green);
+}
+:host-context([data-theme='light']) .notification-icon.warning {
+  background: #fff3d5;
+  color: #996300;
+}
+:host-context([data-theme='light']) .notification-icon.info {
+  background: #e2efff;
+  color: #2563a8;
+}
+:host-context([data-theme='light']) .notification-dot {
+  background: #0b9b63;
+  box-shadow: 0 0 0 3px rgba(11, 155, 99, 0.14);
 }
 
 @media (max-width: 700px) {

@@ -2,11 +2,14 @@
   <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
   <aside class="sidebar" [class.open]="sidebarOpen()" id="app-sidebar">
     <div class="sidebar-top">
-      <div class="brand-mark">↯</div>
+      <div class="brand-lockup">
+        <img class="brand-mark" src="https://i.imgur.com/VKYc3m3.png" alt="Flu$o" />
         <div>
           <p class="brand-name">Flu$o</p>
           <p class="brand-note">Gestão financeira</p>
-        </div><button
+        </div>
+      </div>
+      <button
         class="icon-button mobile-only"
         type="button"
         (click)="closeSidebar()"
@@ -24,7 +27,8 @@
           routerLinkActive="active"
           [attr.aria-current]="link.isActive ? 'page' : null"
           (click)="closeSidebar()"
-          ><span class="nav-label">{{ item.label }}</span></a
+          ><span class="nav-icon" aria-hidden="true">{{ item.icon }}</span
+          ><span class="nav-label">{{ item.label | translate }}</span></a
         >
       }
     </nav>
@@ -52,17 +56,41 @@
         </button>
         <div>
           <p class="eyebrow">Flu$o</p>
-          <h1 class="texto-categoria">{{ mensagem() }}</h1>
+          <h1 class="texto-categoria">{{ mensagem() | translate }}</h1>
         </div>
       </div>
       <div class="topbar-actions">
         <a
           class="icon-button notification-trigger"
           routerLink="/notificacoes"
-          aria-label="Abrir notificações"
+          [attr.aria-label]="
+            unreadNotifications() > 0
+              ? 'Abrir notificações, ' + unreadNotifications() + ' não lidas'
+              : 'Abrir notificações'
+          "
           title="Notificações"
         >
-          🔔
+          <svg
+            class="notification-icon"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            aria-hidden="true"
+          >
+            <path
+              d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+            />
+          </svg>
+          @if (unreadNotifications() > 0) {
+            <span class="notification-badge" aria-hidden="true">
+              {{ unreadNotifications() > 9 ? '9+' : unreadNotifications() }}
+            </span>
+          }
         </a>
 
         <div class="settings-menu">
@@ -75,7 +103,7 @@
             aria-label="Abrir configurações"
             title="Configurações"
           >
-            ⚙
+            <span aria-hidden="true">⚙</span>
           </button>
           @if (settingsOpen()) {
             <div class="settings-dropdown" role="menu">
@@ -92,7 +120,8 @@
                 class="settings-menu-item"
                 type="button"
                 role="menuitem"
-                (click)="toggleTheme(); closeSettings()"
+                (click)="toggleTheme()"
+                [attr.aria-label]="theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'"
               >
                 <span aria-hidden="true">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
                 {{ theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}
