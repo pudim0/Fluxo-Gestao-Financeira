@@ -25,7 +25,7 @@ import { Component, HostListener, input, output } from '@angular/core';
               type="button"
               class="ds-modal__close"
               (click)="close.emit()"
-              aria-label="Fechar modal"
+              aria-label="Close modal"
             >
               ✕
             </button>

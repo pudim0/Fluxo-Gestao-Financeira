@@ -1,7 +1,9 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
+import { LanguageService } from '../../core/services/language.service';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { EmptyState as DsEmptyState } from '../../shared/components/design-system/empty-state/empty-state';
 import { LoadingState as DsLoadingState } from '../../shared/components/design-system/loading-state/loading-state';
@@ -12,54 +14,54 @@ import { TransactionsService } from '../../services/transactions.service';
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard, DsEmptyState, DsLoadingState, DsModal],
+  imports: [CurrencyPipe, DatePipe, FormsModule, DsCard, DsEmptyState, DsLoadingState, DsModal, TranslatePipe],
   template: `
     <section class="page-shell">
       <header class="page-header">
         <div>
-          <h2 class="page-title">Movimentações recentes e recorrentes</h2>
-          <p class="page-copy">Registre cada entrada e saída para manter o painel atualizado.</p>
+          <h2 class="page-title">{{ 'transacoes.titulo' | translate }}</h2>
+          <p class="page-copy">{{ 'transacoes.descricao' | translate }}</p>
         </div>
-        <button class="primary-button" type="button" (click)="startCreate()">Nova transação</button>
+        <button class="primary-button" type="button" (click)="startCreate()">{{ 'transacoes.novadescricao' | translate }}</button>
       </header>
 
       @if (feedbackMessage) {
         <section class="state-card action-feedback" role="status" aria-live="polite">
-          <strong>{{ feedbackMessage }}</strong>
+          <strong>{{ feedbackMessage | translate }}</strong>
         </section>
       }
 
       <section class="page-grid">
         <ds-card
-          eyebrow="Filtros"
-          title="Encontre uma movimentação"
-          subtitle="Combine período, categoria, tipo ou descrição."
+          eyebrow="{{ 'transacoes.filtro' | translate }}"
+          title="{{ 'transacoes.titulofiltr' | translate }}"
+          subtitle="{{ 'transacoes.subtitulo' | translate }}"
         >
           <div class="transaction-filters">
             <label class="field">
-              <span>Buscar</span>
+              <span>{{ 'transacoes.buscar' | translate }}</span>
               <input
                 type="search"
-                placeholder="Descrição ou conta"
+                placeholder="{{ 'transacoes.descricaoConta' | translate }}"
                 [value]="search"
                 (input)="search = $any($event.target).value"
               />
             </label>
             <label class="field">
-              <span>Tipo</span>
+              <span>{{ 'transacoes.periodo' | translate }}</span>
               <select [value]="selectedType" (change)="selectedType = $any($event.target).value">
-                <option value="">Todos</option>
-                <option value="income">Receitas</option>
-                <option value="expense">Despesas</option>
+                <option value="">{{ 'transacoes.todos' | translate }}</option>
+                <option value="income">{{ 'transacoes.receitas' | translate }}</option>
+                <option value="expense">{{ 'transacoes.despesas' | translate }}</option>
               </select>
             </label>
             <label class="field">
-              <span>Categoria</span>
+              <span>{{ 'transacoes.categoria' | translate }}</span>
               <select
                 [value]="selectedCategory"
                 (change)="selectedCategory = $any($event.target).value"
               >
-                <option value="">Todas</option>
+                <option value="">{{ 'transacoes.todas' | translate }}</option>
                 @for (category of transactionsService.categories(); track category) {
                   <option [value]="category">{{ category }}</option>
                 }
@@ -67,7 +69,7 @@ import { TransactionsService } from '../../services/transactions.service';
             </label>
             <div class="date-range">
               <label class="field">
-                <span>De</span>
+                <span>{{ 'transacoes.De' | translate }}</span>
                 <input
                   type="date"
                   [value]="startDate"
@@ -75,7 +77,7 @@ import { TransactionsService } from '../../services/transactions.service';
                 />
               </label>
               <label class="field">
-                <span>Até</span>
+                <span>{{ 'transacoes.Ate' | translate }}</span>
                 <input
                   type="date"
                   [value]="endDate"
@@ -87,20 +89,20 @@ import { TransactionsService } from '../../services/transactions.service';
         </ds-card>
 
         <ds-card
-          eyebrow="Resumo"
-          title="Período filtrado"
-          subtitle="Valores calculados a partir dos resultados visíveis."
+          eyebrow="{{ 'transacoes.resumo' | translate }}"
+          title="{{ 'transacoes.periodoFiltrado' | translate }}"
+          subtitle="{{ 'transacoes.valores' | translate }}"
         >
           <div class="transaction-summary">
             <span
-              ><small>Resultados</small><strong>{{ filteredTransactions.length }}</strong></span
+              ><small>{{ 'transacoes.resultados' | translate }}</small><strong>{{ filteredTransactions.length }}</strong></span
             >
             <span
-              ><small>Entradas</small
+              ><small>{{ 'transacoes.entradas' | translate }}</small
               ><strong class="income-value">{{ filteredIncome | currency: 'BRL' }}</strong></span
             >
             <span
-              ><small>Saídas</small
+              ><small>{{ 'transacoes.saidas' | translate }}</small
               ><strong class="expense-value">{{ filteredExpense | currency: 'BRL' }}</strong></span
             >
           </div>
@@ -108,40 +110,43 @@ import { TransactionsService } from '../../services/transactions.service';
       </section>
 
       @if (transactionsService.isLoading()) {
-        <ds-loading-state label="Carregando transações" detail="Buscando suas movimentações." />
+        <ds-loading-state
+          label="{{ 'transacoes.carregando' | translate }}"
+          detail="{{ 'transacoes.detalheCarregando' | translate }}"
+        />
       } @else if (transactionsService.hasError()) {
         <section class="state-card" role="alert">
-          <strong>Não foi possível carregar as transações.</strong>
-          <p>Verifique a conexão e tente novamente.</p>
+          <strong>{{ 'transacoes.possivel' | translate }}</strong>
+          <p>{{ 'transacoes.verifique' | translate }}</p>
           <button class="secondary-button" type="button" (click)="transactionsService.load()">
-            Tentar novamente
+            {{ 'transacoes.tentarNovamente' | translate }}
           </button>
         </section>
       } @else if (filteredTransactions.length === 0) {
         <ds-empty-state
           [title]="
-            hasActiveFilters ? 'Nenhuma transação encontrada' : 'Comece registrando uma transação'
+            hasActiveFilters ? 'transacoes.naoEncontrado' : 'transacoes.comeceRegistrando'
           "
           [description]="
             hasActiveFilters
-              ? 'Ajuste os filtros para encontrar outras movimentações.'
-              : 'Adicione uma receita ou despesa para acompanhar seu fluxo financeiro.'
+              ? ('transacoes.ajusteFiltros' | translate)
+              : ('transacoes.adicioneRegistro' | translate)
           "
-          [actionLabel]="hasActiveFilters ? 'Limpar filtros' : 'Nova transação'"
+          [actionLabel]="hasActiveFilters ? ('transacoes.limparFiltros' | translate) : ('transacoes.novaTransacao' | translate)"
           (action)="hasActiveFilters ? clearFilters() : startCreate()"
         />
       } @else {
-        <ds-card eyebrow="Extrato" title="Histórico de movimentações">
+        <ds-card eyebrow="{{ 'transacoes.extrato' | translate }}" title="{{ 'transacoes.historicoMovimentacoes' | translate }}">
           <div class="transaction-table-wrap">
             <table class="ds-table">
               <thead>
                 <tr>
-                  <th>Data</th>
-                  <th>Descrição</th>
-                  <th>Categoria</th>
-                  <th>Conta</th>
-                  <th>Valor</th>
-                  <th><span class="visually-hidden">Ações</span></th>
+                  <th>{{ 'transacoes.data' | translate }}</th>
+                  <th>{{ 'transacoes.descricaoth' | translate }}</th>
+                  <th>{{ 'transacoes.categoriath' | translate }}</th>
+                  <th>{{ 'transacoes.conta' | translate }}</th>
+                  <th>{{ 'transacoes.valor' | translate }}</th>
+                  <th><span class="visually-hidden">{{ 'transacoes.acoes' | translate }}</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -160,14 +165,14 @@ import { TransactionsService } from '../../services/transactions.service';
                     </td>
                     <td class="transaction-actions">
                       <button class="ghost-button" type="button" (click)="startEdit(transaction)">
-                        Editar
+                        {{ 'transacoes.editar' | translate }}
                       </button>
                       <button
                         class="ghost-button danger-button"
                         type="button"
                         (click)="remove(transaction)"
                       >
-                        Excluir
+                        {{ 'transacoes.excluir' | translate }}
                       </button>
                     </td>
                   </tr>
@@ -181,22 +186,22 @@ import { TransactionsService } from '../../services/transactions.service';
       @if (formOpen) {
         <ds-modal
           [open]="formOpen"
-          [eyebrow]="editingId ? 'Editar' : 'Nova'"
-          title="Detalhes da movimentação"
+          [eyebrow]="editingId ? ('transacoes.editar' | translate) : ('transacoes.nova' | translate)"
+          title="{{ 'transacoes.detalhesMovimentacao' | translate }}"
           (close)="closeForm()"
         >
           <form class="transaction-form" (ngSubmit)="save()">
             <label class="field field--wide">
-              <span>Descrição</span>
+              <span>{{ 'transacoes.descricao' | translate }}</span>
               <input
                 name="description"
                 required
                 [(ngModel)]="form.description"
-                placeholder="Ex.: Conta de luz"
+                placeholder="{{ 'transacoes.exemploDescricao' | translate }}"
               />
             </label>
             <label class="field">
-              <span>Valor</span>
+              <span>{{ 'transacoes.valor' | translate }}</span>
               <input
                 name="amount"
                 required
@@ -207,18 +212,18 @@ import { TransactionsService } from '../../services/transactions.service';
               />
             </label>
             <label class="field">
-              <span>Tipo</span>
+              <span>{{ 'transacoes.tipo' | translate }}</span>
               <select name="type" [(ngModel)]="form.type">
-                <option value="expense">Despesa</option>
-                <option value="income">Receita</option>
+                <option value="expense">{{ 'transacoes.despesa' | translate }}</option>
+                <option value="income">{{ 'transacoes.receita' | translate }}</option>
               </select>
             </label>
             <label class="field">
-              <span>Categoria</span>
+              <span>{{ 'transacoes.categoria' | translate }}</span>
 
               @if (!creatingCategory) {
                 <select name="category" required [(ngModel)]="form.category">
-                  <option value="">Selecione uma categoria</option>
+                  <option value="">{{ 'transacoes.selecioneCategoria' | translate }}</option>
 
                   @if (form.category && !transactionsService.categories().includes(form.category)) {
                     <option [value]="form.category">{{ form.category }}</option>
@@ -232,7 +237,7 @@ import { TransactionsService } from '../../services/transactions.service';
                 </select>
 
                 <button class="secondary-button" type="button" (click)="startNewCategory()">
-                  + Criar nova categoria
+                  + {{ 'transacoes.criarNovaCategoria' | translate }}
                 </button>
               } @else {
                 <div class="category-input-row">
@@ -240,43 +245,43 @@ import { TransactionsService } from '../../services/transactions.service';
                     name="category"
                     required
                     [(ngModel)]="form.category"
-                    placeholder="Ex.: Alimentação"
+                    placeholder="{{ 'transacoes.exemploCategoria' | translate }}"
                   />
                   <button
                     class="icon-button category-confirm-button"
                     type="button"
                     [disabled]="!form.category.trim()"
                     (click)="confirmNewCategory()"
-                    aria-label="Confirmar categoria"
-                    title="Confirmar categoria"
+                    aria-label="{{ 'transacoes.confirmarCategoria' | translate }}"
+                    title="{{ 'transacoes.confirmarCategoria' | translate }}"
                   >
                     →
                   </button>
                 </div>
 
                 <button class="secondary-button" type="button" (click)="cancelNewCategory()">
-                  Escolher categoria existente
+                  {{ 'transacoes.escolherCategoriaExistente' | translate }}
                 </button>
               }
             </label>
             <label class="field">
-              <span>Data</span>
+              <span>{{ 'transacoes.data' | translate }}</span>
               <input name="date" required type="date" [(ngModel)]="form.date" />
             </label>
             <label class="field">
-              <span>Conta</span>
+              <span>{{ 'transacoes.conta' | translate }}</span>
               <input
                 name="account"
                 required
                 [(ngModel)]="form.account"
-                placeholder="Ex.: Conta principal"
+                placeholder="{{ 'transacoes.exemploContaPrincipal' | translate }}"
               />
             </label>
             <div class="button-row field--wide">
               <button class="primary-button" type="submit">
-                {{ editingId ? 'Salvar alterações' : 'Adicionar transação' }}
+                {{ editingId ? ('transacoes.salvarAlteracoes' | translate) : ('transacoes.adicionarTransacao' | translate) }}
               </button>
-              <button class="secondary-button" type="button" (click)="closeForm()">Cancelar</button>
+              <button class="secondary-button" type="button" (click)="closeForm()">{{ 'transacoes.cancelar' | translate }}</button>
             </div>
           </form>
         </ds-modal>
@@ -286,6 +291,7 @@ import { TransactionsService } from '../../services/transactions.service';
 })
 export class Transactions implements OnDestroy {
   protected readonly transactionsService = inject(TransactionsService);
+  private readonly languageService = inject(LanguageService);
   protected search = '';
   protected selectedType: TransactionType | '' = '';
   protected selectedCategory = '';
@@ -381,14 +387,21 @@ export class Transactions implements OnDestroy {
     }
     this.closeForm();
     this.feedbackMessage = wasEditing
-      ? 'Transação atualizada com sucesso.'
-      : 'Transação criada com sucesso.';
+      ? 'transacoes.transacaoAtualizadaSucesso'
+      : 'transacoes.transacaoCriadaSucesso';
   }
 
   protected remove(transaction: Transaction): void {
-    if (window.confirm(`Excluir a transação "${transaction.description}"?`)) {
+    if (
+      window.confirm(
+        this.languageService.texto(
+          `Excluir a transação "${transaction.description}"?`,
+          `Delete the transaction "${transaction.description}"?`,
+        ),
+      )
+    ) {
       this.transactionsService.delete(transaction.id);
-      this.feedbackMessage = 'Transação excluída com sucesso.';
+      this.feedbackMessage = 'transacoes.transacaoExcluidaSucesso';
     }
   }
 
@@ -411,7 +424,7 @@ export class Transactions implements OnDestroy {
       type: 'expense',
       category: '',
       date: new Date().toISOString().slice(0, 10),
-      account: 'Conta principal',
+      account: this.languageService.texto('Conta principal', 'Main account'),
     };
   }
 }
