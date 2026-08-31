@@ -5,14 +5,65 @@
    },
 
    "metas": {
-   "titulo": "Metas ativas",
-    "descricao": "Acompanhe o progresso das suas metas e defina novos objetivos para o seu orçamento.",
 
     "msgDescricaoMetas": "Panorama do progresso atual por meta.",
-    "totalMetas": "Total de metas"
+    "totalMetas": "Total de metas",
+
+    "titulo": "do total acumulado",
+    "descricao": "Acompanhe o progresso das suas metas e defina novos objetivos para o seu orçamento.",
+    "mensagensMetasProgresso": "Progresso das metas",
+     
+    "tituloReservaMetas":  "reserva metas",
+    "ReservaMetas": "reserva metas",
+
+    "tituloMetames": "Metas",
+    "proximaMetaMes": "Próxima meta do mês",
+
+    "tituloPrazo": "Prazo",
+    "Prazo": "Prazo",
+
+    "tituloAdigido":"adigido",
+    "atingido":"atingido",
+
+    "tituloEconomizado": "Economizado",
+    "economizado": "Economizado",
+
+    "tituloMinhasMetas": "Minhas metas",
+    "minhasMetas": "Minhas metas",
+
+    "tituloMinhaMetas": "Minhas metas",
+    "minhaMetas": "Minhas metas",
+
+    "tituloEvolução das metas": "Evolução das metas",
+    "evolução das metas": "Evolução das metas",
+
+    "tituloSeus objetivos em andamento.": "Seus objetivos em andamento.",
+    "Seus objetivos em andamento.": "Seus objetivos em andamento.",
+
+    "tituloCrescimento do saldo poupado.": "Crescimento do saldo poupado.",
+    "Crescimento do saldo poupado.": "Crescimento do saldo poupado.",
+
+    "tituloAdicionar nova meta": "Adicionar nova meta",
+    "Adicionar nova meta": "Adicionar nova meta",
+
+    "tituloNomeDaMeta": "Nome da meta",
+    "NomeDaMeta": "Nome da meta",
+
+    "tituloValor total da meta": "Valor total da meta",
+    "Valor total da meta": "Valor total da meta",
+
+    "tituloNome da meta": "Nome da meta",
+    "Nome da meta": "Nome da meta",
+
+    "tituloAportemensal": "Aporte mensal",
+    "Aportemensal": "Aporte mensal",
+
+    "titulo Excluir meta": "Excluir meta",
+    "Excluir meta": "Excluir meta"
 
 
-   },
+
+    },
 
 
     "budget": {

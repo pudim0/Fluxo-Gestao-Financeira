@@ -1,15 +1,70 @@
 {
 
   "metas": {
-    "titulo": "Goals",
-    "descricao": "Track the progress of your goals and set new objectives for your budget.",
 
     "msgDescricaoMetas": "Overview of current progress by goal.",
 
-    "totalMetas": "Total goals"
+    "totalMetas": "Total goals",
  
+    "titulo": "of the total accumulated",
+    "descricao": "Track the progress of your goals and set new objectives for your budget.",
+    "mensagensMetasProgresso": "Goals progress",
+
+   "tituloReservaMetas":  "reserve goals",
+    "ReservaMetas": "reserve goals",
+
+    "tituloMetames": "Goals",
+    "proximaMetaMes": "Next goal of the month",
+
+    "tituloPrazo": "Term",
+    "Prazo": "Term",
+
+    "tituloAdigido":"achieved",
+    "atingido":"achieved",
+
+    "tituloEconomizado": "Saved",
+    "economizado": "Saved",
+    
+    "tituloMinhasMetas": "My goals",
+    "minhasMetas": "My goals",
+
+
+    "tituloMinhaMetas": "My goals",
+    "minhaMetas": "My goals",
+
+    "tituloEvolução das metas": "Goals evolution",
+    "evolução das metas": "Goals evolution",
+
+    "tituloSeus objetivos em andamento.": "Your ongoing goals.",
+    "Seus objetivos em andamento.": "Your ongoing goals.",
+
+    "titulocrescimento do saldo poupado.": "Growth of the saved balance.",
+    "Crescimento do saldo poupado.": "Growth of the saved balance.",
+
+    "tituloAdicionar nova meta": "Add new goal",
+    "Adicionar nova meta": "Add new goal",
+
+    "tituloNomeDaMeta": "Goal name",
+    "NomeDaMeta": "Goal name",
+      "tituloValor total da meta": "Total goal value",
+    "Valor total da meta": "Total goal value",
+
+    "tituloNome da meta": "Goal name",
+    "Nome da meta": "Goal name",
+
+    "tituloAporte mensal": "Monthly contribution",
+    "Aportemensal": "Monthly contribution",
+    
+    "titulo Excluir meta": "Delete goal",
+    "Excluir meta": "Delete goal"
+
+    
+    
 
   },
+
+
+  
 
   "budget": {
     "titulo": "Budget",

@@ -1,8 +1,8 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="page-kicker">Planejamento</p>
-      <h2 class="page-title">Minhas metas</h2>
+
+      <h2 class="page-title">{{ 'metas.minhasMetas' | translate }}</h2>
       <p class="page-copy">
         {{ 'metas.msgDescricaoMetas' | translate }}
       </p>
@@ -16,25 +16,25 @@
       <span class="metric-detail">{{ goals().length }} {{ 'metas.titulo' | translate }}</span>
     </article>
     <article class="metric-card">
-      <span class="metric-label">Economizado</span>
+      <span class="metric-label">{{ 'metas.economizado' | translate }}</span>
       <span class="metric-value">{{ totalSaved() | currency: 'BRL' : 'symbol' : '1.0-0' }}</span>
-      <span class="metric-detail">{{ overallProgress() }} {{ 'metasprogresso' | translate }}</span>
+      <span class="metric-detail">{{ overallProgress() }} {{ 'metas.mensagensMetasProgresso' | translate }}</span>
     </article>
     <article class="metric-card">
-      <span class="metric-label">Próxima meta</span>
+      <span class="metric-label">{{ 'metas.ReservaMetas' | translate }}</span>
       <span class="metric-value">{{ nextGoal().name }}</span>
-      <span class="metric-detail">Prazo: {{ nextGoal().deadlineLabel }}</span>
+      <span class="metric-detail">{{ 'metas.Prazo' | translate }}: {{ nextGoal().deadlineLabel }}</span>
     </article>
     <article class="metric-card">
-      <span class="metric-label">Meta do mês</span>
+      <span class="metric-label">{{ 'metas.proximaMetaMes' | translate }}</span>
       <span class="metric-value">{{ monthlyTarget() | currency: 'BRL' : 'symbol' : '1.0-0' }}</span>
-      <span class="metric-detail">{{ monthlyProgress() }}% atingido</span>
+      <span class="metric-detail">{{ monthlyProgress() }}% {{ 'metas.atingido' | translate }}</span>
     </article>
   </section>
 
   <section class="goals-layout">
     <div class="goals-main-card">
-      <ds-card eyebrow="Progresso" title="Minhas metas" subtitle="Seus objetivos em andamento.">
+      <ds-card eyebrow="Progresso" title="{{ 'metas.minhaMetas' | translate }}" subtitle="{{ 'metas.Seus objetivos em andamento.' | translate }}">
         <form
           class="new-goal-form"
           (submit)="
@@ -42,16 +42,16 @@
             addGoal(goalName.value, +goalTarget.value, +goalMonthly.value, goalDeadline.value)
           "
         >
-          <strong>Adicionar nova meta</strong>
+          <strong>{{ 'metas.Adicionar nova meta' | translate }}</strong>
           <label class="visually-hidden" for="goal-name">Nome da meta</label>
-          <input id="goal-name" #goalName type="text" placeholder="Nome da meta" />
+          <input id="goal-name" #goalName type="text" placeholder="{{ 'metas.Nome da meta' | translate }}" />
           <label class="visually-hidden" for="goal-target">Valor total da meta</label>
           <input
             id="goal-target"
             #goalTarget
             type="number"
             min="1"
-            placeholder="Valor total"
+            placeholder="{{ 'metas.Valor total da meta' | translate }}"
           />
           <label class="visually-hidden" for="goal-monthly">Aporte mensal</label>
           <input
@@ -59,11 +59,11 @@
             #goalMonthly
             type="number"
             min="1"
-            placeholder="Aporte mensal"
+            placeholder="{{ 'metas.Aportemensal' | translate }}"
           />
           <label class="visually-hidden" for="goal-deadline">Prazo da meta</label>
           <input id="goal-deadline" #goalDeadline type="month" />
-          <button type="submit">Adicionar meta</button>
+          <button type="submit"></button>
         </form>
 
         <div class="goals-carousel" aria-label="Carrossel de metas">
@@ -156,7 +156,7 @@
                     </form>
 
                     <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">
-                      Excluir meta
+                     {{ 'metas.Remover meta' | translate }}
                     </button>
                   </div>
                 </div>
@@ -193,9 +193,8 @@
     <div class="goals-chart-card">
       <ds-card
         eyebrow="Acompanhamento"
-        title="Evolução das metas"
-        subtitle="Crescimento do saldo poupado."
-      >
+        title="{{ 'metas.tituloEvolução das metas' | translate }}"
+        subtitle="{{'metas.Crescimento do saldo poupado.'| translate}}">
         <div class="goals-chart" aria-label="Gráfico de evolução das metas">
           <svg viewBox="0 0 420 180" role="img" aria-label="Evolução do saldo poupado">
             <polyline
