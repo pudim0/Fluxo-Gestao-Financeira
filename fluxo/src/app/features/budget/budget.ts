@@ -139,7 +139,24 @@ export class Budget {
   protected save(): void {
     const category = this.form.category.trim();
     const amount = Number(this.form.amount);
-    if (!category || !Number.isFinite(amount) || amount <= 0) return;
+    
+    // Bug #9 Fix: Validar categoria não vazia
+    if (!category) {
+      this.feedback.set('Por favor, informe uma categoria.');
+      return;
+    }
+    
+    if (!Number.isFinite(amount) || amount <= 0) {
+      this.feedback.set('O limite deve ser maior que zero.');
+      return;
+    }
+    
+    // Bug #13 Fix: Validar valores não são extravagantes
+    if (amount > Number.MAX_SAFE_INTEGER / 100) {
+      this.feedback.set('Valor muito grande. Use um valor realista.');
+      return;
+    }
+    
     const current = this.editing();
     const next = current ? this.limits().map((item) => item.category === current ? { category, amount } : item) : [...this.limits(), { category, amount }];
     this.limitsState.set(this.unique(next));

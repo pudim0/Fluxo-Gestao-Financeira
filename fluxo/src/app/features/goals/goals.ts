@@ -55,7 +55,22 @@ export class GoalsComponent {
     this.goals().reduce((acc, goal) => acc + goal.monthly, 0),
   );
 
-  readonly monthlyProgress = computed(() => 78);
+  // Bug #6 Fix: Calcular real monthlyProgress em vez de hardcoded
+  readonly monthlyProgress = computed(() => {
+    const target = this.monthlyTarget();
+    if (target <= 0) return 0;
+    
+    const currentMonth = new Date();
+    const monthKey = this.getMonthKey(currentMonth);
+    let monthlyContribution = 0;
+    
+    for (const goal of this.goals()) {
+      const history = goal.contributionHistory ?? {};
+      monthlyContribution += history[monthKey] ?? 0;
+    }
+    
+    return Math.round((monthlyContribution / target) * 100);
+  });
 
   readonly nextGoal = computed(() => {
     const currentGoals = this.goals();
@@ -138,12 +153,33 @@ export class GoalsComponent {
 
   // --- Ações de Gestão de Metas ---
   addGoal(name: string, target: number, monthly: number, deadline: string): void {
-    if (!name || !target) return;
+    // Bug #9 Fix: Validar descrição não vazia
+    if (!name || !name.trim()) {
+      alert('Por favor, informe um nome para a meta.');
+      return;
+    }
+    
+    if (!target || target <= 0) {
+      alert('O valor alvo deve ser maior que zero.');
+      return;
+    }
+    
+    // Bug #7 Fix: Validar data existe e é válida
+    if (deadline && !this.isValidDate(deadline)) {
+      alert('Por favor, informe uma data válida.');
+      return;
+    }
+    
+    // Bug #2 Fix: Validar monthly não ultrapassa target
+    if (monthly && monthly > target) {
+      alert('O aporte mensal não pode ser maior que o valor alvo.');
+      return;
+    }
 
     const newGoal: Goal = {
       id: Date.now(),
       icon: '🎯',
-      name,
+      name: name.trim(),
       target,
       saved: 0,
       monthly: monthly || 0,
@@ -158,6 +194,14 @@ export class GoalsComponent {
 
   addContribution(goalId: number, amount: number): void {
     if (!amount || amount <= 0) return;
+    
+    // Bug #2, #13 Fix: Validar contribuição não ultrapassa target
+    const goal = this.goals().find(g => g.id === goalId);
+    if (goal && (goal.saved + amount) > goal.target) {
+      alert(`A contribuição ultrapassa o valor alvo de ${goal.name}. Máximo disponível: R$ ${goal.target - goal.saved}`);
+      return;
+    }
+    
     this.goals.update((items) =>
       items.map((g) =>
         g.id === goalId
@@ -259,6 +303,12 @@ export class GoalsComponent {
 
   private getMonthKey(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  // Bug #7 Fix: Validar data existe e é válida
+  private isValidDate(dateStr: string): boolean {
+    const date = new Date(dateStr + '-01');
+    return !isNaN(date.getTime());
   }
 
   private defaultGoals(): Goal[] {
