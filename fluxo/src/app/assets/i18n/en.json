@@ -1,20 +1,16 @@
 {
-
   "budget": {
     "titulo": "Budget",
-    "descricao":"The settings panel will centralize personalization, account and interface behavior.",
+    "descricao": "The settings panel will centralize personalization, account and interface behavior.",
 
     "categorias": "Categories",
     "limites": "Limits",
-    "disciplina": "Discipline",
 
     "msgCategorias": "Monthly distribution",
     "msgLimites": "Change spending limit",
-    "msgDisciplina": "Add and or remove categories",
 
     "msgDescricaoCategorias": "Overview of current limits by expense group.",
-    "msgDescricaoLimites": "Overview of current limits by expense group.",
-    "msgDescricaoDisciplina": "Overview of current limits by expense group."
+    "msgDescricaoLimites": "Overview of current limits by expense group."
   },
 
   "settings": {

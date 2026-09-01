@@ -313,9 +313,33 @@ export class GoalsComponent {
 
   private defaultGoals(): Goal[] {
     return [
-      { id: 1, icon: '🛡️', name: 'Reserva de emergência', target: 15000, saved: 12000, monthly: 500, deadlineLabel: '12/2026' },
-      { id: 2, icon: '✈️', name: 'Viagem Europa', target: 20000, saved: 6000, monthly: 800, deadlineLabel: '07/2027' },
-      { id: 3, icon: '🚗', name: 'Troca de carro', target: 35000, saved: 22000, monthly: 1200, deadlineLabel: '11/2027' },
+      {
+        id: 1,
+        icon: '🛡️',
+        name: 'Reserva de emergência',
+        target: 15000,
+        saved: 12000,
+        monthly: 500,
+        deadlineLabel: '12/2026',
+      },
+      {
+        id: 2,
+        icon: '✈️',
+        name: 'Viagem Europa',
+        target: 20000,
+        saved: 6000,
+        monthly: 800,
+        deadlineLabel: '07/2027',
+      },
+      {
+        id: 3,
+        icon: '🚗',
+        name: 'Troca de carro',
+        target: 35000,
+        saved: 22000,
+        monthly: 1200,
+        deadlineLabel: '11/2027',
+      },
     ];
   }
 }

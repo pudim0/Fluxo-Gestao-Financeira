@@ -36,5 +36,4 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: 'pt-BR',
     }),
   ],
-  
 };
