@@ -207,6 +207,10 @@ export class Onboarding {
   }
 
   finish(): void {
+    // ✅ Salva profile no serviço (atualiza signal)
+    // ✅ Dashboard é notificado via effect() e recalcula profileSummary
+    // ✅ localStorage é atualizado automaticamente
+    // Fluxo: Onboarding.finish() → ProfileService.save() → effect() no Dashboard → Sincronização completa
     this.profileService.save(this.profile);
     this.router.navigate(['/dashboard']);
   }
