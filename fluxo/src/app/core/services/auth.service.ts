@@ -42,6 +42,13 @@ export class AuthService {
 
   startDemoSession(email: string, name?: string): void {
     const normalizedEmail = email.trim().toLowerCase();
+    
+    // Bug #18 Fix: Validar formato de email
+    if (!this.isValidEmail(normalizedEmail)) {
+      console.error('Email inválido. Use um formato válido: exemplo@email.com');
+      return;
+    }
+    
     this.currentEmail = normalizedEmail || null;
 
     if (!this.currentEmail) {
@@ -57,6 +64,11 @@ export class AuthService {
     } catch {
       // Storage may be unavailable in some test environments.
     }
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   logout(): void {

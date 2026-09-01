@@ -23,11 +23,24 @@ export class FinancialProfileService {
   private readonly authService = inject(AuthService);
   private readonly profileState = signal<FinancialProfile>(this.read());
 
+  /**
+   * PERFIL FINANCEIRO DO USUÁRIO - SIGNAL REATIVO
+   *
+   * ✅ Sempre sincronizado com localStorage
+   * ✅ Mudanças são automaticamente propagadas para componentes observadores
+   * ✅ Componentes que usam effect() serão notificados de atualizações
+   *
+   * Uso recomendado:
+   * - Componentes lêem via: this.profileService.profile()
+   * - Componentes que precisam sincronização usam effect() para observar mudanças
+   *
+   * @see DashboardComponent - exemplo de sincronização com effect()
+   */
   readonly profile = this.profileState.asReadonly();
 
   save(profile: FinancialProfile): void {
     const copy = { ...profile, debtTypes: [...profile.debtTypes] };
-    this.profileState.set(copy);
+    this.profileState.set(copy); // ✅ Atualiza signal - notifica todos os observadores
 
     try {
       localStorage.setItem(this.getStorageKey(), JSON.stringify(copy));

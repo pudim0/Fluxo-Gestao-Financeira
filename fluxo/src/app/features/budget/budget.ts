@@ -33,20 +33,25 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
           <h2 class="page-title">Orçamento mensal</h2>
           <p class="page-copy">Acompanhe o consumo mensal e ajuste seus limites por categoria.</p>
         </div>
+
         <div class="page-actions">
-          <label class="field"
-            ><span>Mês</span
-            ><input
+          <label class="field">
+            <span>Mês</span>
+            <input
               type="month"
               [value]="selectedMonth()"
               (change)="selectedMonth.set($any($event.target).value)"
-          /></label>
+            />
+          </label>
+
           <button class="primary-button" type="button" (click)="openForm()">Novo limite</button>
         </div>
       </header>
 
       @if (feedback()) {
-        <section class="state-card action-feedback" role="status">{{ feedback() }}</section>
+        <section class="state-card action-feedback" role="status">
+          {{ feedback() }}
+        </section>
       }
 
       <section class="page-grid">
@@ -60,9 +65,10 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
               @for (row of rows(); track row.category) {
                 <article class="progress-item">
                   <div class="progress-top">
-                    <span>{{ row.category }}</span
-                    ><strong [class.expense-value]="row.isOverLimit">{{ row.percentage }}%</strong>
+                    <span>{{ row.category }}</span>
+                    <strong [class.expense-value]="row.isOverLimit"> {{ row.percentage }}% </strong>
                   </div>
+
                   <div
                     class="progress-track"
                     role="progressbar"
@@ -75,16 +81,22 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
                       [style.width.%]="Math.min(row.percentage, 100)"
                     ></div>
                   </div>
+
                   <div class="progress-top">
-                    <small>{{ row.spent | currency: 'BRL' }} gastos</small>
-                    <small>{{
-                      row.amount
-                        ? 'Limite: ' + (row.amount | currency: 'BRL')
-                        : 'Sem limite definido'
-                    }}</small>
+                    <small> {{ row.spent | currency: 'BRL' }} gastos </small>
+
+                    <small>
+                      {{
+                        row.amount
+                          ? 'Limite: ' + (row.amount | currency: 'BRL')
+                          : 'Sem limite definido'
+                      }}
+                    </small>
                   </div>
+
                   <div class="button-row">
                     <button class="ghost-button" type="button" (click)="edit(row)">Editar</button>
+
                     <button
                       class="ghost-button danger-button"
                       type="button"
@@ -109,9 +121,9 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
           >
             <div class="tag-row">
               @for (alert of alerts(); track alert.category) {
-                <span class="tag expense-value"
-                  >{{ alert.category }}: {{ alert.percentage }}% do limite</span
-                >
+                <span class="tag expense-value">
+                  {{ alert.category }}: {{ alert.percentage }}% do limite
+                </span>
               }
             </div>
           </ds-card>
@@ -123,19 +135,26 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
           subtitle="Totais baseados nas suas transações."
         >
           <div class="transaction-summary">
-            <span
-              ><small>Despesas</small
-              ><strong class="expense-value">{{ monthExpense() | currency: 'BRL' }}</strong></span
-            >
-            <span
-              ><small>Limites</small><strong>{{ totalLimits() | currency: 'BRL' }}</strong></span
-            >
-            <span
-              ><small>Disponível</small
-              ><strong [class.expense-value]="remaining() < 0">{{
-                remaining() | currency: 'BRL'
-              }}</strong></span
-            >
+            <span>
+              <small>Despesas</small>
+              <strong class="expense-value">
+                {{ monthExpense() | currency: 'BRL' }}
+              </strong>
+            </span>
+
+            <span>
+              <small>Limites</small>
+              <strong>
+                {{ totalLimits() | currency: 'BRL' }}
+              </strong>
+            </span>
+
+            <span>
+              <small>Disponível</small>
+              <strong [class.expense-value]="remaining() < 0">
+                {{ remaining() | currency: 'BRL' }}
+              </strong>
+            </span>
           </div>
         </ds-card>
       </section>
@@ -150,33 +169,41 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
           <form class="transaction-form" (ngSubmit)="save()">
             <label class="field field--wide">
               <span>Categoria</span>
+
               <select name="category" required [(ngModel)]="form.category">
                 <option value="">Selecione uma categoria</option>
+
                 @for (category of categories(); track category) {
-                  <option [value]="category">{{ category }}</option>
+                  <option [value]="category">
+                    {{ category }}
+                  </option>
                 }
               </select>
+
               @if (!categories().length) {
-                <small class="page-copy"
-                  >Crie uma categoria ao registrar uma transação primeiro.</small
-                >
+                <small class="page-copy">
+                  Crie uma categoria ao registrar uma transação primeiro.
+                </small>
               }
             </label>
-            <label class="field field--wide"
-              ><span>Limite mensal</span
-              ><input
+
+            <label class="field field--wide">
+              <span>Limite mensal</span>
+
+              <input
                 name="amount"
                 required
                 type="number"
                 min="0.01"
                 step="0.01"
                 [(ngModel)]="form.amount"
-            /></label>
+              />
+            </label>
+
             <div class="button-row field--wide">
-              <button class="primary-button" type="submit">Salvar limite</button
-              ><button class="secondary-button" type="button" (click)="closeForm()">
-                Cancelar
-              </button>
+              <button class="primary-button" type="submit">Salvar limite</button>
+
+              <button class="secondary-button" type="button" (click)="closeForm()">Cancelar</button>
             </div>
           </form>
         </ds-modal>
@@ -187,30 +214,48 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
 export class Budget {
   private readonly auth = inject(AuthService);
   private readonly transactions = inject(TransactionsService);
+
   private readonly limitsState = signal<BudgetLimit[]>(this.readLimits());
 
   protected readonly Math = Math;
+
   protected readonly limits = this.limitsState.asReadonly();
+
   protected readonly categories = computed(() => {
     const categories = new Map<string, string>();
+
     const expenseCategories = this.transactions
       .transactions()
       .filter((item) => item.type === 'expense')
       .map((item) => item.category);
+
     for (const category of [...expenseCategories, ...this.limits().map((item) => item.category)]) {
       const normalized = normalizeText(category);
-      if (normalized && !categories.has(normalized)) categories.set(normalized, category.trim());
+
+      if (normalized && !categories.has(normalized)) {
+        categories.set(normalized, category.trim());
+      }
     }
+
     return [...categories.values()].sort((first, second) => first.localeCompare(second, 'pt-BR'));
   });
+
   protected readonly formOpen = signal(false);
+
   protected readonly editing = signal<string | null>(null);
+
   protected readonly feedback = signal('');
+
   protected readonly selectedMonth = signal(new Date().toISOString().slice(0, 7));
-  protected form: BudgetLimit = { category: '', amount: 0 };
+
+  protected form: BudgetLimit = {
+    category: '',
+    amount: 0,
+  };
 
   protected readonly monthExpense = computed(() => {
     const month = this.selectedMonth();
+
     return this.transactions
       .transactions()
       .filter((item) => item.type === 'expense' && item.date.startsWith(month))
@@ -218,34 +263,55 @@ export class Budget {
   });
 
   protected readonly rows = computed<BudgetRow[]>(() => {
-    const month = this.selectedMonth();
-    const spent = new Map<string, number>();
-    for (const item of this.transactions.transactions()) {
-      if (item.type === 'expense' && item.date.startsWith(month)) {
-        const category = normalizeText(item.category);
-        spent.set(category, (spent.get(category) ?? 0) + item.amount);
-      }
+  const month = this.selectedMonth();
+
+  const spent = new Map<string, number>();
+
+  for (const transaction of this.transactions.transactions()) {
+    if (
+      transaction.type !== 'expense' ||
+      !transaction.date.startsWith(month)
+    ) {
+      continue;
     }
-    const limitsByCategory = new Map(
-      this.limits().map((limit) => [normalizeText(limit.category), limit]),
+
+    const category = normalizeText(transaction.category);
+    const currentSpent = spent.get(category) ?? 0;
+
+    spent.set(
+      category,
+      currentSpent + transaction.amount,
     );
-    return this.categories().map((category) => {
-      const limit = limitsByCategory.get(normalizeText(category)) ?? { category, amount: 0 };
-      const value = spent.get(normalizeText(category)) ?? 0;
-      return {
-        ...limit,
-        category,
-        spent: value,
-        percentage: limit.amount ? Math.round((value / limit.amount) * 100) : 0,
-        isOverLimit: limit.amount > 0 && value > limit.amount,
-      };
-    });
+  }
+
+  return this.limits().map((limit) => {
+    const categoryKey = normalizeText(limit.category);
+    const spentAmount = spent.get(categoryKey) ?? 0;
+
+    const percentage =
+      limit.amount > 0
+        ? Math.round(
+            (spentAmount / limit.amount) * 100,
+          )
+        : 0;
+
+    return {
+      category: limit.category,
+      amount: limit.amount,
+      spent: spentAmount,
+      percentage,
+      isOverLimit:
+        spentAmount > limit.amount,
+    };
   });
+});
 
   protected readonly totalLimits = computed(() =>
     this.limits().reduce((sum, item) => sum + item.amount, 0),
   );
+
   protected readonly remaining = computed(() => this.totalLimits() - this.monthExpense());
+
   protected readonly alerts = computed(() => this.rows().filter((row) => row.isOverLimit));
 
   constructor() {
@@ -254,14 +320,27 @@ export class Budget {
 
   protected openForm(): void {
     this.editing.set(null);
-    this.form = { category: '', amount: 0 };
+
+    this.form = {
+      category: '',
+      amount: 0,
+    };
+
     this.formOpen.set(true);
   }
+
   protected edit(row: BudgetRow): void {
     this.editing.set(row.category);
-    this.form = { category: row.category, amount: row.amount };
+
+    this.form = {
+      category: row.category,
+      amount: row.amount,
+    };
+
+    this.feedback.set('');
     this.formOpen.set(true);
   }
+
   protected closeForm(): void {
     this.formOpen.set(false);
     this.editing.set(null);
@@ -271,32 +350,94 @@ export class Budget {
     const category =
       this.categories().find((item) => normalizeText(item) === normalizeText(this.form.category)) ??
       '';
+
     const amount = Number(this.form.amount);
-    if (!category || !Number.isFinite(amount) || amount <= 0) return;
+
+    // Bug #9: categoria obrigatória
+    if (!category) {
+      this.feedback.set('Por favor, informe uma categoria.');
+      return;
+    }
+
+    // Valor válido
+    if (!Number.isFinite(amount) || amount <= 0) {
+      this.feedback.set('O limite deve ser maior que zero.');
+      return;
+    }
+
+    // Bug #13: impedir valores absurdamente grandes
+    if (amount > Number.MAX_SAFE_INTEGER / 100) {
+      this.feedback.set('Valor muito grande. Use um valor realista.');
+      return;
+    }
+
     const current = this.editing();
-    const next = current
-      ? this.limits().map((item) => (item.category === current ? { category, amount } : item))
-      : [...this.limits(), { category, amount }];
+
+    let next: BudgetLimit[];
+
+    if (current) {
+      next = this.limits().map((item) => {
+        const isEditing = normalizeText(item.category) === normalizeText(current);
+
+        if (isEditing) {
+          return {
+            category,
+            amount,
+          };
+        }
+
+        return item;
+      });
+    } else {
+      next = [
+        ...this.limits(),
+        {
+          category,
+          amount,
+        },
+      ];
+    }
+
     this.limitsState.set(this.unique(next));
+
     this.persist();
+
     this.feedback.set(`Limite de ${category} salvo.`);
+
     this.closeForm();
   }
 
   protected remove(category: string): void {
-    this.limitsState.update((items) => items.filter((item) => item.category !== category));
+    const normalizedCategory = normalizeText(category);
+
+    const exists = this.limits().some(
+      (item) => normalizeText(item.category) === normalizedCategory,
+    );
+
+    if (!exists) {
+      this.feedback.set(`Nenhum limite encontrado para ${category}.`);
+      return;
+    }
+
+    this.limitsState.update((items) =>
+      items.filter((item) => normalizeText(item.category) !== normalizedCategory),
+    );
+
     this.persist();
+
     this.feedback.set(`Limite de ${category} removido.`);
   }
 
   private readLimits(): BudgetLimit[] {
     try {
       const raw = localStorage.getItem(this.key());
+
       return raw ? this.unique(JSON.parse(raw) as BudgetLimit[]) : [];
     } catch {
       return [];
     }
   }
+
   private persist(): void {
     try {
       localStorage.setItem(this.key(), JSON.stringify(this.limits()));
@@ -304,18 +445,27 @@ export class Budget {
       /* Storage may be unavailable. */
     }
   }
+
   private key(): string {
     return `${STORAGE_PREFIX}${this.auth.getCurrentUserEmail() ?? 'anonymous'}`;
   }
+
   private unique(items: BudgetLimit[]): BudgetLimit[] {
     return [
       ...new Map(
         items
-          .filter((item) => item.category.trim() && item.amount > 0)
-          .map((item) => [
-            item.category.trim(),
-            { category: item.category.trim(), amount: item.amount },
-          ]),
+          .filter((item) => item.category.trim() && Number.isFinite(item.amount) && item.amount > 0)
+          .map((item) => {
+            const category = item.category.trim();
+
+            return [
+              normalizeText(category),
+              {
+                category,
+                amount: item.amount,
+              },
+            ] as const;
+          }),
       ).values(),
     ];
   }
