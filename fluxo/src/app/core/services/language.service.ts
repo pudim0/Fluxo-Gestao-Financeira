@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export type Idioma = 'pt-BR' | 'en';
@@ -7,10 +7,10 @@ export type Idioma = 'pt-BR' | 'en';
   providedIn: 'root',
 })
 export class LanguageService {
-  idioma = signal<Idioma>('pt-BR');
 
-  constructor(private translate: TranslateService) {
-    const idiomaSalvo = localStorage.getItem('idioma') as Idioma | null;
+  private readonly translate = inject(TranslateService);
+
+  idioma = signal<Idioma>(this.carregarIdioma());
 
     const idiomaInicial: Idioma =
       idiomaSalvo === 'en' || idiomaSalvo === 'pt-BR' ? idiomaSalvo : 'pt-BR';
