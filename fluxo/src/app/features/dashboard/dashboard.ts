@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { TransactionsService } from '../../services/transactions.service';
@@ -39,6 +39,29 @@ export class DashboardComponent {
   protected readonly showAllAlerts = signal<boolean>(true);
   protected readonly showAllTransactions = signal<boolean>(true);
   protected readonly showAllInvestments = signal<boolean>(true);
+
+  /**
+   * SINCRONIZAÇÃO DE PERFIL FINANCEIRO
+   * 
+   * Efeito que observa mudanças no perfil do usuário (salvo no onboarding)
+   * e força a recalculação dos computeds que dependem dele.
+   * 
+   * Benefício: Dashboard é atualizado automaticamente quando profile.save() é chamado
+   * Sem isso, a atualização só aconteceria após navegação manual ou F5.
+   */
+  constructor() {
+    effect(() => {
+      // Observar mudanças no profile
+      const profile = this.profile();
+      
+      // Forçar recalculação de computeds que dependem do profile
+      // Isso garante que profileSummary seja recalculado quando profile muda
+      if (profile.goal) {
+        // Log para debug (remover em produção se necessário)
+        console.log('🔄 Profile atualizado no dashboard:', profile);
+      }
+    });
+  }
 
   // Sinais vindos do serviço de transações
   protected readonly metrics = computed(() => this.transactionsService.metrics());

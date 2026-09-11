@@ -35,6 +35,7 @@ export interface ChartPoint {
 })
 export class GoalsComponent {
   private readonly authService = inject(AuthService);
+
   readonly goals = signal<Goal[]>(this.readGoals());
 
   readonly currentIndex = signal<number>(0);
@@ -42,12 +43,14 @@ export class GoalsComponent {
   readonly assistantResponse = signal<string | null>(null);
 
   // --- Indicadores Calculados (Computed Signals) ---
+
   readonly totalTarget = computed(() => this.goals().reduce((acc, goal) => acc + goal.target, 0));
 
   readonly totalSaved = computed(() => this.goals().reduce((acc, goal) => acc + goal.saved, 0));
 
   readonly overallProgress = computed(() => {
     const target = this.totalTarget();
+
     return target > 0 ? Math.round((this.totalSaved() / target) * 100) : 0;
   });
 
@@ -55,34 +58,76 @@ export class GoalsComponent {
     this.goals().reduce((acc, goal) => acc + goal.monthly, 0),
   );
 
-  readonly monthlyProgress = computed(() => 78);
+  readonly monthlyProgress = computed(() => {
+    const target = this.monthlyTarget();
+
+    if (target <= 0) {
+      return 0;
+    }
+
+    const monthKey = this.getMonthKey(new Date());
+
+    let monthlyContribution = 0;
+
+    for (const goal of this.goals()) {
+      const history = goal.contributionHistory ?? {};
+
+      monthlyContribution += history[monthKey] ?? 0;
+    }
+
+    return Math.min(Math.round((monthlyContribution / target) * 100), 100);
+  });
 
   readonly nextGoal = computed(() => {
     const currentGoals = this.goals();
-    return currentGoals.length > 0 ? currentGoals[0] : { name: 'Sem metas', deadlineLabel: '-' };
+
+    if (currentGoals.length === 0) {
+      return {
+        name: 'Sem metas',
+        deadlineLabel: '-',
+      };
+    }
+
+    return currentGoals[0];
   });
 
   // --- Gráfico de Evolução ---
+
   readonly chartData = computed(() => {
     const goal = this.goals()[this.currentIndex()];
-    if (!goal) return [];
+
+    if (!goal) {
+      return [];
+    }
 
     const currentDate = new Date();
+
     return Array.from({ length: 6 }, (_, index) => {
       const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 5 + index, 1);
+
       const monthsAgo = 5 - index;
       const monthKey = this.getMonthKey(monthDate);
+
       const contributions = Object.entries(goal.contributionHistory ?? {});
+
       const recordedContributions = contributions.reduce((sum, [key, value]) => {
         return key <= monthKey ? sum + value : sum;
       }, 0);
+
       const totalRecorded = contributions.reduce((sum, [, value]) => sum + value, 0);
+
       const baselineSaved = Math.max(0, goal.saved - totalRecorded);
+
       const baseline = Math.max(0, baselineSaved - goal.monthly * monthsAgo);
+
       const amount = Math.min(goal.target, baseline + recordedContributions);
 
       return {
-        month: monthDate.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
+        month: monthDate
+          .toLocaleDateString('pt-BR', {
+            month: 'short',
+          })
+          .replace('.', ''),
         amount: Math.round(amount * 100) / 100,
       };
     });
@@ -90,16 +135,22 @@ export class GoalsComponent {
 
   readonly chartPoints = computed<ChartPoint[]>(() => {
     const data = this.chartData();
-    if (data.length === 0) return [];
+
+    if (data.length === 0) {
+      return [];
+    }
 
     const maxVal = Math.max(...data.map((d) => d.amount)) || 1;
+
     const width = 420;
     const height = 140;
     const paddingX = 30;
 
     return data.map((d, index) => {
       const x = paddingX + (index / Math.max(data.length - 1, 1)) * (width - paddingX * 2);
+
       const y = height - (d.amount / maxVal) * (height - 30) + 20;
+
       const position = (x / width) * 100;
 
       return {
@@ -120,6 +171,7 @@ export class GoalsComponent {
   );
 
   // --- Ações do Carrossel ---
+
   goToPreviousGoal(): void {
     if (this.currentIndex() > 0) {
       this.currentIndex.update((i) => i - 1);
@@ -137,13 +189,33 @@ export class GoalsComponent {
   }
 
   // --- Ações de Gestão de Metas ---
+
   addGoal(name: string, target: number, monthly: number, deadline: string): void {
-    if (!name || !target) return;
+    if (!name || !name.trim()) {
+      alert('Por favor, informe um nome para a meta.');
+      return;
+    }
+
+    // Validar valor alvo
+    if (!target || target <= 0) {
+      alert('O valor alvo deve ser maior que zero.');
+      return;
+    }
+
+    if (deadline && !this.isValidDate(deadline)) {
+      alert('Por favor, informe uma data válida.');
+      return;
+    }
+
+    if (monthly > target) {
+      alert('O aporte mensal não pode ser maior que o valor alvo.');
+      return;
+    }
 
     const newGoal: Goal = {
       id: Date.now(),
       icon: '🎯',
-      name,
+      name: name.trim(),
       target,
       saved: 0,
       monthly: monthly || 0,
@@ -152,12 +224,27 @@ export class GoalsComponent {
     };
 
     this.goals.update((items) => [...items, newGoal]);
+
     this.currentIndex.set(this.goals().length - 1);
+
     this.persistGoals();
   }
 
   addContribution(goalId: number, amount: number): void {
-    if (!amount || amount <= 0) return;
+    if (!amount || amount <= 0) {
+      return;
+    }
+
+    const goal = this.goals().find((g) => g.id === goalId);
+
+    if (goal && goal.saved + amount > goal.target) {
+      alert(
+        `A contribuição ultrapassa o valor alvo de ${goal.name}. Máximo disponível: R$ ${goal.target - goal.saved}`,
+      );
+
+      return;
+    }
+
     this.goals.update((items) =>
       items.map((g) =>
         g.id === goalId
@@ -169,11 +256,15 @@ export class GoalsComponent {
           : g,
       ),
     );
+
     this.persistGoals();
   }
 
   removeContribution(goalId: number, amount: number): void {
-    if (!amount || amount <= 0) return;
+    if (!amount || amount <= 0) {
+      return;
+    }
+
     this.goals.update((items) =>
       items.map((g) =>
         g.id === goalId
@@ -185,23 +276,28 @@ export class GoalsComponent {
           : g,
       ),
     );
+
     this.persistGoals();
   }
 
   removeGoal(goalId: number): void {
     const goal = this.goals().find((item) => item.id === goalId);
+
     if (!goal || !window.confirm(`Excluir a meta "${goal.name}"?`)) {
       return;
     }
 
     this.goals.update((items) => items.filter((g) => g.id !== goalId));
+
     if (this.currentIndex() >= this.goals().length && this.currentIndex() > 0) {
       this.currentIndex.update((i) => i - 1);
     }
+
     this.persistGoals();
   }
 
   // --- Interações com Gráfico e IA ---
+
   showChartPoint(point: ChartPoint): void {
     this.activeChartPoint.set(point);
   }
@@ -211,15 +307,21 @@ export class GoalsComponent {
   }
 
   askFinancialAssistant(question: string): void {
-    if (!question.trim()) return;
+    if (!question.trim()) {
+      return;
+    }
+
     this.assistantResponse.set(
       `Analisando sua pergunta ("${question}")... Com base nos seus aportes atuais, manter o ritmo reduzirá seu prazo geral em até 2 meses.`,
     );
   }
 
+  // --- Persistência ---
+
   private readGoals(): Goal[] {
     try {
       const stored = localStorage.getItem(this.getStorageKey());
+
       if (stored) {
         return JSON.parse(stored) as Goal[];
       }
@@ -240,12 +342,19 @@ export class GoalsComponent {
 
   private getStorageKey(): string {
     const email = this.authService.getCurrentUserEmail() ?? 'anonymous';
+
     return `${GOALS_STORAGE_PREFIX}${email}`;
   }
 
+  // --- Histórico de Contribuições ---
+
   private updateContributionHistory(goal: Goal, amount: number): Record<string, number> {
     const monthKey = this.getMonthKey(new Date());
-    const history = { ...(goal.contributionHistory ?? {}) };
+
+    const history = {
+      ...(goal.contributionHistory ?? {}),
+    };
+
     const nextAmount = (history[monthKey] ?? 0) + amount;
 
     if (nextAmount > 0) {
@@ -260,6 +369,34 @@ export class GoalsComponent {
   private getMonthKey(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   }
+
+  // --- Validação de Data ---
+
+  private isValidDate(dateStr: string): boolean {
+    // Espera o formato YYYY-MM
+    if (!/^\d{4}-\d{2}$/.test(dateStr)) {
+      return false;
+    }
+
+    const [year, month] = dateStr.split('-').map(Number);
+
+    // Validar mês
+    if (month < 1 || month > 12) {
+      return false;
+    }
+
+    const date = new Date(year, month - 1, 1);
+
+    const today = new Date();
+
+    // Comparar apenas ano e mês
+    today.setDate(1);
+    today.setHours(0, 0, 0, 0);
+
+    return date >= today;
+  }
+
+  // --- Metas Padrão ---
 
   private defaultGoals(): Goal[] {
     return [

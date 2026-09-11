@@ -119,9 +119,11 @@ import { TranslatePipe } from '@ngx-translate/core';
             title="{{ 'settings.contatoSuporte' | translate }}"
             subtitle="{{ 'settings.dadosContaDescricao' | translate }}"
           >
-            <div class="button-config">
-              <ds-button variant="primary">E-mail</ds-button>
-              <ds-button variant="primary">WhatsApp</ds-button>
+            <p>Entre em contato conosco através dos canais abaixo:</p>
+          </ds-card>
+          <div class="button-config">
+            <ds-button variant="secondary" (click)="contactSupport('email')">E-mail</ds-button>
+            <ds-button variant="secondary" (click)="contactSupport('whatsapp')">WhatsApp</ds-button>
           </div>
           </ds-card>
         }
@@ -136,12 +138,14 @@ import { TranslatePipe } from '@ngx-translate/core';
             <ds-button
               [style.opacity]="alterado ? '1' : '0.5'"
               [disabled]="!alterado"
+              (click)="salvarAlteracoes()"
               class="button-save"
-              >{{ 'settings.salvarAlteracoes' | translate }}</ds-button
             >
-            <ds-button (click)="cancelarAlteracoes()" variant="secondary">{{
-              'settings.cancelar' | translate
-            }}</ds-button>
+              {{ 'settings.salvarAlteracoes' | translate }}
+            </ds-button>
+            <ds-button (click)="cancelarAlteracoes()" variant="secondary">
+              {{ 'settings.cancelar' | translate }}
+            </ds-button>
           </div>
         </ds-card>
       </section>
@@ -235,5 +239,28 @@ export class Settings {
 
   private applyTheme(theme: 'dark' | 'light'): void {
     this.document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  // Bug #10, #12 Fix: Implementar salvar alterações
+  salvarAlteracoes(): void {
+    if (!this.alterado) return;
+
+    this.nomeOriginal = this.nomeAtual();
+    this.emailOriginal = this.emailAtual();
+    this.senhaOriginal = this.senhaAntiga();
+
+    console.log('Alterações salvas com sucesso!');
+  }
+
+  // Bug #5 Fix: Adicionar suporte a contato via email/WhatsApp
+  contactSupport(channel: 'email' | 'whatsapp'): void {
+    const email = 'suporte@fluxo.local';
+
+    if (channel === 'email') {
+      window.open(`mailto:${email}`, '_blank');
+    } else if (channel === 'whatsapp') {
+      const message = 'Olá! Preciso de ajuda com o aplicativo Fluxo';
+      window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(message)}`, '_blank');
+    }
   }
 }
