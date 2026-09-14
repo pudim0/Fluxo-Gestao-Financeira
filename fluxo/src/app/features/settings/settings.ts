@@ -125,7 +125,6 @@ import { TranslatePipe } from '@ngx-translate/core';
             <ds-button variant="secondary" (click)="contactSupport('email')">E-mail</ds-button>
             <ds-button variant="secondary" (click)="contactSupport('whatsapp')">WhatsApp</ds-button>
           </div>
-          </ds-card>
         }
       </section>
 
