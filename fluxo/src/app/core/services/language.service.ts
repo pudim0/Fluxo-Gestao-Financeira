@@ -10,8 +10,10 @@ export class LanguageService {
 
   private readonly translate = inject(TranslateService);
 
-  idioma = signal<Idioma>(this.carregarIdioma());
+  idioma = signal<Idioma>('pt-BR');
 
+  constructor() {
+    const idiomaSalvo = localStorage.getItem('idioma');
     const idiomaInicial: Idioma =
       idiomaSalvo === 'en' || idiomaSalvo === 'pt-BR' ? idiomaSalvo : 'pt-BR';
 
