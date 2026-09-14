@@ -128,10 +128,9 @@ svg {
   display: flex;
   padding: 14px;
   background-color: var(--page-bg);
-  background-image: linear-gradient(
-    rgba(132, 156, 177, 0.035) 1px,
-    transparent 1px
-  ), linear-gradient(90deg, rgba(132, 156, 177, 0.035) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(132, 156, 177, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(132, 156, 177, 0.035) 1px, transparent 1px);
   background-size: 42px 42px;
   color: var(--text-primary);
   transition:

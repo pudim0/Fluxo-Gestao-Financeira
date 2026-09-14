@@ -1,9 +1,5 @@
 export type DebtType =
-  | 'Cartão de crédito'
-  | 'Empréstimo'
-  | 'Financiamento'
-  | 'Cheque especial'
-  | 'Outra';
+  'Cartão de crédito' | 'Empréstimo' | 'Financiamento' | 'Cheque especial' | 'Outra';
 
 export interface FinancialProfile {
   goal: string;

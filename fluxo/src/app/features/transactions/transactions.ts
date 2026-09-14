@@ -372,8 +372,49 @@ export class Transactions implements OnDestroy {
   }
 
   protected save(): void {
+    // Bug #1, #14, #15 Fix: Validar transação antes de salvar
+    const description = this.form.description?.trim() || '';
+    
+    if (!description) {
+      this.feedbackMessage = 'Por favor, informe uma descrição.';
+      return;
+    }
+    
+    if (description.length < 3) {
+      this.feedbackMessage = 'A descrição deve ter pelo menos 3 caracteres.';
+      return;
+    }
+    
+    const amount = Number(this.form.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      this.feedbackMessage = 'O valor deve ser maior que zero.';
+      return;
+    }
+    
+    if (amount > Number.MAX_SAFE_INTEGER / 100) {
+      this.feedbackMessage = 'Valor muito grande. Use um valor realista.';
+      return;
+    }
+    
+    if (!this.form.category?.trim()) {
+      this.feedbackMessage = 'Por favor, selecione uma categoria.';
+      return;
+    }
+    
+    // Bug #1 Fix: Validar data é válida
+    const dateObj = new Date(this.form.date);
+    if (isNaN(dateObj.getTime())) {
+      this.feedbackMessage = 'Por favor, informe uma data válida.';
+      return;
+    }
+    
+    if (!this.form.account?.trim()) {
+      this.feedbackMessage = 'Por favor, informe a conta.';
+      return;
+    }
+    
     const wasEditing = Boolean(this.editingId);
-    const transaction = { ...this.form, amount: Number(this.form.amount) };
+    const transaction = { ...this.form, amount, description };
     if (wasEditing && this.editingId) {
       this.transactionsService.update(this.editingId, transaction);
     } else {

@@ -12,6 +12,26 @@ const TRANSACTIONS_STORAGE_PREFIX = 'fluxo.mock.transactions:';
 export class MockTransactionRepository implements TransactionRepository {
   private readonly authService = inject(AuthService);
   private readonly transactionsByUser = new Map<string, Transaction[]>();
+
+  /**
+   * DADOS DE DEMONSTRAÇÃO PARA NOVO USUÁRIO
+   *
+   * ℹ️ Intenção: Mostrar exemplos práticos de como a aplicação funciona
+   *
+   * 📋 Comportamento:
+   * - Carregados automaticamente na primeira entrada de novo usuário
+   * - A renda (tx-2) é adaptada ao perfil definido no onboarding
+   * - Removidos automaticamente quando usuário criar sua primeira transação real
+   *
+   * 🎯 Benefício para o usuário:
+   * - Dashboard não fica vazio (melhor UX)
+   * - Exemplos educacionais de categorias e tipos de transação
+   * - Demonstra funcionalidades (filtros, relatórios, metas)
+   * - Facilita compreensão do app antes de usar dados reais
+   *
+   * ⚠️ NOTA: Em produção, avaliar se deve ser removido completamente
+   * ou migrado para dados reais da base de dados.
+   */
   private readonly defaultTransactions: Transaction[] = [
     {
       id: 'tx-1',
@@ -127,13 +147,14 @@ export class MockTransactionRepository implements TransactionRepository {
 
       if (!amount) return 6500;
 
-      const multiplier = {
-        Diariamente: 30,
-        Semanalmente: 52 / 12,
-        Quinzenalmente: 26 / 12,
-        Mensalmente: 1,
-        Eventualmente: 1,
-      }[profile?.incomeFrequency ?? 'Mensalmente'] ?? 1;
+      const multiplier =
+        {
+          Diariamente: 30,
+          Semanalmente: 52 / 12,
+          Quinzenalmente: 26 / 12,
+          Mensalmente: 1,
+          Eventualmente: 1,
+        }[profile?.incomeFrequency ?? 'Mensalmente'] ?? 1;
 
       return Math.round(amount * multiplier * 100) / 100;
     } catch {
@@ -142,7 +163,14 @@ export class MockTransactionRepository implements TransactionRepository {
   }
 
   private parseAmount(value: string): number {
-    return Number(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
+    return (
+      Number(
+        value
+          .replace(/\./g, '')
+          .replace(',', '.')
+          .replace(/[^\d.-]/g, ''),
+      ) || 0
+    );
   }
 
   private getUserKey(): string {

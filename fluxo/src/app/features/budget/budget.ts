@@ -1,744 +1,475 @@
-import { Component, DOCUMENT, inject, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import { AuthService } from '../../core/services/auth.service';
+import { TransactionsService } from '../../services/transactions.service';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
-import { TranslatePipe } from '@ngx-translate/core';
-import { Button as DsButton } from '../../shared/components/design-system/button/button';
-import { DecimalPipe } from '@angular/common';
+import { Modal as DsModal } from '../../shared/components/design-system/modal/modal';
+import { normalizeText } from '../../utils/normalize-text';
+
+interface BudgetLimit {
+  category: string;
+  amount: number;
+}
+
+interface BudgetRow extends BudgetLimit {
+  spent: number;
+  percentage: number;
+  isOverLimit: boolean;
+}
+
+const STORAGE_PREFIX = 'fluxo.budgets:';
 
 @Component({
   selector: 'app-budget',
   standalone: true,
-  imports: [DsCard, DsButton, TranslatePipe, DecimalPipe],
+  imports: [CurrencyPipe, FormsModule, DsCard, DsModal],
   template: `
     <section class="page-shell">
+
       <header class="page-header">
+
         <div>
-          <p class="page-copy">
-            {{ 'budget.descricao' | translate }}
-          </p>
+          <p class="page-kicker">Orçamento</p>
+          <h2 class="page-title">Orçamento mensal</h2>
+          <p class="page-copy">Acompanhe o consumo mensal e ajuste seus limites por categoria.</p>
         </div>
-        <div class="button-budget">
-              <ds-button (click)="mostrarAbaBudget('categorias')" [class.selecionado]="abaAtivaBudget() === 'categorias'">
-                {{ 'budget.categorias' | translate }}
-              </ds-button>
-              <ds-button (click)="mostrarAbaBudget('limites')" [class.selecionado]="abaAtivaBudget() === 'limites'">
-                {{ 'budget.limites' | translate }}
-              </ds-button>
-              <ds-button (click)="mostrarAbaBudget('disciplina')" [class.selecionado]="abaAtivaBudget() === 'disciplina'">
-                {{ 'budget.disciplina' | translate }}
-              </ds-button>
-          </div>
+
+        <div class="page-actions">
+          <label class="field">
+            <span>Mês</span>
+            <input
+              type="month"
+              [value]="selectedMonth()"
+              (change)="selectedMonth.set($any($event.target).value)"
+            />
+          </label>
+
+          <button class="primary-button" type="button" (click)="openForm()">Novo limite</button>
+        </div>
       </header>
 
+      @if (feedback()) {
+        <section class="state-card action-feedback" role="status">
+          {{ feedback() }}
+        </section>
+      }
+
       <section class="page-grid">
+        <ds-card
+          eyebrow="Acompanhamento"
+          title="Distribuição por categoria"
+          subtitle="Despesas do mês atual comparadas aos limites definidos."
+        >
+          @if (rows().length) {
+            <div class="progress-list">
+              @for (row of rows(); track row.category) {
+                <article class="progress-item">
+                  <div class="progress-top">
+                    <span>{{ row.category }}</span>
+                    <strong [class.expense-value]="row.isOverLimit"> {{ row.percentage }}% </strong>
+                  </div>
 
-        @if (abaAtivaBudget() === 'categorias') {
-          <div class="progress-list">
+                  <div
+                    class="progress-track"
+                    role="progressbar"
+                    [attr.aria-valuenow]="row.percentage"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <div
+                      class="progress-fill"
+                      [style.width.%]="Math.min(row.percentage, 100)"
+                    ></div>
+                  </div>
 
-          @for (categoria of categorias(); track categoria.nome) {
-            <div class="progress-item">
+                  <div class="progress-top">
+                    <small> {{ row.spent | currency: 'BRL' }} gastos </small>
 
-              <div class="progress-top">
-                <span>{{ categoria.nome }}</span>
+                    <small>
+                      {{
+                        row.amount
+                          ? 'Limite: ' + (row.amount | currency: 'BRL')
+                          : 'Sem limite definido'
+                      }}
+                    </small>
+                  </div>
 
-                <span>
-                  {{ progressoAtualPorcentagem(categoria) | number:'1.0-0' }}%
-                </span>
-              </div>
+                  <div class="button-row">
+                    <button class="ghost-button" type="button" (click)="edit(row)">Editar</button>
 
-              <div class="budget-info">
-                <span>
-                  <strong>{{ 'budget.limite' | translate }}:</strong>
-                  R$ {{ categoria.limite }}
-                </span>
-
-                <span>
-                  <strong>{{ 'budget.usos' | translate }}:</strong>
-                  R$ {{ categoria.usado }}
-                </span>
-              </div>
-
-              <span>
-                {{ 'budget.restante' | translate }}:
-                R$ {{ valorRestante(categoria) }}
-              </span>
-
-              <div class="progress-track">
-                <div
-                  class="progress-fill"
-                  [style.width.%]="progressoAtualPorcentagem(categoria)"
-                ></div>
-              </div>
-
+                    <button
+                      class="ghost-button danger-button"
+                      type="button"
+                      (click)="remove(row.category)"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </article>
+              }
             </div>
+          } @else {
+            <p class="page-copy">Defina seu primeiro limite para começar a acompanhar o mês.</p>
           }
+        </ds-card>
 
-        </div>
-        }
-
-        @if (abaAtivaBudget() === 'limites') {
+        @if (alerts().length) {
           <ds-card
-            eyebrow="{{ 'budget.limites' | translate }}"
-            title="{{ 'budget.msgLimites' | translate }}"
-            subtitle="{{ 'budget.msgDescricaoLimites' | translate }}"
+            eyebrow="Alertas"
+            title="Atenção aos limites"
+            subtitle="Categorias que ultrapassaram o orçamento selecionado."
           >
-
-            <div class="button-budget">
-              <ds-button
-                variant="secondary"
-                (click)="mostrarAbaLimites('limites')"
-                [class.selecionado]="abaLimiteAtiva() === 'limites'"
-              >
-                {{ 'budget.limites' | translate }}
-              </ds-button>
-
-              <ds-button
-                variant="secondary"
-                (click)="mostrarAbaLimites('usos')"
-                [class.selecionado]="abaLimiteAtiva() === 'usos'"
-              >
-                {{ 'budget.usos' | translate }}
-              </ds-button>
-            </div>
-
-            @if (abaLimiteAtiva() === 'limites') {
-
-              <div class="progress-list">
-
-                @for (categoria of categorias(); track categoria.nome) {
-
-                  <div class="progress-item">
-
-                    <div class="progress-top">
-                      <span>{{ categoria.nome }}</span>
-                      <span>R$ {{ categoria.limite }}</span>
-                    </div>
-
-                    <div class="button-budget">
-                      <ds-button
-                        variant="primary"
-                        (click)="abrirPopupLimite(categoria)"
-                      >
-                        Alterar limite
-                      </ds-button>
-                    </div>
-
-                  </div>
-
-                }
-
-              </div>
-
-            }
-
-            @if (abaLimiteAtiva() === 'usos') {
-
-              <div class="progress-list">
-
-                @for (categoria of categorias(); track categoria.nome) {
-
-                  <div class="progress-item">
-
-                    <div class="progress-top">
-                      <span>{{ categoria.nome }}</span>
-                      <span>R$ {{ categoria.usado }}</span>
-                    </div>
-
-                    <div class="button-budget">
-                      <ds-button
-                        variant="primary"
-                        (click)="abrirPopupUso(categoria)"
-                      >
-                        Adicionar uso
-                      </ds-button>
-                    </div>
-
-                  </div>
-
-                }
-
-              </div>
-
-            }
-
-          </ds-card>
-        }
-
-        @if (abaAtivaBudget() === 'disciplina') {
-          <ds-card
-          eyebrow="{{ 'budget.disciplina' | translate }}"
-            title="{{ 'budget.msgDisciplina' | translate }}"
-            subtitle="{{ 'budget.msgDescricaoDisciplina' | translate }}"
-          >
-            <div class="button-budget">
-              <ds-button (click)="adicionarCategoria()" variant="primary">{{ 'budget.buttonAdd' | translate }}</ds-button>
-              <ds-button (click)="removerCategoria()" variant="secondary">{{ 'budget.buttonRemove' | translate }}</ds-button>
+            <div class="tag-row">
+              @for (alert of alerts(); track alert.category) {
+                <span class="tag expense-value">
+                  {{ alert.category }}: {{ alert.percentage }}% do limite
+                </span>
+              }
             </div>
           </ds-card>
         }
 
         <ds-card
-          eyebrow="{{ 'budget.acoes' | translate }}"
-          title="{{ 'budget.msgAcoes' | translate }}"
-          subtitle="{{ 'budget.msgDescricaoAcoes' | translate }}"
+          eyebrow="Resumo"
+          title="Visão do mês"
+          subtitle="Totais baseados nas suas transações."
         >
-          <div class="tag-row">
-            <span class="tag">{{ 'budget.rebalancear' | translate }}</span>
-            <span class="tag">{{ 'budget.copiarMesAnterior' | translate }}</span>
-            <span class="tag">{{ 'budget.receberAlerta' | translate }}</span>
+          <div class="transaction-summary">
+            <span>
+              <small>Despesas</small>
+              <strong class="expense-value">
+                {{ monthExpense() | currency: 'BRL' }}
+              </strong>
+            </span>
+
+            <span>
+              <small>Limites</small>
+              <strong>
+                {{ totalLimits() | currency: 'BRL' }}
+              </strong>
+            </span>
+
+            <span>
+              <small>Disponível</small>
+              <strong [class.expense-value]="remaining() < 0">
+                {{ remaining() | currency: 'BRL' }}
+              </strong>
+            </span>
           </div>
+
         </ds-card>
-        
-      @if (popupAdicionar()) {
-        <div class="ds-modal__backdrop">
-
-          <div class="ds-modal">
-
-            <div class="ds-modal__header">
-              <div>
-                <span class="ds-modal__eyebrow">
-                  {{ 'budget.categorias' | translate }}
-                </span>
-
-                <h2 class="ds-modal__title">
-                  Adicionar categoria
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                class="ds-modal__close"
-                (click)="popupAdicionar.set(false)"
-              >
-                ×
-              </button>
-            </div>
-
-            <div class="ds-modal__body">
-
-              <p class="modal-copy">
-                Configure o nome, limite e valor usado da categoria.
-              </p>
-
-              <label class="field">
-                <span>Nome</span>
-
-                <input
-                  type="text"
-                  placeholder="Ex.: Lazer"
-                  [value]="novaCategoria().nome"
-                  (input)="novaCategoria.update(c => ({
-                    ...c,
-                    nome: $any($event.target).value
-                  }))"
-                />
-              </label>
-
-              <label class="field">
-                <span>Limite</span>
-
-                <input
-                  type="number"
-                  min="0"
-                  [value]="novaCategoria().limite"
-                  (input)="novaCategoria.update(c => ({
-                    ...c,
-                    limite: +$any($event.target).value
-                  }))"
-                />
-              </label>
-
-              <label class="field">
-                <span>Usado</span>
-
-                <input
-                  type="number"
-                  min="0"
-                  [value]="novaCategoria().usado"
-                  (input)="novaCategoria.update(c => ({
-                    ...c,
-                    usado: +$any($event.target).value
-                  }))"
-                />
-              </label>
-
-              <div class="modal-actions">
-
-                <ds-button
-                  variant="secondary"
-                  (click)="popupAdicionar.set(false)"
-                >
-                  Cancelar
-                </ds-button>
-
-                <ds-button
-                  variant="primary"
-                  (click)="confirmarAdicionar()"
-                >
-                  Adicionar
-                </ds-button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      }
-
-      @if (popupRemover()) {
-        <div class="ds-modal__backdrop">
-
-          <div class="ds-modal">
-
-            <div class="ds-modal__header">
-              <div>
-                <span class="ds-modal__eyebrow">
-                  {{ 'budget.categorias' | translate }}
-                </span>
-
-                <h2 class="ds-modal__title">
-                  Remover categoria
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                class="ds-modal__close"
-                (click)="popupRemover.set(false)"
-              >
-                ×
-              </button>
-            </div>
-
-            <div class="ds-modal__body">
-
-              <p class="modal-copy">
-                Escolha qual categoria deseja remover.
-              </p>
-
-              <div class="progress-list">
-
-                @for (categoria of categorias(); track $index) {
-
-                  <button
-                    type="button"
-                    class="categoria-remover"
-                    [class.categoria-remover--selecionada]="
-                      categoriaSelecionadaRemover() === $index
-                    "
-                    (click)="categoriaSelecionadaRemover.set($index)"
-                  >
-                    <span>
-                      {{ categoria.nome }}
-                    </span>
-
-                    <span>
-                      R$ {{ categoria.limite }}
-                    </span>
-                  </button>
-
-                }
-
-              </div>
-
-              <div class="modal-actions">
-
-                <ds-button
-                  variant="secondary"
-                  (click)="popupRemover.set(false)"
-                >
-                  Cancelar
-                </ds-button>
-
-                <ds-button
-                  variant="primary"
-                  (click)="confirmarRemocao()"
-                  [disabled]="categoriaSelecionadaRemover() === null"
-                >
-                  Remover
-                </ds-button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      }
-
-      @if (popupLimite()) {
-        <div class="ds-modal__backdrop">
-
-          <div class="ds-modal">
-
-            <div class="ds-modal__header">
-              <div>
-                <span class="ds-modal__eyebrow">
-                  {{ 'budget.limites' | translate }}
-                </span>
-
-                <h2 class="ds-modal__title">
-                  Alterar limite
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                class="ds-modal__close"
-                (click)="fecharPopupLimite()"
-              >
-                ×
-              </button>
-            </div>
-
-            <div class="ds-modal__body">
-
-              @if (categoriaSelecionada(); as categoria) {
-
-                <p class="modal-copy">
-                  Alterando o limite de
-                  <strong>{{ categoria.nome }}</strong>.
-                </p>
-
-                <label class="field">
-                  <span>Limite atual</span>
-
-                  <input
-                    type="text"
-                    [value]="'R$ ' + categoria.limite"
-                    disabled
-                  />
-                </label>
-
-                <label class="field">
-                  <span>Novo limite</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    [value]="novoLimite()"
-                    (input)="novoLimite.set(+$any($event.target).value)"
-                  />
-                </label>
-
-                <div class="modal-actions">
-
-                  <ds-button
-                    variant="secondary"
-                    (click)="fecharPopupLimite()"
-                  >
-                    Cancelar
-                  </ds-button>
-
-                  <ds-button
-                    variant="primary"
-                    (click)="confirmarNovoLimite()"
-                  >
-                    Salvar
-                  </ds-button>
-
-                </div>
-
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-      }
-
-      @if (popupUso()) {
-        <div class="ds-modal__backdrop">
-
-          <div class="ds-modal">
-
-            <div class="ds-modal__header">
-              <div>
-                <span class="ds-modal__eyebrow">
-                  {{ 'budget.usos' | translate }}
-                </span>
-
-                <h2 class="ds-modal__title">
-                  Adicionar uso
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                class="ds-modal__close"
-                (click)="fecharPopupUso()"
-              >
-                ×
-              </button>
-            </div>
-
-            <div class="ds-modal__body">
-
-              @if (categoriaSelecionada(); as categoria) {
-
-                <p class="modal-copy">
-                  Adicionando um novo uso em
-                  <strong>{{ categoria.nome }}</strong>.
-                </p>
-
-                <label class="field">
-                  <span>Total usado atualmente</span>
-
-                  <input
-                    type="text"
-                    [value]="'R$ ' + categoria.usado"
-                    disabled
-                  />
-                </label>
-
-                <label class="field">
-                  <span>Quanto foi usado?</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    [value]="valorUso()"
-                    (input)="valorUso.set(+$any($event.target).value)"
-                  />
-                </label>
-
-                <div class="modal-actions">
-
-                  <ds-button
-                    variant="secondary"
-                    (click)="fecharPopupUso()"
-                  >
-                    Cancelar
-                  </ds-button>
-
-                  <ds-button
-                    variant="primary"
-                    (click)="confirmarUso()"
-                  >
-                    Adicionar
-                  </ds-button>
-
-                </div>
-
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-      }
-      
       </section>
+
+      @if (formOpen()) {
+        <ds-modal
+          [open]="formOpen()"
+          eyebrow="Planejamento"
+          [title]="editing() ? 'Editar limite' : 'Novo limite'"
+          (close)="closeForm()"
+        >
+          <form class="transaction-form" (ngSubmit)="save()">
+            <label class="field field--wide">
+              <span>Categoria</span>
+
+              <select name="category" required [(ngModel)]="form.category">
+                <option value="">Selecione uma categoria</option>
+
+                @for (category of categories(); track category) {
+                  <option [value]="category">
+                    {{ category }}
+                  </option>
+                }
+              </select>
+
+              @if (!categories().length) {
+                <small class="page-copy">
+                  Crie uma categoria ao registrar uma transação primeiro.
+                </small>
+              }
+            </label>
+
+            <label class="field field--wide">
+              <span>Limite mensal</span>
+
+              <input
+                name="amount"
+                required
+                type="number"
+                min="0.01"
+                step="0.01"
+                [(ngModel)]="form.amount"
+              />
+            </label>
+
+            <div class="button-row field--wide">
+              <button class="primary-button" type="submit">Salvar limite</button>
+
+              <button class="secondary-button" type="button" (click)="closeForm()">Cancelar</button>
+            </div>
+          </form>
+        </ds-modal>
+      }
     </section>
   `,
 })
-
 export class Budget {
-  private readonly document = inject(DOCUMENT);
+  private readonly auth = inject(AuthService);
+  private readonly transactions = inject(TransactionsService);
 
-  abaAtivaBudget = signal<'categorias' | 'limites' | 'disciplina'>('categorias');
+  private readonly limitsState = signal<BudgetLimit[]>(this.readLimits());
 
-  abaLimiteAtiva = signal<'limites' | 'usos'>('limites');
+  protected readonly Math = Math;
 
-  mostrarAbaLimites(
-    aba: 'limites' | 'usos'
-  ): void {
-    this.abaLimiteAtiva.set(aba);
-  }
-  popupAdicionar = signal(false);
+  protected readonly limits = this.limitsState.asReadonly();
 
-  popupRemover = signal(false);
+  protected readonly categories = computed(() => {
+    const categories = new Map<string, string>();
 
-  categoriaSelecionadaRemover = signal<number | null>(null);
+    const expenseCategories = this.transactions
+      .transactions()
+      .filter((item) => item.type === 'expense')
+      .map((item) => item.category);
 
-  popupLimite = signal(false);
-  popupUso = signal(false);
+    for (const category of [...expenseCategories, ...this.limits().map((item) => item.category)]) {
+      const normalized = normalizeText(category);
 
-  categoriaSelecionada = signal<{
-    nome: string;
-    limite: number;
-    usado: number;
-  } | null>(null);
+      if (normalized && !categories.has(normalized)) {
+        categories.set(normalized, category.trim());
+      }
+    }
 
-  novoLimite = signal(0);
-  valorUso = signal(0);
-
-  novaCategoria = signal({
-    nome: '',
-    limite: 0,
-    usado: 0
+    return [...categories.values()].sort((first, second) => first.localeCompare(second, 'pt-BR'));
   });
 
-  mostrarAbaBudget(aba: 'categorias' | 'limites' | 'disciplina'): void {
-      this.abaAtivaBudget.set(aba);
+  protected readonly formOpen = signal(false);
+
+  protected readonly editing = signal<string | null>(null);
+
+  protected readonly feedback = signal('');
+
+  protected readonly selectedMonth = signal(new Date().toISOString().slice(0, 7));
+
+  protected form: BudgetLimit = {
+    category: '',
+    amount: 0,
+  };
+
+  protected readonly monthExpense = computed(() => {
+    const month = this.selectedMonth();
+
+    return this.transactions
+      .transactions()
+      .filter((item) => item.type === 'expense' && item.date.startsWith(month))
+      .reduce((sum, item) => sum + item.amount, 0);
+  });
+
+  protected readonly rows = computed<BudgetRow[]>(() => {
+  const month = this.selectedMonth();
+
+  const spent = new Map<string, number>();
+
+  for (const transaction of this.transactions.transactions()) {
+    if (
+      transaction.type !== 'expense' ||
+      !transaction.date.startsWith(month)
+    ) {
+      continue;
     }
 
-  categorias = signal([
-  {
-    nome: 'Alimentação',
-    limite: 1200,
-    usado: 864
-  },
-  {
-    nome: 'Transporte',
-    limite: 500,
-    usado: 220
-  },
-  {
-    nome: 'Assinaturas',
-    limite: 300,
-    usado: 243
-  }
-  ]);
+    const category = normalizeText(transaction.category);
+    const currentSpent = spent.get(category) ?? 0;
 
-  progressoAtualPorcentagem(categoria: { limite: number; usado: number }): number {
-    if (categoria.limite <= 0) {
-      return 0;
-    }
-
-    const porcentagem = (categoria.usado / categoria.limite) * 100;
-
-    return Math.min(Number(porcentagem.toFixed(2)), 100);
+    spent.set(
+      category,
+      currentSpent + transaction.amount,
+    );
   }
 
-  valorRestante(categoria: { limite: number; usado: number }): number {
-    return Math.max(categoria.limite - categoria.usado, 0);
+  return this.limits().map((limit) => {
+    const categoryKey = normalizeText(limit.category);
+    const spentAmount = spent.get(categoryKey) ?? 0;
+
+    const percentage =
+      limit.amount > 0
+        ? Math.round(
+            (spentAmount / limit.amount) * 100,
+          )
+        : 0;
+
+    return {
+      category: limit.category,
+      amount: limit.amount,
+      spent: spentAmount,
+      percentage,
+      isOverLimit:
+        spentAmount > limit.amount,
+    };
+  });
+});
+
+  protected readonly totalLimits = computed(() =>
+    this.limits().reduce((sum, item) => sum + item.amount, 0),
+  );
+
+  protected readonly remaining = computed(() => this.totalLimits() - this.monthExpense());
+
+  protected readonly alerts = computed(() => this.rows().filter((row) => row.isOverLimit));
+
+  constructor() {
+    this.transactions.load();
   }
 
-  abrirPopupLimite(categoria: {
-    nome: string;
-    limite: number;
-    usado: number;
-  }): void {
-    this.categoriaSelecionada.set(categoria);
-    this.novoLimite.set(categoria.limite);
-    this.popupLimite.set(true);
+  protected openForm(): void {
+    this.editing.set(null);
+
+    this.form = {
+      category: '',
+      amount: 0,
+    };
+
+    this.formOpen.set(true);
   }
 
-  fecharPopupLimite(): void {
-    this.popupLimite.set(false);
-    this.categoriaSelecionada.set(null);
+  protected edit(row: BudgetRow): void {
+    this.editing.set(row.category);
+
+    this.form = {
+      category: row.category,
+      amount: row.amount,
+    };
+
+    this.feedback.set('');
+    this.formOpen.set(true);
   }
 
-  confirmarNovoLimite(): void {
-    const categoria = this.categoriaSelecionada();
+  protected closeForm(): void {
+    this.formOpen.set(false);
+    this.editing.set(null);
+  }
 
-    if (!categoria) {
+  protected save(): void {
+    const category =
+      this.categories().find((item) => normalizeText(item) === normalizeText(this.form.category)) ??
+      '';
+
+    const amount = Number(this.form.amount);
+
+    // Bug #9: categoria obrigatória
+    if (!category) {
+      this.feedback.set('Por favor, informe uma categoria.');
       return;
     }
 
-    const novoLimite = this.novoLimite();
-
-    if (novoLimite < 0) {
+    // Valor válido
+    if (!Number.isFinite(amount) || amount <= 0) {
+      this.feedback.set('O limite deve ser maior que zero.');
       return;
     }
 
-    this.categorias.update(categorias =>
-      categorias.map(item =>
-        item.nome === categoria.nome
-          ? {
-              ...item,
-              limite: novoLimite
-            }
-          : item
-      )
+    // Bug #13: impedir valores absurdamente grandes
+    if (amount > Number.MAX_SAFE_INTEGER / 100) {
+      this.feedback.set('Valor muito grande. Use um valor realista.');
+      return;
+    }
+
+    const current = this.editing();
+
+    let next: BudgetLimit[];
+
+    if (current) {
+      next = this.limits().map((item) => {
+        const isEditing = normalizeText(item.category) === normalizeText(current);
+
+        if (isEditing) {
+          return {
+            category,
+            amount,
+          };
+        }
+
+        return item;
+      });
+    } else {
+      next = [
+        ...this.limits(),
+        {
+          category,
+          amount,
+        },
+      ];
+    }
+
+    this.limitsState.set(this.unique(next));
+
+    this.persist();
+
+    this.feedback.set(`Limite de ${category} salvo.`);
+
+    this.closeForm();
+  }
+
+  protected remove(category: string): void {
+    const normalizedCategory = normalizeText(category);
+
+    const exists = this.limits().some(
+      (item) => normalizeText(item.category) === normalizedCategory,
     );
 
-    this.fecharPopupLimite();
-  }
-
-  abrirPopupUso(categoria: {
-    nome: string;
-    limite: number;
-    usado: number;
-  }): void {
-    this.categoriaSelecionada.set(categoria);
-    this.valorUso.set(0);
-    this.popupUso.set(true);
-  }
-
-  fecharPopupUso(): void {
-    this.popupUso.set(false);
-    this.categoriaSelecionada.set(null);
-    this.valorUso.set(0);
-  }
-
-  confirmarUso(): void {
-    const categoria = this.categoriaSelecionada();
-
-    if (!categoria) {
+    if (!exists) {
+      this.feedback.set(`Nenhum limite encontrado para ${category}.`);
       return;
     }
 
-    const valor = this.valorUso();
-
-    if (valor <= 0) {
-      return;
-    }
-
-    this.categorias.update(categorias =>
-      categorias.map(item =>
-        item.nome === categoria.nome
-          ? {
-              ...item,
-              usado: item.usado + valor
-            }
-          : item
-      )
+    this.limitsState.update((items) =>
+      items.filter((item) => normalizeText(item.category) !== normalizedCategory),
     );
 
-    this.fecharPopupUso();
+    this.persist();
+
+    this.feedback.set(`Limite de ${category} removido.`);
   }
 
-  adicionarCategoria(): void {
-    this.novaCategoria.set({
-      nome: '',
-      limite: 0,
-      usado: 0
-    });
+  private readLimits(): BudgetLimit[] {
+    try {
+      const raw = localStorage.getItem(this.key());
 
-    this.popupAdicionar.set(true);
-}
-
-  confirmarAdicionar(): void {
-    const categoria = this.novaCategoria();
-
-    if (!categoria.nome.trim()) {
-      return;
+      return raw ? this.unique(JSON.parse(raw) as BudgetLimit[]) : [];
+    } catch {
+      return [];
     }
-
-    this.categorias.update(categorias => [...categorias, {
-      nome: categoria.nome.trim(),
-      limite: categoria.limite,
-      usado: categoria.usado
-    }]);
-
-    this.popupAdicionar.set(false);
   }
 
-  removerCategoria(): void {
-    this.categoriaSelecionadaRemover.set(null);
-    this.popupRemover.set(true);
-  }
-
-  confirmarRemocao(): void {
-    const indice = this.categoriaSelecionadaRemover();
-
-    if (indice === null) {
-      return;
+  private persist(): void {
+    try {
+      localStorage.setItem(this.key(), JSON.stringify(this.limits()));
+    } catch {
+      /* Storage may be unavailable. */
     }
+  }
 
-    this.categorias.update(categorias => {
-      const novasCategorias = [...categorias];
-      novasCategorias.splice(indice, 1);
-      return novasCategorias;
-    });
+  private key(): string {
+    return `${STORAGE_PREFIX}${this.auth.getCurrentUserEmail() ?? 'anonymous'}`;
+  }
 
-    this.categoriaSelecionadaRemover.set(null);
-    this.popupRemover.set(false);
+  private unique(items: BudgetLimit[]): BudgetLimit[] {
+    return [
+      ...new Map(
+        items
+          .filter((item) => item.category.trim() && Number.isFinite(item.amount) && item.amount > 0)
+          .map((item) => {
+            const category = item.category.trim();
+
+            return [
+              normalizeText(category),
+              {
+                category,
+                amount: item.amount,
+              },
+            ] as const;
+          }),
+      ).values(),
+    ];
   }
 }

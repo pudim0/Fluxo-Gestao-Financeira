@@ -5,14 +5,9 @@
 
       <h1>Vamos organizar sua vida financeira.</h1>
 
-      <p>
-        Responda algumas perguntas rápidas para que o Flu$o personalize
-        sua experiência.
-      </p>
+      <p>Responda algumas perguntas rápidas para que o Flu$o personalize sua experiência.</p>
 
-      <button type="button" class="primary-button" (click)="start()">
-        Começar
-      </button>
+      <button type="button" class="primary-button" (click)="start()">Começar</button>
     </section>
   }
 
@@ -36,7 +31,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('goal', option)"
-              (click)="selectAnswer('goal', option)">
+              (click)="selectAnswer('goal', option)"
+            >
               {{ option }}
             </button>
           }
@@ -52,7 +48,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('incomeSource', option)"
-              (click)="selectAnswer('incomeSource', option)">
+              (click)="selectAnswer('incomeSource', option)"
+            >
               {{ option }}
             </button>
           }
@@ -68,7 +65,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('incomeFrequency', option)"
-              (click)="selectAnswer('incomeFrequency', option)">
+              (click)="selectAnswer('incomeFrequency', option)"
+            >
               {{ option }}
             </button>
           }
@@ -87,7 +85,8 @@
             inputmode="decimal"
             placeholder="Ex.: R$ 2.500"
             [value]="profile.incomeAmount"
-            (input)="profile.incomeAmount = $any($event.target).value">
+            (input)="profile.incomeAmount = $any($event.target).value"
+          />
         </div>
       }
 
@@ -100,7 +99,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('incomeType', option)"
-              (click)="selectAnswer('incomeType', option)">
+              (click)="selectAnswer('incomeType', option)"
+            >
               {{ option }}
             </button>
           }
@@ -116,7 +116,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('hasDebt', option)"
-              (click)="selectAnswer('hasDebt', option)">
+              (click)="selectAnswer('hasDebt', option)"
+            >
               {{ option }}
             </button>
           }
@@ -133,7 +134,8 @@
               type="button"
               class="option-button"
               [class.selected]="profile.debtTypes.includes(type)"
-              (click)="toggleDebtType(type)">
+              (click)="toggleDebtType(type)"
+            >
               {{ type }}
             </button>
           }
@@ -152,7 +154,8 @@
             inputmode="decimal"
             placeholder="Ex.: R$ 2.500"
             [value]="profile.debtAmount"
-            (input)="updateDebtAmount($event)">
+            (input)="updateDebtAmount($event)"
+          />
         </div>
       }
 
@@ -165,7 +168,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('hasEmergencyFund', option)"
-              (click)="selectAnswer('hasEmergencyFund', option)">
+              (click)="selectAnswer('hasEmergencyFund', option)"
+            >
               {{ option }}
             </button>
           }
@@ -181,7 +185,8 @@
               type="button"
               class="option-button"
               [class.selected]="isSelected('concern', option)"
-              (click)="selectAnswer('concern', option)">
+              (click)="selectAnswer('concern', option)"
+            >
               {{ option }}
             </button>
           }
@@ -190,16 +195,10 @@
 
       <div class="navigation">
         @if (currentStep > 0) {
-          <button type="button" class="back-button" (click)="previous()">
-            Voltar
-          </button>
+          <button type="button" class="back-button" (click)="previous()">Voltar</button>
         }
 
-        <button
-          type="button"
-          class="primary-button"
-          [disabled]="!canContinue()"
-          (click)="next()">
+        <button type="button" class="primary-button" [disabled]="!canContinue()" (click)="next()">
           {{ currentStep === steps.length - 1 ? 'Ver resumo' : 'Continuar' }}
         </button>
       </div>
@@ -235,11 +234,7 @@
       <div class="profile-row">
         <span>Dívidas</span>
         <strong>
-          {{
-            profile.hasDebt === 'Sim'
-              ? profile.debtTypes.join(', ')
-              : 'Não possui'
-          }}
+          {{ profile.hasDebt === 'Sim' ? profile.debtTypes.join(', ') : 'Não possui' }}
         </strong>
       </div>
 
@@ -257,12 +252,11 @@
 
       <p class="recommendation">
         Com base nas suas respostas, o Flu$o vai priorizar
-        <strong>{{ recommendation }}</strong>.
+        <strong>{{ recommendation }}</strong
+        >.
       </p>
 
-      <button type="button" class="primary-button" (click)="finish()">
-        Ir para meu painel
-      </button>
+      <button type="button" class="primary-button" (click)="finish()">Ir para meu painel</button>
     </section>
   }
 </main>
