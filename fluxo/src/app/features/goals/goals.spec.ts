@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 
+import { AuthService } from '../../core/services/auth.service';
 import { GoalsComponent } from './goals';
 
 describe('GoalsComponent', () => {
@@ -8,12 +10,23 @@ describe('GoalsComponent', () => {
 
   beforeEach(async () => {
     localStorage.clear();
+
     await TestBed.configureTestingModule({
       imports: [GoalsComponent],
+      providers: [
+        provideTranslateService(),
+        {
+          provide: AuthService,
+          useValue: {
+            getCurrentUserEmail: () => null,
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(GoalsComponent);
     component = fixture.componentInstance;
+
     await fixture.whenStable();
   });
 
@@ -23,12 +36,15 @@ describe('GoalsComponent', () => {
 
   it('should show a chart tooltip when a point is selected', () => {
     const chartPoint = fixture.nativeElement.querySelectorAll('circle')[2] as SVGCircleElement;
+
     chartPoint.dispatchEvent(new MouseEvent('mouseenter'));
+
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(
       component.chartData()[2].month,
     );
+
     expect(fixture.nativeElement.querySelector('.chart-tooltip')?.textContent).toContain(
       component.chartPoints()[2].value,
     );
@@ -36,7 +52,9 @@ describe('GoalsComponent', () => {
 
   it('should add and remove contributions', () => {
     const savedBefore = component.goals()[0].saved;
+
     component.addContribution(component.goals()[0].id, 300);
+
     expect(component.goals()[0].saved).toBe(savedBefore + 300);
 
     component.removeContribution(component.goals()[0].id, 500);
