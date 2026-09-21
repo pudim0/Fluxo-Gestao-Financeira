@@ -11,15 +11,25 @@ describe('Transactions', () => {
   let fixture: ComponentFixture<Transactions>;
   let service: any;
   const transaction: Transaction = {
-    id: '1', description: 'Mercado', amount: 100, type: 'expense',
-    category: 'Alimentação', date: '2026-09-10', account: 'Conta principal',
+    id: '1',
+    description: 'Mercado',
+    amount: 100,
+    type: 'expense',
+    category: 'Alimentação',
+    date: '2026-09-10',
+    account: 'Conta principal',
   };
 
   beforeEach(async () => {
     service = {
-      transactions: signal([transaction]), categories: signal(['Alimentação']),
-      isLoading: signal(false), hasError: signal(false), load: vi.fn(),
-      create: vi.fn(), update: vi.fn(), delete: vi.fn(),
+      transactions: signal([transaction]),
+      categories: signal(['Alimentação']),
+      isLoading: signal(false),
+      hasError: signal(false),
+      load: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     };
     await TestBed.configureTestingModule({
       imports: [Transactions],
@@ -41,7 +51,10 @@ describe('Transactions', () => {
   });
 
   it('calculates income and expense totals', () => {
-    service.transactions.set([transaction, { ...transaction, id: '2', type: 'income', amount: 250 }]);
+    service.transactions.set([
+      transaction,
+      { ...transaction, id: '2', type: 'income', amount: 250 },
+    ]);
     const instance = component as any;
     expect(instance.filteredIncome).toBe(250);
     expect(instance.filteredExpense).toBe(100);
@@ -67,13 +80,22 @@ describe('Transactions', () => {
     instance.form = { ...instance.form, description: 'x' };
     instance.save();
     expect(instance.feedbackMessage).toContain('pelo menos 3 caracteres');
-    instance.form = { ...instance.form, description: 'Conta', amount: 80, category: 'Casa', account: 'Carteira' };
+    instance.form = {
+      ...instance.form,
+      description: 'Conta',
+      amount: 80,
+      category: 'Casa',
+      account: 'Carteira',
+    };
     instance.save();
     expect(service.create).toHaveBeenCalled();
     instance.startEdit(transaction);
     instance.form.description = 'Mercado atualizado';
     instance.save();
-    expect(service.update).toHaveBeenCalledWith('1', expect.objectContaining({ description: 'Mercado atualizado' }));
+    expect(service.update).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({ description: 'Mercado atualizado' }),
+    );
   });
 
   it('handles category creation and confirmed deletion', () => {
@@ -89,4 +111,67 @@ describe('Transactions', () => {
     expect(service.delete).toHaveBeenCalledWith('1');
     vi.restoreAllMocks();
   });
+
+  
+it ('Descrição deve mostrar mensagem quando estiver vazia', () => {
+  const instance = component as any; 
+
+  instance.form.description = '';
+
+  instance.save();
+
+  expect(instance.feedbackMessage)
+  .toBe('Por favor, informe uma descrição.');
+
 });
+
+it ('Descrição deve mostrar mensagem quando adiconado menos de 3 caracteres',() => {
+const instance  = component as any 
+
+instance.form.description = 'ab';
+
+instance.save();
+
+expect(instance.feedbackMessage)
+.toBe('A descrição deve ter pelo menos 3 caracteres.')  
+});
+
+it ('Deve enviar uma mensagem qaundo data for invalida',() => {
+const instance = component as any 
+
+instance.form = {
+  ...instance.form,
+  description: 'Mercado',
+  amount: 100,
+  category: 'Alimentação',
+  account: 'Conta principal',
+  date:'data-invalida',
+};
+
+instance.save();
+
+expect(instance.feedbackMessage)
+.toBe('Por favor, informe uma data válida.');
+
+});
+
+it('Deve enviar uma mensagem quando a conta estiver vazia', () => {
+  const instance = component as any;
+
+  instance.form = {
+    ...instance.form,
+    description: 'Mercado',
+    amount: 100,
+    category: 'Alimentação',
+    date: '2026-09-10',
+    account:'',
+  };
+  
+  instance.save();
+
+  expect(instance.feedbackMessage)
+    .toBe('Por favor, informe a conta.');
+});
+});
+
+
