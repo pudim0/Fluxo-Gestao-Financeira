@@ -4,7 +4,7 @@ import { provideRouter, Route, Router, UrlSegment } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { authGuard } from './auth.guard';
 
-describe('authGuard', () => {
+describe('Proteção de autenticação', () => {
   let authService: AuthService;
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('authGuard', () => {
     authService.logout();
   });
 
-  it('allows authenticated users to continue', () => {
+  it('permite que usuários autenticados continuem', () => {
     authService.startDemoSession('user@example.com');
 
     const result = TestBed.runInInjectionContext(() =>
@@ -25,7 +25,7 @@ describe('authGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('redirects anonymous users to login with the attempted route', () => {
+  it('redireciona usuários anônimos para o login com a rota pretendida', () => {
     const result = TestBed.runInInjectionContext(() =>
       authGuard({} as Route, [new UrlSegment('transacoes', {})]),
     );

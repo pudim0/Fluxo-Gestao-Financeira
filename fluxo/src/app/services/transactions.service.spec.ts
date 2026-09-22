@@ -5,7 +5,7 @@ import { MockTransactionRepository } from '../repositories/mock-transaction.repo
 import { TRANSACTION_REPOSITORY } from '../repositories/transaction.repository';
 import { TransactionsService } from './transactions.service';
 
-describe('TransactionsService', () => {
+describe('Serviço de transações', () => {
   let service: TransactionsService;
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('TransactionsService', () => {
     service = TestBed.inject(TransactionsService);
   });
 
-  it('derives financial metrics from the repository transactions', () => {
+  it('calcula métricas financeiras a partir das transações do repositório', () => {
     expect(service.transactions()).toHaveLength(4);
     expect(service.totalIncome()).toBe(6500);
     expect(service.totalExpense()).toBeCloseTo(297.2);
@@ -28,7 +28,7 @@ describe('TransactionsService', () => {
     expect(service.hasError()).toBe(false);
   });
 
-  it('creates, updates and deletes transactions in shared state', () => {
+  it('cria, atualiza e exclui transações no estado compartilhado', () => {
     const transaction: NewTransaction = {
       description: 'Freelance',
       amount: 1000,
@@ -51,7 +51,7 @@ describe('TransactionsService', () => {
     expect(service.totalIncome()).toBe(6500);
   });
 
-  it('reuses existing category when only casing, accents or spaces differ', () => {
+  it('reutiliza uma categoria existente quando só mudam maiúsculas, acentos ou espaços', () => {
     const duplicatedCategoryTransaction: NewTransaction = {
       description: 'Mercado bairro',
       amount: 152.3,

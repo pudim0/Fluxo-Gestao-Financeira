@@ -4,7 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { guestGuard } from './guest.guard';
 
-describe('guestGuard', () => {
+describe('Proteção de visitantes', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [AuthService, provideRouter([])],
@@ -12,13 +12,13 @@ describe('guestGuard', () => {
     TestBed.inject(AuthService).logout();
   });
 
-  it('allows anonymous users to access public auth pages', () => {
+  it('permite que usuários anônimos acessem páginas públicas de autenticação', () => {
     const result = TestBed.runInInjectionContext(() => guestGuard({} as never, []));
 
     expect(result).toBe(true);
   });
 
-  it('redirects authenticated users to the dashboard', () => {
+  it('redireciona usuários autenticados para o painel', () => {
     TestBed.inject(AuthService).startDemoSession('user@example.com');
 
     const result = TestBed.runInInjectionContext(() => guestGuard({} as never, []));

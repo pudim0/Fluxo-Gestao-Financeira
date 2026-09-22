@@ -3,7 +3,7 @@ import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { LanguageService } from './language.service';
 
-describe('LanguageService', () => {
+describe('Serviço de idioma', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({
@@ -11,13 +11,13 @@ describe('LanguageService', () => {
     });
   });
 
-  it('uses Portuguese when no stored language exists', () => {
+  it('usa português quando não existe idioma armazenado', () => {
     const service = TestBed.inject(LanguageService);
     expect(service.idioma()).toBe('pt-BR');
     expect(TestBed.inject(TranslateService).getCurrentLang()).toBe('pt-BR');
   });
 
-  it('loads a valid stored language and persists changes', () => {
+  it('carrega um idioma armazenado válido e persiste as alterações', () => {
     localStorage.setItem('idioma', 'en');
     const service = TestBed.inject(LanguageService);
     const translate = TestBed.inject(TranslateService);

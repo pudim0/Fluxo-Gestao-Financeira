@@ -6,7 +6,7 @@ import { TransactionsService } from '../../services/transactions.service';
 import { MockTransactionRepository } from '../../repositories/mock-transaction.repository';
 import { TRANSACTION_REPOSITORY } from '../../repositories/transaction.repository';
 
-describe('DashboardComponent', () => {
+describe('Componente do painel', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
@@ -26,16 +26,16 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render metric cards', () => {
+  it('deve renderizar cartões de métricas', () => {
     const metrics = fixture.nativeElement.querySelectorAll('.metric-card');
     expect(metrics.length).toBeGreaterThan(0);
   });
 
-  it('should render the overview panels from the dashboard mockup', () => {
+  it('deve renderizar os painéis de visão geral do modelo do painel', () => {
     const overviewPanel = fixture.nativeElement.querySelector('.overview-panel');
     const insightsPanel = fixture.nativeElement.querySelector('.insights-panel');
 
@@ -43,12 +43,12 @@ describe('DashboardComponent', () => {
     expect(insightsPanel).toBeTruthy();
   });
 
-  it('shows only three recent transactions in the dashboard preview', () => {
+  it('exibe somente três transações recentes na prévia do painel', () => {
     const rows = fixture.nativeElement.querySelectorAll('.transaction-row');
     expect(rows.length).toBe(3);
   });
 
-  it('renders quick links to notificacoes, transacoes and metas', () => {
+  it('renderiza links rápidos para notificações, transações e metas', () => {
     const links = Array.from(
       fixture.nativeElement.querySelectorAll('.alert-links a'),
     ) as HTMLAnchorElement[];

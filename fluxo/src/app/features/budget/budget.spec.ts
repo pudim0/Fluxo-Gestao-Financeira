@@ -7,7 +7,7 @@ import { Transaction } from '../../models/transaction.model';
 import { TransactionsService } from '../../services/transactions.service';
 import { Budget } from './budget';
 
-describe('Budget', () => {
+describe('Orçamento', () => {
   let component: Budget;
   let transactions: any;
   const expense: Transaction = {
@@ -28,7 +28,7 @@ describe('Budget', () => {
     component = TestBed.createComponent(Budget).componentInstance;
   });
 
-  it('derives categories, monthly expenses and remaining budget', () => {
+  it('calcula categorias, despesas mensais e orçamento restante', () => {
     const instance = component as any;
     instance.selectedMonth.set('2026-09');
     expect(instance.categories()).toEqual(['Moradia']);
@@ -37,7 +37,7 @@ describe('Budget', () => {
     expect(instance.rows()).toEqual([]);
   });
 
-  it('handles empty transaction lists and saves a new valid limit', () => {
+  it('trata listas de transações vazias e salva um novo limite válido', () => {
     const instance = component as any;
     transactions.transactions.set([]);
     expect(instance.categories()).toEqual([]);
@@ -52,7 +52,7 @@ describe('Budget', () => {
     expect(JSON.parse(localStorage.getItem('fluxo.budgets:user@example.com')!)).toHaveLength(1);
   });
 
-  it('rejects invalid limits, edits existing ones and removes them', () => {
+  it('rejeita limites inválidos, edita os existentes e os remove', () => {
     const instance = component as any;
     instance.openForm();
     instance.save();
@@ -74,7 +74,7 @@ describe('Budget', () => {
     expect(instance.feedback()).toContain('Nenhum limite');
   });
 
-  it('marks over-limit categories as alerts', () => {
+  it('marca categorias acima do limite como alertas', () => {
     const instance = component as any;
     instance.limitsState.set([{ category: 'Moradia', amount: 500 }]);
     expect(instance.rows()[0].isOverLimit).toBe(true);

@@ -4,8 +4,8 @@ import { Input } from './input/input';
 import { Modal } from './modal/modal';
 import { Table } from './table/table';
 
-describe('Design system components', () => {
-  it('renders input configuration and emits typed values', async () => {
+describe('Componentes do sistema de design', () => {
+  it('renderiza a configuração do campo e emite valores digitados', async () => {
     await TestBed.configureTestingModule({ imports: [Input] }).compileComponents();
     const fixture = TestBed.createComponent(Input);
     fixture.componentRef.setInput('label', 'Nome');
@@ -23,7 +23,7 @@ describe('Design system components', () => {
     expect(emitted).toBe('Bruna');
   });
 
-  it('renders modal content and emits close from button, backdrop and escape', async () => {
+  it('renderiza o conteúdo do modal e emite fechamento pelo botão, fundo e Escape', async () => {
     await TestBed.configureTestingModule({ imports: [Modal] }).compileComponents();
     const fixture: ComponentFixture<Modal> = TestBed.createComponent(Modal);
     fixture.componentRef.setInput('open', true);
@@ -39,7 +39,7 @@ describe('Design system components', () => {
     expect(closes).toBe(3);
   });
 
-  it('renders table headers and cells, including an empty table', async () => {
+  it('renderiza cabeçalhos e células da tabela, inclusive uma tabela vazia', async () => {
     await TestBed.configureTestingModule({ imports: [Table] }).compileComponents();
     const fixture = TestBed.createComponent(Table);
     fixture.componentRef.setInput('columns', ['Nome', 'Valor']);

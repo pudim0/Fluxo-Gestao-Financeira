@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 import { LanguageService } from '../../core/services/language.service';
 import { Settings } from './settings';
 
-describe('Settings', () => {
+describe('Configurações', () => {
   let component: Settings;
   let language: { idioma: ReturnType<typeof signal<'pt-BR' | 'en'>>; mudarIdioma: ReturnType<typeof vi.fn> };
 
@@ -20,19 +20,19 @@ describe('Settings', () => {
     component = TestBed.createComponent(Settings).componentInstance;
   });
 
-  it('switches between settings tabs', () => {
+  it('alterna entre abas de configurações', () => {
     component.mostrarAba('preferencias');
     expect(component.abaAtiva()).toBe('preferencias');
     component.mostrarAba('acessibilidade');
     expect(component.abaAtiva()).toBe('acessibilidade');
   });
 
-  it('delegates language changes', () => {
+  it('delega alterações de idioma ao serviço', () => {
     component.mudarIdioma('en');
     expect(language.mudarIdioma).toHaveBeenCalledWith('en');
   });
 
-  it('toggles theme and opens support channels', () => {
+  it('alterna o tema e abre canais de suporte', () => {
     const open = vi.spyOn(window, 'open').mockImplementation(() => null);
     const initial = component.theme();
     component.toggleTheme();

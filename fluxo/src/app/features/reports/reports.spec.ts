@@ -6,7 +6,7 @@ import { Transaction } from '../../models/transaction.model';
 import { TransactionsService } from '../../services/transactions.service';
 import { Reports } from './reports';
 
-describe('Reports', () => {
+describe('Relatórios', () => {
   let component: Reports;
   let transactions: any;
 
@@ -19,7 +19,7 @@ describe('Reports', () => {
     component = TestBed.createComponent(Reports).componentInstance;
   });
 
-  it('creates six monthly rows and handles empty expense data', () => {
+  it('cria seis linhas mensais e trata dados de despesas vazios', () => {
     const instance = component as any;
     expect(instance.monthlyData()).toHaveLength(6);
     expect(instance.monthlyRows()).toHaveLength(6);
@@ -27,7 +27,7 @@ describe('Reports', () => {
     expect(instance.balanceRows()[5].accumulated).toBe(0);
   });
 
-  it('groups category expenses and calculates monthly balances', () => {
+  it('agrupa despesas por categoria e calcula saldos mensais', () => {
     const now = new Date();
     const month = now.toISOString().slice(0, 7);
     transactions.transactions.set([

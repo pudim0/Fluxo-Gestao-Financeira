@@ -7,7 +7,7 @@ import { vi } from 'vitest';
 import { AuthService } from '../../core/services/auth.service';
 import { UserAccount } from './user-account';
 
-describe('UserAccount', () => {
+describe('Conta do usuário', () => {
   let component: UserAccount;
   let fixture: ComponentFixture<UserAccount>;
   let httpTesting: HttpTestingController;
