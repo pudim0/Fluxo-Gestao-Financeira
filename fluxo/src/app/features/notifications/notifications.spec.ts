@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Notifications } from './notifications';
 
-describe('Notifications', () => {
+describe('Notificações', () => {
   let component: Notifications;
   let fixture: ComponentFixture<Notifications>;
 
@@ -17,11 +17,11 @@ describe('Notifications', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the notification feed', () => {
+  it('deve renderizar o feed de notificações', () => {
     const title = fixture.nativeElement.querySelector('.notifications-title-wrap h1');
     const summaryCards = fixture.nativeElement.querySelectorAll('.summary-card');
     const cards = fixture.nativeElement.querySelectorAll('.notification-item');
@@ -31,20 +31,20 @@ describe('Notifications', () => {
     expect(cards.length).toBe(4);
   });
 
-  it('should expose the list of notifications in the component', () => {
+  it('deve disponibilizar a lista de notificações no componente', () => {
     expect(component.notifications().length).toBe(4);
     expect(component.notifications()[0].title).toContain('Limite de gasto atingido');
     expect(component.notifications()[3].category).toBe('Lembretes');
   });
 
-  it('marks a single notification as read', () => {
+  it('marca uma única notificação como lida', () => {
     component.markAsRead(1);
 
     expect(component.notifications().find((item) => item.id === 1)?.read).toBe(true);
     expect(component.unreadCount()).toBe(3);
   });
 
-  it('marks all notifications as read', () => {
+  it('marca todas as notificações como lidas', () => {
     component.markAllAsRead();
 
     expect(component.notifications().every((item) => item.read)).toBe(true);

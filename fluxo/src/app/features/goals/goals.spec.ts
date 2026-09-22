@@ -4,7 +4,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
 import { GoalsComponent } from './goals';
 
-describe('GoalsComponent', () => {
+describe('Componente de metas', () => {
   let component: GoalsComponent;
   let fixture: ComponentFixture<GoalsComponent>;
 
@@ -30,11 +30,11 @@ describe('GoalsComponent', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
+  it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show a chart tooltip when a point is selected', () => {
+  it('deve mostrar a dica do gráfico quando um ponto é selecionado', () => {
     const chartPoint = fixture.nativeElement.querySelectorAll('circle')[2] as SVGCircleElement;
 
     chartPoint.dispatchEvent(new MouseEvent('mouseenter'));
@@ -50,7 +50,7 @@ describe('GoalsComponent', () => {
     );
   });
 
-  it('should add and remove contributions', () => {
+  it('deve adicionar e remover contribuições', () => {
     const savedBefore = component.goals()[0].saved;
 
     component.addContribution(component.goals()[0].id, 300);
@@ -62,14 +62,14 @@ describe('GoalsComponent', () => {
     expect(component.goals()[0].saved).toBe(savedBefore - 200);
   });
 
-  it('should add a new goal with zero saved amount', () => {
+  it('deve adicionar uma nova meta com valor economizado igual a zero', () => {
     component.addGoal('Celular novo', 3000, 150, '2027-12');
 
     expect(component.goals().at(-1)?.name).toBe('Celular novo');
     expect(component.goals().at(-1)?.saved).toBe(0);
   });
 
-  it('should persist goal changes in local storage', () => {
+  it('deve persistir alterações das metas no armazenamento local', () => {
     component.addContribution(component.goals()[0].id, 300);
 
     const savedState = JSON.parse(localStorage.getItem('fluxo.goals:anonymous') ?? '[]');

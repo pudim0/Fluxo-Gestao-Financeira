@@ -6,7 +6,7 @@ import { Transaction } from '../../models/transaction.model';
 import { TransactionsService } from '../../services/transactions.service';
 import { Transactions } from './transactions';
 
-describe('Transactions', () => {
+describe('Transações', () => {
   let component: Transactions;
   let fixture: ComponentFixture<Transactions>;
   let service: any;
@@ -40,7 +40,7 @@ describe('Transactions', () => {
     fixture.detectChanges();
   });
 
-  it('filters by search and returns an empty result for unmatched filters', () => {
+  it('filtra pela busca e retorna resultado vazio para filtros sem correspondência', () => {
     const instance = component as any;
     expect(instance.filteredTransactions).toHaveLength(1);
     instance.search = 'inexistente';
@@ -50,7 +50,7 @@ describe('Transactions', () => {
     expect(instance.filteredTransactions).toHaveLength(1);
   });
 
-  it('calculates income and expense totals', () => {
+  it('calcula os totais de receitas e despesas', () => {
     service.transactions.set([
       transaction,
       { ...transaction, id: '2', type: 'income', amount: 250 },
@@ -60,7 +60,7 @@ describe('Transactions', () => {
     expect(instance.filteredExpense).toBe(100);
   });
 
-  it('renders loading, error and empty states', () => {
+  it('renderiza os estados de carregamento, erro e vazio', () => {
     service.isLoading.set(true);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Carregando transações');
@@ -74,7 +74,7 @@ describe('Transactions', () => {
     expect(fixture.nativeElement.textContent).toContain('Comece registrando uma transação');
   });
 
-  it('rejects invalid forms and saves valid create and edit flows', () => {
+  it('rejeita formulários inválidos e salva fluxos válidos de criação e edição', () => {
     const instance = component as any;
     instance.startCreate();
     instance.form = { ...instance.form, description: 'x' };
@@ -98,7 +98,7 @@ describe('Transactions', () => {
     );
   });
 
-  it('handles category creation and confirmed deletion', () => {
+  it('trata a criação de categorias e a exclusão confirmada', () => {
     const instance = component as any;
     instance.startCreate();
     instance.startNewCategory();
@@ -113,7 +113,7 @@ describe('Transactions', () => {
   });
 
   
-it ('Descrição deve mostrar mensagem quando estiver vazia', () => {
+it('deve mostrar mensagem quando a descrição estiver vazia', () => {
   const instance = component as any; 
 
   instance.form.description = '';
@@ -125,7 +125,7 @@ it ('Descrição deve mostrar mensagem quando estiver vazia', () => {
 
 });
 
-it ('Descrição deve mostrar mensagem quando adiconado menos de 3 caracteres',() => {
+it('deve mostrar mensagem quando a descrição tiver menos de 3 caracteres', () => {
 const instance  = component as any 
 
 instance.form.description = 'ab';
@@ -136,7 +136,7 @@ expect(instance.feedbackMessage)
 .toBe('A descrição deve ter pelo menos 3 caracteres.')  
 });
 
-it ('Deve enviar uma mensagem qaundo data for invalida',() => {
+it('deve mostrar mensagem quando a data for inválida', () => {
 const instance = component as any 
 
 instance.form = {
@@ -155,7 +155,7 @@ expect(instance.feedbackMessage)
 
 });
 
-it('Deve enviar uma mensagem quando a conta estiver vazia', () => {
+it('deve mostrar mensagem quando a conta estiver vazia', () => {
   const instance = component as any;
 
   instance.form = {

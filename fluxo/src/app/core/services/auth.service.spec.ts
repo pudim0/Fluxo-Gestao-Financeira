@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
 
-describe('AuthService', () => {
+describe('Serviço de autenticação', () => {
   let service: AuthService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
   });
 
-  it('starts and clears the temporary demo session', () => {
+  it('inicia e encerra a sessão temporária de demonstração', () => {
     expect(service.isAuthenticated()).toBe(false);
     service.startDemoSession('teste@exemplo.com');
     expect(service.isAuthenticated()).toBe(true);
@@ -18,7 +18,7 @@ describe('AuthService', () => {
     expect(service.isAuthenticated()).toBe(false);
   });
 
-  it('does not accept an empty token as an authenticated session', () => {
+  it('não aceita um token vazio como sessão autenticada', () => {
     service.logout();
 
     expect(service.isAuthenticated()).toBe(false);

@@ -7,7 +7,7 @@ import { FinancialProfile } from '../../../models/financial-profile.model';
 import { FinancialProfileService } from '../../../services/financial-profile.service';
 import { Onboarding } from './onboarding';
 
-describe('Onboarding', () => {
+describe('Integração inicial', () => {
   let component: Onboarding;
   let fixture: ComponentFixture<Onboarding>;
   let profileService: { profile: ReturnType<typeof signal<FinancialProfile>>; save: ReturnType<typeof vi.fn> };
@@ -34,11 +34,11 @@ describe('Onboarding', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
+  it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders the welcome state and starts the questionnaire', () => {
+  it('renderiza o estado de boas-vindas e inicia o questionário', () => {
     expect(fixture.nativeElement.textContent).toContain('Vamos organizar sua vida financeira');
     fixture.nativeElement.querySelector('.primary-button').click();
     fixture.detectChanges();
@@ -46,7 +46,7 @@ describe('Onboarding', () => {
     expect(fixture.nativeElement.textContent).toContain('Qual é seu principal objetivo financeiro?');
   });
 
-  it('keeps invalid answers from advancing and accepts a formatted income amount', () => {
+  it('impede o avanço com respostas inválidas e aceita uma renda formatada', () => {
     component.start();
     expect(component.canContinue()).toBe(false);
     component.next();
@@ -63,7 +63,7 @@ describe('Onboarding', () => {
     expect(component.currentQuestion).toBe('incomeType');
   });
 
-  it('removes debt answers when the user changes to no debt', () => {
+  it('remove as respostas de dívida quando o usuário muda para sem dívidas', () => {
     component.selectAnswer('hasDebt', 'Sim');
     component.toggleDebtType('Cartão de crédito');
     component.updateDebtAmount({ target: { value: 'R$ 1.000' } } as unknown as Event);
@@ -74,14 +74,14 @@ describe('Onboarding', () => {
     expect(component.steps).not.toContain('debtTypes');
   });
 
-  it('supports selecting and deselecting debt types', () => {
+  it('permite selecionar e desselecionar tipos de dívida', () => {
     component.toggleDebtType('Empréstimo');
     expect(component.profile.debtTypes).toEqual(['Empréstimo']);
     component.toggleDebtType('Empréstimo');
     expect(component.profile.debtTypes).toEqual([]);
   });
 
-  it('finishes a valid no-debt flow and navigates to the dashboard', () => {
+  it('conclui um fluxo válido sem dívidas e navega para o painel', () => {
     component.profile = {
       ...emptyProfile(), goal: 'Criar uma reserva', incomeSource: 'Salário',
       incomeFrequency: 'Mensalmente', incomeAmount: '2500', incomeType: 'Fixa',

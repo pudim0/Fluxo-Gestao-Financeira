@@ -26,7 +26,7 @@ describe('Login', () => {
     TestBed.inject(AuthService).logout();
   });
 
-  it('rejects an invalid email before navigating', () => {
+  it('rejeita um e-mail inválido antes de navegar', () => {
     const fixture = TestBed.createComponent(Login);
     const component = fixture.componentInstance as Login & {
       email: { set: (value: string) => void };
@@ -43,7 +43,7 @@ describe('Login', () => {
     expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
   });
 
-  it('starts a session and preserves redirectTo for a valid login', () => {
+  it('inicia uma sessão e preserva redirectTo em um login válido', () => {
     const fixture = TestBed.createComponent(Login);
     const component = fixture.componentInstance as Login & {
       email: { set: (value: string) => void };

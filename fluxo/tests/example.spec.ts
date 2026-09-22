@@ -1,18 +1,18 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('deve exibir o título', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
-  // Expect a title "to contain" a substring.
+  // Verifica se o título contém uma parte do texto esperado.
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('get started link', async ({ page }) => {
+test('deve abrir o link de início', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
-  // Click the get started link.
+  // Clica no link de início.
   await page.getByRole('link', { name: 'Get started' }).click();
 
-  // Expects page to have a heading with the name of Installation.
+  // Verifica se a página exibe o título Installation.
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
