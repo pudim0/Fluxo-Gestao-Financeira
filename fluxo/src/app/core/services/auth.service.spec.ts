@@ -1,13 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let httpTesting: HttpTestingController;
 
   beforeEach(() => {
     localStorage.clear();
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(AuthService);
+    httpTesting = TestBed.inject(HttpTestingController);
   });
 
   it('starts and clears the temporary demo session', () => {
@@ -22,5 +29,20 @@ describe('AuthService', () => {
     service.logout();
 
     expect(service.isAuthenticated()).toBe(false);
+  });
+
+  it('persists only the token returned by the API after valid credentials', () => {
+    service.login('user@example.com', 'password').subscribe();
+
+    httpTesting.expectOne(
+      'https://dummyjson.com/users/filter?key=email&value=user%40example.com',
+    ).flush({ users: [{ username: 'user', email: 'user@example.com' }] });
+    httpTesting.expectOne('https://dummyjson.com/auth/login').flush({
+      accessToken: 'api-token',
+      email: 'user@example.com',
+    });
+
+    expect(service.getToken()).toBe('api-token');
+    expect(service.isAuthenticated()).toBe(true);
   });
 });

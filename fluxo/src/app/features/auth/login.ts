@@ -42,9 +42,16 @@ export class Login {
     this.validationMessage.set('');
 
     this.submitting.set(true);
-    this.authService.startDemoSession(email);
-    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/dashboard';
-    void this.router.navigateByUrl(redirectTo);
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') ?? '/dashboard';
+        void this.router.navigateByUrl(redirectTo);
+      },
+      error: () => {
+        this.submitting.set(false);
+        this.validationMessage.set('E-mail ou senha inválidos. Confira seus dados e tente novamente.');
+      },
+    });
   }
 
   protected continueWith(provider: 'google' | 'apple'): void {
