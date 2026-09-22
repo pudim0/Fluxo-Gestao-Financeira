@@ -1,6 +1,8 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { catchError, of } from 'rxjs';
 
 import { TransactionsService } from '../../services/transactions.service';
 import { FinancialProfileService } from '../../services/financial-profile.service';
@@ -16,10 +18,11 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class DashboardComponent {
   private readonly router = inject(Router);
+  private readonly http = inject(HttpClient, { optional: true });
   protected readonly transactionsService = inject(TransactionsService);
   private readonly authService = inject(AuthService);
   protected readonly profileService = inject(FinancialProfileService);
-  protected readonly userName = this.authService.getCurrentUserName();
+  protected readonly userName = signal(this.authService.getCurrentUserName());
   protected readonly profile = this.profileService.profile;
   protected readonly profileSummary = computed(() => {
     const profile = this.profile();
@@ -50,6 +53,8 @@ export class DashboardComponent {
    * Sem isso, a atualização só aconteceria após navegação manual ou F5.
    */
   constructor() {
+    this.carregarUsuarioFicticio();
+
     effect(() => {
       // Observar mudanças no profile
       const profile = this.profile();
@@ -61,6 +66,18 @@ export class DashboardComponent {
         console.log('🔄 Profile atualizado no dashboard:', profile);
       }
     });
+  }
+
+  private carregarUsuarioFicticio(): void {
+    if (!this.http) return;
+
+    this.http
+      .get<{ firstName: string; lastName: string }>('https://dummyjson.com/users/1')
+      .pipe(catchError(() => of(null)))
+      .subscribe((usuario) => {
+        if (!usuario) return;
+        this.userName.set(`${usuario.firstName} ${usuario.lastName}`.trim());
+      });
   }
 
   // Sinais vindos do serviço de transações

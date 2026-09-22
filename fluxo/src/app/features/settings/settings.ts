@@ -1,5 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of } from 'rxjs';
 import { Button as DsButton } from '../../shared/components/design-system/button/button';
 import { Card as DsCard } from '../../shared/components/design-system/card/card';
 import { Input as DsInput } from '../../shared/components/design-system/input/input';
@@ -15,6 +17,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class Settings {
   private readonly document = inject(DOCUMENT);
+  private readonly http = inject(HttpClient);
+
+  private readonly dummyUserUrl = 'https://dummyjson.com/users/1';
 
   abaAtiva = signal<'perfil' | 'preferencias' | 'acessibilidade'>('perfil');
   theme = signal<'dark' | 'light'>(this.readTheme());
@@ -32,12 +37,13 @@ export class Settings {
 
   idioma = this.languageService.idioma;
 
-  mudarIdioma(idioma: 'pt-BR' | 'en'): void {
-    this.languageService.mudarIdioma(idioma);
-  }
-
   constructor() {
     this.applyTheme(this.theme());
+    this.carregarUsuarioFicticio();
+  }
+
+  mudarIdioma(idioma: 'pt-BR' | 'en'): void {
+    this.languageService.mudarIdioma(idioma);
   }
 
   cancelarAlteracoes(): void {
@@ -100,6 +106,21 @@ export class Settings {
 
   private applyTheme(theme: 'dark' | 'light'): void {
     this.document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  private carregarUsuarioFicticio(): void {
+    this.http
+      .get<{ firstName: string; lastName: string; email: string }>(this.dummyUserUrl)
+      .pipe(catchError(() => of(null)))
+      .subscribe((usuario) => {
+        if (!usuario) return;
+
+        const nome = `${usuario.firstName} ${usuario.lastName}`.trim();
+        this.nomeOriginal = nome;
+        this.emailOriginal = usuario.email;
+        this.nomeAtual.set(nome);
+        this.emailAtual.set(usuario.email);
+      });
   }
 
   // Bug #10, #12 Fix: Implementar salvar alterações
