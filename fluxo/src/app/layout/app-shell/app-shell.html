@@ -32,7 +32,14 @@
         >
       }
     </nav>
-    <div class="sidebar-footer">Sua visão financeira, em um só lugar.</div>
+    <a class="sidebar-profile" routerLink="/conta" routerLinkActive="active" (click)="closeSidebar()" aria-label="Abrir minha conta">
+      <span class="sidebar-profile__avatar" aria-hidden="true">{{ sidebarUser().initials }}</span>
+      <span class="sidebar-profile__copy">
+        <strong>{{ sidebarUser().name }}</strong>
+        <small>{{ sidebarUser().email }}</small>
+      </span>
+      <span class="sidebar-profile__arrow" aria-hidden="true">›</span>
+    </a>
   </aside>
   @if (sidebarOpen()) {
     <button

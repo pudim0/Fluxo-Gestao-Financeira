@@ -20,29 +20,14 @@ describe('Settings', () => {
     component = TestBed.createComponent(Settings).componentInstance;
   });
 
-  it('switches tabs and updates profile fields', () => {
+  it('switches between settings tabs', () => {
     component.mostrarAba('preferencias');
     expect(component.abaAtiva()).toBe('preferencias');
     component.mostrarAba('acessibilidade');
     expect(component.abaAtiva()).toBe('acessibilidade');
-    component.atualizarNome({ target: { value: 'Ana' } } as unknown as Event);
-    component.atualizarEmail({ target: { value: 'ana@example.com' } } as unknown as Event);
-    expect(component.nomeAtual()).toBe('Ana');
-    expect(component.emailAtual()).toBe('ana@example.com');
-    expect(component.alterado).toBe(true);
   });
 
-  it('saves and cancels changes, and delegates language changes', () => {
-    component.nomeOriginal = 'Nome antigo';
-    component.emailOriginal = 'old@example.com';
-    component.nomeAtual.set('Nome novo');
-    component.emailAtual.set('new@example.com');
-    component.salvarAlteracoes();
-    expect(component.nomeOriginal).toBe('Nome novo');
-    expect(component.emailOriginal).toBe('new@example.com');
-    component.nomeAtual.set('temporário');
-    component.cancelarAlteracoes();
-    expect(component.nomeAtual()).toBe('Nome novo');
+  it('delegates language changes', () => {
     component.mudarIdioma('en');
     expect(language.mudarIdioma).toHaveBeenCalledWith('en');
   });

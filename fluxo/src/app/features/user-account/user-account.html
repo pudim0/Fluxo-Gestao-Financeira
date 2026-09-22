@@ -1,1 +1,161 @@
-<p>user-account works!</p>
+<section class="account-page">
+	<header class="account-header">
+		<div>
+			<p class="account-kicker">Minha conta</p>
+			<h2>Seu perfil financeiro</h2>
+			<p class="account-copy">Confira seus dados pessoais, cartões e contas conectadas.</p>
+		</div>
+		<button class="account-edit" type="button" [disabled]="!user()" (click)="openEditProfile(user()!)" aria-label="Editar perfil">
+			<span aria-hidden="true">✎</span>
+			Editar perfil
+		</button>
+	</header>
+
+	@if (loading()) {
+		<div class="account-state" role="status">Carregando dados da sua conta...</div>
+	} @else if (error()) {
+		<div class="account-state account-state--error" role="alert">
+			Não foi possível carregar os dados da conta agora.
+		</div>
+	} @else if (user(); as profile) {
+		<div class="account-layout">
+			<div class="account-column">
+				<section class="account-panel cards-panel">
+					<div class="panel-heading">
+						<div>
+							<p class="panel-kicker">Carteiras</p>
+							<h3>Meus cartões</h3>
+						</div>
+						<span class="panel-action">+ Adicionar</span>
+					</div>
+
+					<div class="credit-card">
+						<div class="card-topline"><span>FLUXO BANK</span><strong>{{ brazilianAccount.cardType }}</strong></div>
+						<p class="card-label">Crédito</p>
+						<div class="number-line">
+							<p class="card-number">{{ showCardNumber() ? brazilianAccount.cardNumber : maskedCard(brazilianAccount.cardNumber) }}</p>
+							<button class="visibility-button" type="button" (click)="showCardNumber.set(!showCardNumber())" [attr.aria-label]="showCardNumber() ? 'Ocultar número do cartão' : 'Mostrar número do cartão'">
+								<span aria-hidden="true">{{ showCardNumber() ? '◉' : '◌' }}</span>
+							</button>
+						</div>
+						<div class="card-bottomline">
+							<span><small>TITULAR</small>{{ fullName(profile) }}</span>
+							<span><small>VALIDADE</small>{{ brazilianAccount.cardExpire }}</span>
+							<strong>VISA</strong>
+						</div>
+					</div>
+
+					<div class="card-summary">
+						<div><small>Fatura atual</small><strong>R$ 1.243,80</strong></div>
+						<div><small>Vencimento</small><strong>15 out</strong></div>
+						<div><small>Limite total</small><strong>R$ 8.000,00</strong></div>
+					</div>
+				</section>
+
+				<section class="account-panel profile-panel">
+					<div class="profile-heading">
+						<label class="profile-avatar-upload" aria-label="Adicionar foto de perfil">
+							@if (profilePhoto(); as photo) {
+								<img class="profile-avatar profile-avatar--photo" [src]="photo" alt="Foto de perfil" />
+							} @else {
+								<span class="profile-avatar">{{ initials(profile) }}</span>
+							}
+							<input type="file" accept="image/*" (change)="selectProfilePhoto($event)" />
+							<span class="profile-avatar-upload__hint" aria-hidden="true">+</span>
+						</label>
+						<div>
+							<h3>{{ fullName(profile) }}</h3>
+							<p>{{ profile.email }}</p>
+						</div>
+						<span class="plan-badge">Plano Premium</span>
+					</div>
+					<div class="profile-tabs">
+						<button type="button" class="profile-tab" [class.profile-tab--active]="activeProfileTab() === 'personal'" (click)="setProfileTab('personal')">Dados pessoais</button>
+						<button type="button" class="profile-tab" [class.profile-tab--active]="activeProfileTab() === 'security'" (click)="setProfileTab('security')">Segurança</button>
+					</div>
+					@if (activeProfileTab() === 'personal') {
+						<dl class="profile-details">
+							<div><dt>Nome completo</dt><dd>{{ fullName(profile) }}</dd></div>
+							<div><dt>Usuário</dt><dd>{{ profile.username }}</dd></div>
+							<div><dt>Telefone</dt><dd>+55 (21) 99985-2931</dd></div>
+							<div><dt>Data de nascimento</dt><dd>12/03/1994</dd></div>
+							<div><dt>Local</dt><dd>Rio de Janeiro, RJ</dd></div>
+						</dl>
+					} @else {
+						<div class="security-form">
+							<label>E-mail<input type="email" [value]="editedEmail() || profile.email" (input)="updateEmail($event)" /></label>
+							<label>Senha antiga<input type="password" placeholder="Digite sua senha atual" (input)="updateOldPassword($event)" /></label>
+							<label>Nova senha<input type="password" placeholder="Digite uma nova senha" (input)="updatePassword($event)" /></label>
+							<label>Confirmar senha<input type="password" placeholder="Repita a nova senha" (input)="updateConfirmPassword($event)" /></label>
+							<p class="security-hint">A senha deve possuir no mínimo 8 caracteres.</p>
+							@if (securityError()) { <p class="security-error" role="alert">{{ securityError() }}</p> }
+							<button class="security-save" type="button" (click)="saveSecurity()">Salvar alterações</button>
+						</div>
+					}
+				</section>
+			</div>
+
+			<div class="account-column">
+				<section class="account-panel bank-panel">
+					<div class="panel-heading">
+						<div><p class="panel-kicker">Financeiro</p><h3>Dados bancários</h3></div>
+					</div>
+					<div class="account-tabs"><span class="account-tab account-tab--active">Conta corrente</span><span class="account-tab">Poupança</span></div>
+					<dl class="bank-details">
+						<div><dt>Banco</dt><dd>PicPay</dd></div>
+						<div><dt>Conta</dt><dd class="bank-number-line">{{ showBankNumber() ? brazilianAccount.accountNumber : '••••••••-•' }} <button class="visibility-button visibility-button--dark" type="button" (click)="showBankNumber.set(!showBankNumber())" [attr.aria-label]="showBankNumber() ? 'Ocultar número da conta' : 'Mostrar número da conta'"><span aria-hidden="true">{{ showBankNumber() ? '◉' : '◌' }}</span></button></dd></div>
+						<div><dt>Moeda</dt><dd>R$ (BRL)</dd></div>
+						<div><dt>Chave Pix</dt><dd>{{ brazilianAccount.pixKey }}</dd></div>
+					</dl>
+					<button class="copy-button" type="button">▣&nbsp; Copiar dados para transferência</button>
+				</section>
+
+				<div class="account-lower-grid">
+					<section class="account-panel connected-panel">
+						<p class="panel-kicker">Conectados</p>
+						<div class="connected-row"><span>▥&nbsp; PicPay</span><strong>Ativo</strong></div>
+						<div class="connected-row"><span>▥&nbsp; Mercado Pago</span><strong>Ativo</strong></div>
+					</section>
+					<section class="account-panel logout-panel">
+						<h3>⇥&nbsp; Sair da conta</h3>
+						<p>Desconecte as sessões ativas.</p>
+						<button type="button" (click)="openLogoutConfirmation()">Sair</button>
+					</section>
+				</div>
+			</div>
+		</div>
+
+		@if (editProfileOpen()) {
+			<div class="modal-backdrop" role="presentation" (click)="closeEditProfile()">
+				<section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title" (click)="$event.stopPropagation()">
+					<div class="modal-heading">
+						<div><p class="panel-kicker">Minha conta</p><h3 id="profile-modal-title">Editar dados pessoais</h3></div>
+						<button class="modal-close" type="button" (click)="closeEditProfile()" aria-label="Fechar edição">×</button>
+					</div>
+					<div class="personal-form">
+						<label>Nome completo<input [value]="personalName()" (input)="updatePersonalField('name', $event)" /></label>
+						<label>E-mail<input type="email" [value]="personalEmail()" (input)="updatePersonalField('email', $event)" /></label>
+						<label>Telefone<input [value]="personalPhone()" (input)="updatePersonalField('phone', $event)" /></label>
+						<label>Data de nascimento<input placeholder="DD/MM/AAAA" [value]="personalBirthDate()" (input)="updatePersonalField('birthDate', $event)" /></label>
+						<label>Local<input [value]="personalLocation()" (input)="updatePersonalField('location', $event)" /></label>
+					</div>
+					<div class="modal-actions"><button class="modal-cancel" type="button" (click)="closeEditProfile()">Cancelar</button><button class="security-save" type="button" (click)="savePersonalData()">Salvar dados</button></div>
+				</section>
+			</div>
+		}
+
+		@if (logoutOpen()) {
+			<div class="modal-backdrop" role="presentation" (click)="closeLogoutConfirmation()">
+				<section class="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="logout-title" (click)="$event.stopPropagation()">
+					<div class="confirmation-icon" aria-hidden="true">⇥</div>
+					<h3 id="logout-title">Sair da conta?</h3>
+					<p>Você será direcionado para a tela de login e precisará entrar novamente para acessar sua conta.</p>
+					<div class="modal-actions modal-actions--confirmation">
+						<button class="modal-cancel" type="button" (click)="closeLogoutConfirmation()">Cancelar</button>
+						<button class="logout-confirm" type="button" (click)="confirmLogout()">Quero sair</button>
+					</div>
+				</section>
+			</div>
+		}
+	}
+</section>
