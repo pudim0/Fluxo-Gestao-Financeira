@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { vi } from 'vitest';
 
@@ -7,6 +9,7 @@ import { Login } from './login';
 
 describe('Login', () => {
   let router: { navigateByUrl: (url: string) => Promise<boolean> };
+  let httpTesting: HttpTestingController;
 
   beforeEach(async () => {
     router = { navigateByUrl: async () => true };
@@ -14,6 +17,8 @@ describe('Login', () => {
       imports: [Login],
       providers: [
         AuthService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
@@ -23,6 +28,7 @@ describe('Login', () => {
         },
       ],
     }).compileComponents();
+    httpTesting = TestBed.inject(HttpTestingController);
     TestBed.inject(AuthService).logout();
   });
 
@@ -43,7 +49,7 @@ describe('Login', () => {
     expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
   });
 
-  it('starts a session and preserves redirectTo for a valid login', () => {
+  it('authenticates with the API and preserves redirectTo for a valid login', () => {
     const fixture = TestBed.createComponent(Login);
     const component = fixture.componentInstance as Login & {
       email: { set: (value: string) => void };
@@ -56,7 +62,16 @@ describe('Login', () => {
 
     component.submit();
 
+    httpTesting.expectOne(
+      'https://dummyjson.com/users/filter?key=email&value=user%40example.com',
+    ).flush({ users: [{ username: 'user', email: 'user@example.com' }] });
+    httpTesting.expectOne('https://dummyjson.com/auth/login').flush({
+      accessToken: 'api-token',
+      email: 'user@example.com',
+    });
+
     expect(TestBed.inject(AuthService).getCurrentUserEmail()).toBe('user@example.com');
+    expect(TestBed.inject(AuthService).getToken()).toBe('api-token');
     expect(navigateSpy).toHaveBeenCalledWith('/transacoes');
   });
 });

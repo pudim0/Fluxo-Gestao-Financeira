@@ -1,11 +1,34 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, switchMap, throwError } from 'rxjs';
 
 const AUTH_TOKEN_KEY = 'fluxo.auth.token';
 const AUTH_EMAIL_KEY = 'fluxo.auth.email';
 const AUTH_NAME_KEY = 'fluxo.auth.name';
+const API_URL = 'https://dummyjson.com';
+
+interface ApiUser {
+  username: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface UsersResponse {
+  users: ApiUser[];
+}
+
+interface LoginResponse {
+  accessToken?: string;
+  token?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly http = inject(HttpClient);
   private currentEmail: string | null | undefined;
 
   isAuthenticated(): boolean {
@@ -13,7 +36,48 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.isAuthenticated() ? 'demo-token' : null;
+    try {
+      return localStorage.getItem(AUTH_TOKEN_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  login(email: string, password: string): Observable<void> {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    return this.http
+      .get<UsersResponse>(`${API_URL}/users/filter?key=email&value=${encodeURIComponent(normalizedEmail)}`)
+      .pipe(
+        switchMap(({ users }) => {
+          const user = users[0];
+          if (!user) {
+            return throwError(() => new Error('Credenciais inválidas.'));
+          }
+
+          return this.http.post<LoginResponse>(`${API_URL}/auth/login`, {
+            username: user.username,
+            password,
+            expiresInMins: 30,
+          });
+        }),
+        switchMap((response) => {
+          const token = response.accessToken ?? response.token;
+          if (!token) {
+            return throwError(() => new Error('A API não retornou um token de sessão.'));
+          }
+
+          this.persistSession(
+            token,
+            response.email ?? normalizedEmail,
+            [response.firstName, response.lastName].filter(Boolean).join(' '),
+          );
+          return new Observable<void>((subscriber) => {
+            subscriber.next();
+            subscriber.complete();
+          });
+        }),
+      );
   }
 
   getCurrentUserEmail(): string | null {
@@ -55,9 +119,15 @@ export class AuthService {
       return;
     }
 
+    this.persistSession('demo-token', this.currentEmail, name);
+  }
+
+  private persistSession(token: string, email: string, name?: string): void {
+    this.currentEmail = email;
+
     try {
-      localStorage.setItem(AUTH_TOKEN_KEY, 'demo-token');
-      localStorage.setItem(AUTH_EMAIL_KEY, this.currentEmail);
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
+      localStorage.setItem(AUTH_EMAIL_KEY, email);
       if (name?.trim()) {
         localStorage.setItem(AUTH_NAME_KEY, name.trim());
       }
