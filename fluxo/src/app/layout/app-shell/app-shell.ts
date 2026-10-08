@@ -1,10 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, filter, map, of } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationCenterService } from '../../services/notification-center.service';
 
@@ -23,7 +22,6 @@ export class AppShell {
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly http = inject(HttpClient, { optional: true });
   private readonly notificationCenter = inject(NotificationCenterService);
 
   // State Signals
@@ -68,22 +66,6 @@ export class AppShell {
 
   constructor() {
     this.applyTheme(this.theme());
-    this.loadSidebarUser();
-  }
-
-  private loadSidebarUser(): void {
-    if (!this.http) return;
-    this.http
-      .get<{ firstName: string; lastName: string; email: string }>('https://dummyjson.com/users/1')
-      .pipe(catchError(() => of(null)))
-      .subscribe((user) => {
-        if (!user) return;
-        this.sidebarUser.set({
-          name: `${user.firstName} ${user.lastName}`.trim(),
-          email: user.email,
-          initials: `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase(),
-        });
-      });
   }
 
   // User Actions
@@ -125,6 +107,32 @@ export class AppShell {
   protected onEscape(): void {
     this.closeSidebar();
     this.closeSettings();
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  protected onShortcut(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (
+      target?.matches('input, textarea, select, [contenteditable="true"]') ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const routes: Record<string, string> = {
+      g: '/dashboard',
+      t: '/transacoes',
+      b: '/orcamento',
+      m: '/metas',
+    };
+    const route = routes[event.key.toLowerCase()];
+
+    if (route) {
+      event.preventDefault();
+      void this.router.navigateByUrl(route);
+    }
   }
 
   // Theme Helpers

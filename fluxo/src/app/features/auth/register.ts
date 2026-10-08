@@ -41,8 +41,12 @@ export class Register {
     }
 
     this.validationMessage = '';
-    this.authService.startDemoSession(this.email, this.name);
-    void this.router.navigateByUrl('/onboarding');
+    this.authService.register(this.email, this.password, this.name).subscribe({
+      next: () => void this.router.navigateByUrl('/onboarding'),
+      error: () => {
+        this.validationMessage = 'Não foi possível criar sua conta. Tente novamente.';
+      },
+    });
   }
 
   protected continueWith(provider: 'google' | 'apple'): void {

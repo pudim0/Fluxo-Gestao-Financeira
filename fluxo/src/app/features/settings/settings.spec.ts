@@ -43,4 +43,12 @@ describe('Configurações', () => {
     expect(open).toHaveBeenCalledTimes(2);
     open.mockRestore();
   });
+
+  it('persiste e aplica o modo compacto', () => {
+    expect(component.compactMode()).toBe(false);
+    component.toggleCompactMode();
+    expect(component.compactMode()).toBe(true);
+    expect(localStorage.getItem('fluxo.compact-mode')).toBe('true');
+    expect(document.documentElement.hasAttribute('data-compact')).toBe(true);
+  });
 });

@@ -45,4 +45,16 @@ describe('Serviço de autenticação', () => {
     expect(service.getToken()).toBe('api-token');
     expect(service.isAuthenticated()).toBe(true);
   });
+
+  it('cria uma conta local e permite entrar novamente com a senha escolhida', async () => {
+    service.register('ana@example.com', 'senha-segura', 'Ana Souza').subscribe();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    service.logout();
+
+    service.login('ana@example.com', 'senha-segura').subscribe();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(service.isAuthenticated()).toBe(true);
+    expect(service.getCurrentUserName()).toBe('Ana Souza');
+  });
 });

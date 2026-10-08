@@ -138,6 +138,26 @@ svg {
     color var(--theme-transition);
 }
 
+:root[data-compact] .app-shell {
+  padding: 8px;
+}
+
+:root[data-compact] .sidebar {
+  padding: 14px;
+  gap: 12px;
+}
+
+:root[data-compact] .page-shell {
+  gap: 14px;
+}
+
+:root[data-compact] .metric-card,
+:root[data-compact] .subpanel,
+:root[data-compact] .ds-card,
+:root[data-compact] .account-panel {
+  padding: 14px;
+}
+
 .sidebar {
   flex-shrink: 0;
   padding: 20px;

@@ -121,10 +121,7 @@ export class MockTransactionRepository implements TransactionRepository {
       return this.defaultTransactions.map((transaction) => ({ ...transaction }));
     }
 
-    return this.defaultTransactions.map((transaction) => ({
-      ...transaction,
-      ...(transaction.type === 'income' ? { amount: this.getInitialIncome() } : {}),
-    }));
+    return [];
   }
 
   private persist(): void {

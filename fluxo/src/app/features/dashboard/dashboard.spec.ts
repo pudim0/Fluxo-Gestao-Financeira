@@ -5,18 +5,28 @@ import { DashboardComponent } from './dashboard';
 import { TransactionsService } from '../../services/transactions.service';
 import { MockTransactionRepository } from '../../repositories/mock-transaction.repository';
 import { TRANSACTION_REPOSITORY } from '../../repositories/transaction.repository';
+import { AuthService } from '../../core/services/auth.service';
 
 describe('Componente do painel', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
   beforeEach(async () => {
-    localStorage.removeItem('fluxo.mock.transactions:anonymous');
+    localStorage.setItem(
+      'fluxo.mock.transactions:anonymous',
+      JSON.stringify([
+        { id: 'tx-1', description: 'Mercado', amount: 100, type: 'expense', category: 'Casa', date: '2026-08-11', account: 'Conta' },
+        { id: 'tx-2', description: 'Salário', amount: 1000, type: 'income', category: 'Receita', date: '2026-08-10', account: 'Conta' },
+        { id: 'tx-3', description: 'Uber', amount: 20, type: 'expense', category: 'Transporte', date: '2026-08-09', account: 'Conta' },
+        { id: 'tx-4', description: 'Assinatura', amount: 30, type: 'expense', category: 'Software', date: '2026-08-08', account: 'Conta' },
+      ]),
+    );
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, RouterTestingModule],
       providers: [
         TransactionsService,
         { provide: TRANSACTION_REPOSITORY, useClass: MockTransactionRepository },
+        { provide: AuthService, useValue: { getCurrentUserEmail: () => null, getCurrentUserName: () => null } },
       ],
     }).compileComponents();
 

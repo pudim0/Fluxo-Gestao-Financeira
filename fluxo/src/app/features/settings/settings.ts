@@ -16,6 +16,7 @@ export class Settings {
   private readonly document = inject(DOCUMENT);
   abaAtiva = signal<'preferencias' | 'acessibilidade'>('preferencias');
   theme = signal<'dark' | 'light'>(this.readTheme());
+  compactMode = signal(this.readCompactMode());
 
   private readonly languageService = inject(LanguageService);
 
@@ -23,6 +24,7 @@ export class Settings {
 
   constructor() {
     this.applyTheme(this.theme());
+    this.applyCompactMode(this.compactMode());
   }
 
   mudarIdioma(idioma: 'pt-BR' | 'en'): void {
@@ -42,6 +44,15 @@ export class Settings {
     this.applyTheme(next);
   }
 
+  toggleCompactMode(): void {
+    const next = !this.compactMode();
+    this.compactMode.set(next);
+    try {
+      localStorage.setItem('fluxo.compact-mode', String(next));
+    } catch {}
+    this.applyCompactMode(next);
+  }
+
   private readTheme(): 'dark' | 'light' {
     try {
       const theme = localStorage.getItem('fluxo.theme');
@@ -53,6 +64,18 @@ export class Settings {
 
   private applyTheme(theme: 'dark' | 'light'): void {
     this.document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  private readCompactMode(): boolean {
+    try {
+      return localStorage.getItem('fluxo.compact-mode') === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  private applyCompactMode(enabled: boolean): void {
+    this.document.documentElement.toggleAttribute('data-compact', enabled);
   }
 
   // Bug #5 Fix: Adicionar suporte a contato via email/WhatsApp

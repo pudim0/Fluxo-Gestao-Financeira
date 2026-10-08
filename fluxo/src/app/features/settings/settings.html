@@ -53,8 +53,10 @@
                 : ('settings.temaEscuro' | translate)
             }}
           </button>
-          <span class="tag">{{ 'settings.modoCompacto' | translate }}</span>
-          <span class="tag">{{ 'settings.atalhosTeclado' | translate }}</span>
+          <button type="button" class="tag" [class.tag--active]="compactMode()" (click)="toggleCompactMode()">
+            {{ 'settings.modoCompacto' | translate }}: {{ compactMode() ? 'On' : 'Off' }}
+          </button>
+          <span class="tag">G dashboard · T transações · B orçamento · M metas · Esc fechar</span>
         </div>
       </ds-card>
     }

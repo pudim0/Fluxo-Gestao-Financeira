@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, of } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 
-interface DummyUser {
+interface AccountUser {
   firstName: string;
   lastName: string;
   maidenName: string;
@@ -25,7 +23,7 @@ interface DummyUser {
   company: { name: string; title: string; department: string };
 }
 
-interface BrazilianAccount {
+interface AccountData {
   cardNumber: string;
   cardExpire: string;
   cardType: string;
@@ -42,11 +40,10 @@ interface BrazilianAccount {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserAccount {
-  private readonly http = inject(HttpClient, { optional: true });
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
-  protected readonly user = signal<DummyUser | null>(null);
+  protected readonly user = signal<AccountUser | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
   protected readonly activeProfileTab = signal<'personal' | 'security'>('personal');
@@ -62,16 +59,16 @@ export class UserAccount {
   protected readonly securityError = signal('');
   protected readonly personalName = signal('');
   protected readonly personalEmail = signal('');
-  protected readonly personalPhone = signal('+55 (21) 99985-2931');
-  protected readonly personalBirthDate = signal('12/03/1994');
-  protected readonly personalLocation = signal('Rio de Janeiro, RJ');
-  protected readonly brazilianAccount: BrazilianAccount = {
-    cardNumber: '5300 1234 5678 9012',
-    cardExpire: '09/28',
-    cardType: 'Visa Platinum',
+  protected readonly personalPhone = signal('');
+  protected readonly personalBirthDate = signal('');
+  protected readonly personalLocation = signal('');
+  protected readonly brazilianAccount: AccountData = {
+    cardNumber: '',
+    cardExpire: '',
+    cardType: '',
     currency: 'BRL',
-    accountNumber: '12345678-9',
-    pixKey: '21999852931',
+    accountNumber: '',
+    pixKey: '',
   };
 
   protected openLogoutConfirmation(): void {
@@ -105,11 +102,11 @@ export class UserAccount {
     this.loadUser();
   }
 
-  protected fullName(user: DummyUser): string {
+  protected fullName(user: AccountUser): string {
     return `${user.firstName} ${user.lastName}`.trim();
   }
 
-  protected initials(user: DummyUser): string {
+  protected initials(user: AccountUser): string {
     return `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
   }
 
@@ -125,7 +122,7 @@ export class UserAccount {
     this.activeProfileTab.set(tab);
   }
 
-  protected openEditProfile(user: DummyUser): void {
+  protected openEditProfile(user: AccountUser): void {
     this.personalName.set(this.fullName(user));
     this.personalEmail.set(user.email);
     this.editProfileOpen.set(true);
@@ -205,23 +202,24 @@ export class UserAccount {
   }
 
   private loadUser(): void {
-    if (!this.http) {
-      this.loading.set(false);
-      return;
-    }
+    const email = this.authService.getCurrentUserEmail();
+    const name = this.authService.getCurrentUserName() ?? email?.split('@')[0] ?? 'Minha conta';
+    const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
+    const user: AccountUser = {
+      firstName: firstName || 'Minha',
+      lastName: lastNameParts.join(' '),
+      maidenName: '', age: 0, gender: '', email: email ?? '', phone: '',
+      username: email?.split('@')[0] ?? '', birthDate: '', image: '', bloodGroup: '',
+      height: 0, weight: 0, eyeColor: '', hair: { color: '', type: '' },
+      address: { address: '', city: '', state: '', postalCode: '', country: 'Brasil' },
+      bank: { cardNumber: '', cardExpire: '', cardType: '', currency: 'BRL', iban: '' },
+      company: { name: '', title: '', department: '' },
+    };
 
-    this.http
-      .get<DummyUser>('https://dummyjson.com/users/1')
-      .pipe(catchError(() => of(null)))
-      .subscribe((user) => {
-        this.user.set(user);
-        if (user) {
-          this.editedEmail.set(user.email);
-          this.personalName.set(this.fullName(user));
-          this.personalEmail.set(user.email);
-        }
-        this.error.set(!user);
-        this.loading.set(false);
-      });
+    this.user.set(user);
+    this.editedEmail.set(user.email);
+    this.personalName.set(this.fullName(user));
+    this.personalEmail.set(user.email);
+    this.loading.set(false);
   }
 }

@@ -46,9 +46,9 @@
 					</div>
 
 					<div class="card-summary">
-						<div><small>Fatura atual</small><strong>R$ 1.243,80</strong></div>
-						<div><small>Vencimento</small><strong>15 out</strong></div>
-						<div><small>Limite total</small><strong>R$ 8.000,00</strong></div>
+						<div><small>Fatura atual</small><strong>Não informada</strong></div>
+						<div><small>Vencimento</small><strong>Não informado</strong></div>
+						<div><small>Limite total</small><strong>Não informado</strong></div>
 					</div>
 				</section>
 
@@ -77,9 +77,9 @@
 						<dl class="profile-details">
 							<div><dt>Nome completo</dt><dd>{{ fullName(profile) }}</dd></div>
 							<div><dt>Usuário</dt><dd>{{ profile.username }}</dd></div>
-							<div><dt>Telefone</dt><dd>+55 (21) 99985-2931</dd></div>
-							<div><dt>Data de nascimento</dt><dd>12/03/1994</dd></div>
-							<div><dt>Local</dt><dd>Rio de Janeiro, RJ</dd></div>
+							<div><dt>Telefone</dt><dd>{{ profile.phone || 'Não informado' }}</dd></div>
+							<div><dt>Data de nascimento</dt><dd>{{ profile.birthDate || 'Não informado' }}</dd></div>
+							<div><dt>Local</dt><dd>{{ profile.address.city || 'Não informado' }}</dd></div>
 						</dl>
 					} @else {
 						<div class="security-form">
@@ -100,12 +100,12 @@
 					<div class="panel-heading">
 						<div><p class="panel-kicker">Financeiro</p><h3>Dados bancários</h3></div>
 					</div>
-					<div class="account-tabs"><span class="account-tab account-tab--active">Conta corrente</span><span class="account-tab">Poupança</span></div>
+					<div class="account-tabs"><button type="button" class="account-tab account-tab--active">Conta corrente</button><button type="button" class="account-tab">Poupança</button></div>
 					<dl class="bank-details">
-						<div><dt>Banco</dt><dd>PicPay</dd></div>
-						<div><dt>Conta</dt><dd class="bank-number-line">{{ showBankNumber() ? brazilianAccount.accountNumber : '••••••••-•' }} <button class="visibility-button visibility-button--dark" type="button" (click)="showBankNumber.set(!showBankNumber())" [attr.aria-label]="showBankNumber() ? 'Ocultar número da conta' : 'Mostrar número da conta'"><span aria-hidden="true">{{ showBankNumber() ? '◉' : '◌' }}</span></button></dd></div>
+						<div><dt>Banco</dt><dd>Não conectado</dd></div>
+						<div><dt>Conta</dt><dd class="bank-number-line">{{ brazilianAccount.accountNumber || 'Nenhuma conta cadastrada' }}</dd></div>
 						<div><dt>Moeda</dt><dd>R$ (BRL)</dd></div>
-						<div><dt>Chave Pix</dt><dd>{{ brazilianAccount.pixKey }}</dd></div>
+						<div><dt>Chave Pix</dt><dd>{{ brazilianAccount.pixKey || 'Nenhuma chave cadastrada' }}</dd></div>
 					</dl>
 					<button class="copy-button" type="button">▣&nbsp; Copiar dados para transferência</button>
 				</section>
@@ -113,8 +113,7 @@
 				<div class="account-lower-grid">
 					<section class="account-panel connected-panel">
 						<p class="panel-kicker">Conectados</p>
-						<div class="connected-row"><span>▥&nbsp; PicPay</span><strong>Ativo</strong></div>
-						<div class="connected-row"><span>▥&nbsp; Mercado Pago</span><strong>Ativo</strong></div>
+						<div class="connected-row"><span>Nenhuma instituição conectada</span><strong>Adicionar</strong></div>
 					</section>
 					<section class="account-panel logout-panel">
 						<h3>⇥&nbsp; Sair da conta</h3>

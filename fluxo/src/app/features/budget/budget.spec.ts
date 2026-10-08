@@ -76,6 +76,7 @@ describe('Orçamento', () => {
 
   it('marca categorias acima do limite como alertas', () => {
     const instance = component as any;
+    instance.selectedMonth.set('2026-09');
     instance.limitsState.set([{ category: 'Moradia', amount: 500 }]);
     expect(instance.rows()[0].isOverLimit).toBe(true);
     expect(instance.alerts()).toHaveLength(1);

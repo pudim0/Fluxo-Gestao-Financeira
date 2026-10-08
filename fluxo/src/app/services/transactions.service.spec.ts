@@ -5,11 +5,18 @@ import { MockTransactionRepository } from '../repositories/mock-transaction.repo
 import { TRANSACTION_REPOSITORY } from '../repositories/transaction.repository';
 import { TransactionsService } from './transactions.service';
 
+const seededTransactions = [
+  { id: 'tx-1', description: 'Mercado Central', amount: 182.4, type: 'expense', category: 'Alimentação', date: '2026-08-11', account: 'Conta principal' },
+  { id: 'tx-2', description: 'Salário', amount: 6500, type: 'income', category: 'Receita', date: '2026-08-10', account: 'Conta principal' },
+  { id: 'tx-3', description: 'Assinatura', amount: 89.9, type: 'expense', category: 'Software', date: '2026-08-09', account: 'Cartão principal' },
+  { id: 'tx-4', description: 'Uber', amount: 24.9, type: 'expense', category: 'Transporte', date: '2026-08-10', account: 'Conta principal' },
+];
+
 describe('Serviço de transações', () => {
   let service: TransactionsService;
 
   beforeEach(() => {
-    localStorage.removeItem('fluxo.mock.transactions:anonymous');
+    localStorage.setItem('fluxo.mock.transactions:anonymous', JSON.stringify(seededTransactions));
     TestBed.configureTestingModule({
       providers: [
         TransactionsService,

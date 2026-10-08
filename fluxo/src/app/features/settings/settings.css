@@ -1,0 +1,8 @@
+.tag {
+	cursor: pointer;
+}
+
+.tag--active {
+	border-color: var(--accent);
+	color: var(--accent);
+}

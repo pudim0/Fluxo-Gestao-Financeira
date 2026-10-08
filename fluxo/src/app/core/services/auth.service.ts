@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, switchMap, throwError } from 'rxjs';
+import { Observable, from, of, switchMap, throwError } from 'rxjs';
 
 const AUTH_TOKEN_KEY = 'fluxo.auth.token';
 const AUTH_EMAIL_KEY = 'fluxo.auth.email';
 const AUTH_NAME_KEY = 'fluxo.auth.name';
+const LOCAL_ACCOUNTS_KEY = 'fluxo.auth.accounts';
 const API_URL = 'https://dummyjson.com';
 
 interface ApiUser {
@@ -26,6 +27,12 @@ interface LoginResponse {
   lastName?: string;
 }
 
+interface LocalAccount {
+  email: string;
+  name: string;
+  passwordHash: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -45,6 +52,20 @@ export class AuthService {
 
   login(email: string, password: string): Observable<void> {
     const normalizedEmail = email.trim().toLowerCase();
+    const localAccount = this.readAccounts().find((account) => account.email === normalizedEmail);
+
+    if (localAccount) {
+      return from(this.hashPassword(password)).pipe(
+        switchMap((passwordHash) => {
+          if (passwordHash !== localAccount.passwordHash) {
+            return throwError(() => new Error('Credenciais inválidas.'));
+          }
+
+          this.persistSession('local-token', localAccount.email, localAccount.name);
+          return of(void 0);
+        }),
+      );
+    }
 
     return this.http
       .get<UsersResponse>(`${API_URL}/users/filter?key=email&value=${encodeURIComponent(normalizedEmail)}`)
@@ -78,6 +99,28 @@ export class AuthService {
           });
         }),
       );
+  }
+
+  register(email: string, password: string, name: string): Observable<void> {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    return from(this.hashPassword(password)).pipe(
+      switchMap((passwordHash) => {
+        const accounts = this.readAccounts();
+        const account: LocalAccount = { email: normalizedEmail, name: name.trim(), passwordHash };
+        const existingIndex = accounts.findIndex((item) => item.email === normalizedEmail);
+
+        if (existingIndex >= 0) {
+          accounts[existingIndex] = account;
+        } else {
+          accounts.push(account);
+        }
+
+        this.writeAccounts(accounts);
+        this.persistSession('local-token', normalizedEmail, account.name);
+        return of(void 0);
+      }),
+    );
   }
 
   getCurrentUserEmail(): string | null {
@@ -139,6 +182,29 @@ export class AuthService {
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+
+  private readAccounts(): LocalAccount[] {
+    try {
+      const stored = localStorage.getItem(LOCAL_ACCOUNTS_KEY);
+      return stored ? (JSON.parse(stored) as LocalAccount[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private writeAccounts(accounts: LocalAccount[]): void {
+    try {
+      localStorage.setItem(LOCAL_ACCOUNTS_KEY, JSON.stringify(accounts));
+    } catch {
+      // Storage may be unavailable in restricted environments.
+    }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const bytes = new TextEncoder().encode(password);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
   }
 
   logout(): void {
