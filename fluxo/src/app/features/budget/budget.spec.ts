@@ -52,6 +52,18 @@ describe('Orçamento', () => {
     expect(JSON.parse(localStorage.getItem('fluxo.budgets:user@example.com')!)).toHaveLength(1);
   });
 
+  it('permite salvar uma categoria personalizada', () => {
+    const instance = component as any;
+
+    instance.openForm();
+    instance.form = { category: instance.customCategoryOption, amount: 800 };
+    instance.customCategory = 'Academia';
+    instance.save();
+
+    expect(instance.limits()).toEqual([{ category: 'Academia', amount: 800 }]);
+    expect(instance.feedback()).toContain('Academia salvo');
+  });
+
   it('rejeita limites inválidos, edita os existentes e os remove', () => {
     const instance = component as any;
     instance.openForm();

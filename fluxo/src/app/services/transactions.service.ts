@@ -25,7 +25,17 @@ export class TransactionsService {
     () => !this.isLoading() && !this.hasError() && this.transactions().length === 0,
   );
   readonly categories = computed(() =>
-    [...new Set(this.transactions().map((transaction) => transaction.category))].sort(),
+    [...new Set(this.transactions().map((transaction) => transaction.category))].sort(
+      (first, second) => {
+        const firstIsIncome = normalizeText(first) === 'receita';
+        const secondIsIncome = normalizeText(second) === 'receita';
+
+        if (firstIsIncome) return -1;
+        if (secondIsIncome) return 1;
+
+        return first.localeCompare(second, 'pt-BR');
+      },
+    ),
   );
   readonly totalIncome = computed(() => this.sumByType('income'));
   readonly totalExpense = computed(() => this.sumByType('expense'));

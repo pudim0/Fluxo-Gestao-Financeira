@@ -70,4 +70,17 @@ describe('Serviço de transações', () => {
     const normalizedCategories = service.categories().map((category) => category.toLowerCase());
     expect(normalizedCategories.filter((category) => category === 'alimentação')).toHaveLength(1);
   });
+
+  it('mantém Receita como primeira categoria', () => {
+    service.create({
+      description: 'Salário',
+      amount: 3000,
+      type: 'income',
+      category: 'Receita',
+      date: '2026-08-15',
+      account: 'Conta principal',
+    });
+
+    expect(service.categories()[0]).toBe('Receita');
+  });
 });

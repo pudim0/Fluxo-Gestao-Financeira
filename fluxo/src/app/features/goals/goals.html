@@ -18,7 +18,7 @@
     <article class="metric-card">
       <span class="metric-label">{{ 'metas.economizado' | translate }}</span>
       <span class="metric-value">{{ totalSaved() | currency: 'BRL' : 'symbol' : '1.0-0' }}</span>
-      <span class="metric-detail">{{ overallProgress() }} {{ 'metas.mensagensMetasProgresso' | translate }}</span>
+      <span class="metric-detail">{{ overallProgress() }}% {{ 'metas.mensagensMetasProgresso' | translate }}</span>
     </article>
     <article class="metric-card">
       <span class="metric-label">{{ 'metas.ReservaMetas' | translate }}</span>
@@ -63,7 +63,7 @@
           />
           <label class="visually-hidden" for="goal-deadline">Prazo da meta</label>
           <input id="goal-deadline" #goalDeadline type="month" />
-          <button type="submit"></button>
+          <button type="submit">Adicionar Meta</button>
         </form>
 
         <div class="goals-carousel" aria-label="Carrossel de metas">
@@ -160,7 +160,7 @@
                     </form>
 
                     <button class="remove-goal-button" type="button" (click)="removeGoal(goal.id)">
-                     {{ 'metas.Remover meta' | translate }}
+                     {{ 'Remover meta' | translate }}
                     </button>
                   </div>
                 </div>

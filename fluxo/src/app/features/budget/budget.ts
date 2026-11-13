@@ -20,6 +20,7 @@ interface BudgetRow extends BudgetLimit {
 }
 
 const STORAGE_PREFIX = 'fluxo.budgets:';
+const CUSTOM_CATEGORY = '__custom__';
 
 @Component({
   selector: 'app-budget',
@@ -173,7 +174,12 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
             <label class="field field--wide">
               <span>Categoria</span>
 
-              <select name="category" required [(ngModel)]="form.category">
+              <select
+                name="category"
+                required
+                [(ngModel)]="form.category"
+                (ngModelChange)="categoryChanged($event)"
+              >
                 <option value="">Selecione uma categoria</option>
 
                 @for (category of categories(); track category) {
@@ -181,9 +187,19 @@ const STORAGE_PREFIX = 'fluxo.budgets:';
                     {{ category }}
                   </option>
                 }
+
+                <option [value]="customCategoryOption">Outra categoria</option>
               </select>
 
-              @if (!categories().length) {
+              @if (form.category === customCategoryOption) {
+                <input
+                  name="customCategory"
+                  type="text"
+                  required
+                  placeholder="Digite o nome da categoria"
+                  [(ngModel)]="customCategory"
+                />
+              } @else if (!categories().length) {
                 <small class="page-copy">
                   Crie uma categoria ao registrar uma transação primeiro.
                 </small>
@@ -250,6 +266,10 @@ export class Budget {
   protected readonly feedback = signal('');
 
   protected readonly selectedMonth = signal(new Date().toISOString().slice(0, 7));
+
+  protected readonly customCategoryOption = CUSTOM_CATEGORY;
+
+  protected customCategory = '';
 
   protected form: BudgetLimit = {
     category: '',
@@ -328,6 +348,7 @@ export class Budget {
       category: '',
       amount: 0,
     };
+    this.customCategory = '';
 
     this.formOpen.set(true);
   }
@@ -339,9 +360,16 @@ export class Budget {
       category: row.category,
       amount: row.amount,
     };
+    this.customCategory = '';
 
     this.feedback.set('');
     this.formOpen.set(true);
+  }
+
+  protected categoryChanged(category: string): void {
+    if (category !== this.customCategoryOption) {
+      this.customCategory = '';
+    }
   }
 
   protected closeForm(): void {
@@ -351,8 +379,11 @@ export class Budget {
 
   protected save(): void {
     const category =
-      this.categories().find((item) => normalizeText(item) === normalizeText(this.form.category)) ??
-      '';
+      this.form.category === this.customCategoryOption
+        ? this.customCategory.trim()
+        : this.categories().find(
+            (item) => normalizeText(item) === normalizeText(this.form.category),
+          ) ?? '';
 
     const amount = Number(this.form.amount);
 

@@ -217,23 +217,25 @@ import { TransactionsService } from '../../services/transactions.service';
               <span>Categoria</span>
 
               @if (!creatingCategory) {
-                <select name="category" required [(ngModel)]="form.category">
-                  <option value="">Selecione uma categoria</option>
+                <div class="category-select-row">
+                  <select name="category" required [(ngModel)]="form.category">
+                    <option value="">Selecione uma categoria</option>
 
-                  @if (form.category && !transactionsService.categories().includes(form.category)) {
-                    <option [value]="form.category">{{ form.category }}</option>
-                  }
+                    @if (form.category && !transactionsService.categories().includes(form.category)) {
+                      <option [value]="form.category">{{ form.category }}</option>
+                    }
 
-                  @for (category of transactionsService.categories(); track category) {
-                    <option [value]="category">
-                      {{ category }}
-                    </option>
-                  }
-                </select>
+                    @for (category of transactionsService.categories(); track category) {
+                      <option [value]="category">
+                        {{ category }}
+                      </option>
+                    }
+                  </select>
 
-                <button class="secondary-button" type="button" (click)="startNewCategory()">
-                  + Criar nova categoria
-                </button>
+                  <button class="secondary-button" type="button" (click)="startNewCategory()">
+                    + Criar nova categoria
+                  </button>
+                </div>
               } @else {
                 <div class="category-input-row">
                   <input

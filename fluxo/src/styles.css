@@ -1082,9 +1082,17 @@ svg {
   gap: 0.45rem;
 }
 
-.transaction-form .secondary-button {
-  width: 100%;
-  margin-top: 8px;
+.category-select-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.category-select-row .secondary-button {
+  min-height: 46px;
+  padding-inline: 12px;
+  white-space: nowrap;
 }
 
 .category-input-row {
