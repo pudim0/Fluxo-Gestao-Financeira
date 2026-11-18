@@ -69,28 +69,30 @@
       </div>
     </div>
 
-    <section class="dashboard-grid">
-      <article class="ds-card">
-        <header class="ds-card__header">
-          <p class="ds-card__eyebrow">Indicadores</p>
-          <h3 class="ds-card__title">Saúde financeira</h3>
-          <p class="ds-card__subtitle">{{ profileSummary() }}</p>
-        </header>
-        <div class="tag-row">
-          @if (profile().goal) {
-            <span class="tag">Objetivo: {{ profile().goal }}</span>
-            <span class="tag">Foco: {{ profile().concern }}</span>
-          }
-          @for (highlight of highlights(); track highlight) {
-            <span class="tag">{{ highlight }}</span>
-          }
-        </div>
-      </article>
-    </section>
   </section>
 
   <section class="bottom-grid">
-    <article class="subpanel alerts-panel">
+    <div class="financial-left-column">
+      <section class="dashboard-grid">
+        <article class="ds-card">
+          <header class="ds-card__header">
+            <p class="ds-card__eyebrow">Indicadores</p>
+            <h3 class="ds-card__title">Saúde financeira</h3>
+            <p class="ds-card__subtitle">{{ profileSummary() }}</p>
+          </header>
+          <div class="tag-row">
+            @if (profile().goal) {
+              <span class="tag">Objetivo: {{ profile().goal }}</span>
+              <span class="tag">Foco: {{ profile().concern }}</span>
+            }
+            @for (highlight of highlights(); track highlight) {
+              <span class="tag">{{ highlight }}</span>
+            }
+          </div>
+        </article>
+      </section>
+
+      <article class="subpanel alerts-panel">
       <div class="panel-head compact-head panel-head--stacked-mobile">
         <h3>Alertas</h3>
         <div class="panel-actions">
@@ -118,45 +120,76 @@
           </li>
         }
       </ul>
-    </article>
+      </article>
+    </div>
 
-    <article class="subpanel transactions-panel">
-      <div class="panel-head compact-head panel-head--stacked-mobile">
-        <h3>Últimas Transações</h3>
-        <div class="panel-actions">
-          <a routerLink="/transacoes">Ver todos</a>
-          <button
-            class="panel-toggle"
-            type="button"
-            [attr.aria-expanded]="showAllTransactions()"
-            aria-label="Expandir transações"
-            (click)="toggleTransactions()"
-          >
-            <span class="panel-toggle__icon" [class.open]="showAllTransactions()">⌄</span>
-          </button>
+    <article class="subpanel my-card-panel">
+      <div class="my-card-header">
+        <h3>My Card</h3>
+        <a routerLink="/transacoes">View All ›</a>
+      </div>
+
+      <div class="wallet-card">
+        <div class="wallet-card__balance">
+          <span>Total Balance</span>
+          <strong>$22,350.50</strong>
+        </div>
+
+        <button class="wallet-card__add" type="button" routerLink="/transacoes" aria-label="Nova transação">+</button>
+
+        <div class="wallet-card__number">
+          <strong>4358 4445 0966 2323</strong>
+          <span>08/24</span>
         </div>
       </div>
 
-      <div class="transaction-list">
-        @for (transaction of visibleTransactions(); track transaction.id) {
-          <div class="transaction-row">
-            <div class="transaction-text">
-              <strong>{{ transaction.description }}</strong>
-              <small>{{ transaction.date | date: 'dd/MM' }}</small>
+      <div class="wallet-transactions">
+        <div class="wallet-transactions__header">
+          <h4>Transactions</h4>
+          <a routerLink="/transacoes">View All ›</a>
+        </div>
+
+        <div class="wallet-transaction">
+          <span class="wallet-transaction__icon wallet-transaction__icon--figma">F</span>
+          <strong>Figma</strong>
+          <span class="wallet-transaction__value expense-value">-$15.00</span>
+        </div>
+        <div class="wallet-transaction">
+          <span class="wallet-transaction__icon wallet-transaction__icon--grammarly">G</span>
+          <strong>Grammarly</strong>
+          <span class="wallet-transaction__value expense-value">-$10.00</span>
+        </div>
+        <div class="wallet-transaction">
+          <span class="wallet-transaction__icon wallet-transaction__icon--blender">B</span>
+          <strong>Blender</strong>
+          <span class="wallet-transaction__value expense-value">-$15.00</span>
+        </div>
+
+        <div class="wallet-bottom-grid">
+          <div class="wallet-mini-card wallet-friends">
+            <h5>Add friends</h5>
+            <p>Invite friends to join and earn<br />cash rewards together</p>
+            <div class="wallet-friends__avatars">
+              <span class="avatar avatar--one">A</span>
+              <span class="avatar avatar--two">M</span>
+              <span class="avatar avatar--three">J</span>
             </div>
-            <div class="transaction-tag" [class.income]="transaction.type === 'income'">
-              {{ transaction.category }}
-            </div>
-            <strong
-              class="transaction-value"
-              [class.income-value]="transaction.type === 'income'"
-              [class.expense-value]="transaction.type === 'expense'"
-            >
-              {{ transaction.type === 'income' ? '+' : '-' }}
-              {{ transaction.amount | currency: 'BRL' }}
-            </strong>
           </div>
-        }
+
+          <div class="wallet-mini-card wallet-spending">
+            <h5>Spending</h5>
+            <svg viewBox="0 0 220 95" role="img" aria-label="Gráfico de gastos">
+              <defs>
+                <linearGradient id="spendingFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#38CC91" stop-opacity="0.34" />
+                  <stop offset="1" stop-color="#38CC91" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path class="spending-area" d="M8 71 C28 32, 43 79, 62 57 C82 34, 94 82, 116 55 C137 29, 149 78, 166 65 C184 52, 192 76, 212 38 L212 95 L8 95 Z" />
+              <path class="spending-line" d="M8 71 C28 32, 43 79, 62 57 C82 34, 94 82, 116 55 C137 29, 149 78, 166 65 C184 52, 192 76, 212 38" />
+            </svg>
+          </div>
+        </div>
       </div>
     </article>
   </section>

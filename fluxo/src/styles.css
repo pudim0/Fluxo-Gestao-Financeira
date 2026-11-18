@@ -1084,15 +1084,15 @@ svg {
 
 .category-select-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
-  align-items: center;
 }
 
 .category-select-row .secondary-button {
+  width: 100%;
   min-height: 46px;
   padding-inline: 12px;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .category-input-row {

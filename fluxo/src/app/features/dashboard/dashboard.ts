@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -11,7 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

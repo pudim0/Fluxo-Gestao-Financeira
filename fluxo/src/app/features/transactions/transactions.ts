@@ -203,6 +203,8 @@ import { TransactionsService } from '../../services/transactions.service';
                 type="number"
                 min="0.01"
                 step="0.01"
+                inputmode="decimal"
+                (keydown)="restrictAmountInput($event)"
                 [(ngModel)]="form.amount"
               />
             </label>
@@ -371,6 +373,23 @@ export class Transactions implements OnDestroy {
     this.formOpen = false;
     this.editingId = null;
     this.creatingCategory = false;
+  }
+
+  protected restrictAmountInput(event: KeyboardEvent): void {
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey ||
+      ['Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(
+        event.key,
+      )
+    ) {
+      return;
+    }
+
+    if (!/^[\d.,]$/.test(event.key)) {
+      event.preventDefault();
+    }
   }
 
   protected save(): void {
